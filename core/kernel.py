@@ -2,6 +2,7 @@ from core.logger import logger
 from core.config import config
 from core.events import event_bus
 from core.plugins import plugin_manager
+from core.health import health
 
 
 class Kernel:
@@ -12,6 +13,8 @@ class Kernel:
 
     def start(self):
         self.running = True
+
+        health.start()
 
         logger.info(f"{self.name} {self.version}")
         logger.info("Kernel started.")
@@ -28,6 +31,8 @@ class Kernel:
 
     def stop(self):
         self.running = False
+
+        health.stop()
 
         logger.info("Kernel stopped.")
 

@@ -1,5 +1,6 @@
 from core.events import event_bus
 from core.kernel import Kernel
+from core.health import health
 
 
 def on_kernel_started(data):
@@ -20,7 +21,14 @@ def on_kernel_stopped(data):
 event_bus.subscribe("kernel.started", on_kernel_started)
 event_bus.subscribe("kernel.stopped", on_kernel_stopped)
 
+
 kernel = Kernel()
 
 kernel.start()
+
+print("=" * 50)
+print("HEALTH REPORT")
+print(health.report())
+print("=" * 50)
+
 kernel.stop()
