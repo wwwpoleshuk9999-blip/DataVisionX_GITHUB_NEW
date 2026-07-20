@@ -1,6 +1,6 @@
 app:
   name: DataVision X
-  version: 0.0.3 Foundation
+  version: 0.2.0 Core Configuration
 
 logging:
   level: INFO

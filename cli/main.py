@@ -2,14 +2,10 @@ import sys
 import subprocess
 from pathlib import Path
 
-from core.kernel import Kernel
 from core.health import health
 from core.plugins import plugin_manager
 from core.service import service
-
-
-VERSION = "0.1.0"
-NAME = "DataVision X"
+from core.config import config
 
 
 def start():
@@ -58,17 +54,31 @@ def doctor():
 
     print("DataVision X Doctor")
     print("==============================")
-    print(f"Kernel  : OK")
+    print("Kernel  : OK")
     print(f"Runtime : {data['status']}")
     print(f"Process : {data['process']}")
     print(f"PID     : {data['pid']}")
     print(f"Plugins : {data['plugins']}")
-    print(f"Health  : HEALTHY")
+    print("Health  : HEALTHY")
 
 
 def version():
-    print(NAME)
-    print(f"Version : {VERSION}")
+    print(
+        config.get(
+            "app",
+            "name",
+            default="DataVision X"
+        )
+    )
+
+    print(
+        "Version :",
+        config.get(
+            "app",
+            "version",
+            default="unknown"
+        )
+    )
 
 
 def plugins():
@@ -77,8 +87,8 @@ def plugins():
     print("Loaded plugins")
     print("==============================")
 
-    for item in plugin_manager.list_plugins():
-        print(item)
+    for plugin in plugin_manager.list_plugins():
+        print(plugin)
 
 
 def logs():
@@ -95,6 +105,18 @@ def logs():
     )
 
 
+def config_show():
+    print("DataVision X Config")
+    print("==============================")
+
+    for section, values in config.all().items():
+        print(f"\n[{section}]")
+
+        if isinstance(values, dict):
+            for key, value in values.items():
+                print(f"{key}: {value}")
+
+
 def help_menu():
     print("""
 DataVision X CLI
@@ -108,6 +130,7 @@ doctor
 version
 plugins
 logs
+config
 help
 """)
 
@@ -127,6 +150,7 @@ def main():
         "version": version,
         "plugins": plugins,
         "logs": logs,
+        "config": config_show,
         "help": help_menu,
     }
 

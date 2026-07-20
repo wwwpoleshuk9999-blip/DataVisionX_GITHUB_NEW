@@ -1,9 +1,9 @@
 from core.logger import logger
 from core.runtime import runtime
+from core.config import config
 
 
 class Kernel:
-    VERSION = "0.1.0 Core Architecture"
 
     def __init__(self):
         self.running = False
@@ -13,16 +13,37 @@ class Kernel:
             return
 
         self.running = True
+
         runtime.start()
 
-        logger.info(f"DataVision X {self.VERSION}")
-        logger.info("Kernel started.")
+        name = config.get(
+            "app",
+            "name",
+            default="DataVision X"
+        )
+
+        version = config.get(
+            "app",
+            "version",
+            default="unknown"
+        )
+
+        logger.info(
+            f"{name} {version}"
+        )
+
+        logger.info(
+            "Kernel started."
+        )
 
     def stop(self):
         if not self.running:
             return
 
         self.running = False
+
         runtime.stop()
 
-        logger.info("Kernel stopped.")
+        logger.info(
+            "Kernel stopped."
+        )
