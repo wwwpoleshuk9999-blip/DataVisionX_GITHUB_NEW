@@ -1,6 +1,5 @@
 __pycache__/
 *.pyc
-runtime/state.json
-runtime/dvx.pid
-logs/*.log
 .venv/
+runtime/api_token.txt
+logs/
