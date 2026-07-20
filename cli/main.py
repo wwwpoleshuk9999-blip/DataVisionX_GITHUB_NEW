@@ -2,10 +2,12 @@ import sys
 import subprocess
 from pathlib import Path
 
-from core.health import health
-from core.plugins import plugin_manager
+from services.health_service import health_service
+from services.plugin_service import plugin_service
+from services.config_service import config_service
+from services.system_service import system_service
+
 from core.service import service
-from core.config import config
 
 
 def start():
@@ -37,7 +39,7 @@ def stop():
 
 
 def status():
-    data = health.report()
+    data = health_service.report()
 
     print("DataVision X Status")
     print("==============================")
@@ -48,9 +50,9 @@ def status():
 
 
 def doctor():
-    plugin_manager.load_plugins()
+    plugin_service.load()
 
-    data = health.report()
+    data = health_service.report()
 
     print("DataVision X Doctor")
     print("==============================")
@@ -58,47 +60,30 @@ def doctor():
     print(f"Runtime : {data['status']}")
     print(f"Process : {data['process']}")
     print(f"PID     : {data['pid']}")
-    print(f"Plugins : {data['plugins']}")
+    print(f"Plugins : {plugin_service.count()}")
     print("Health  : HEALTHY")
 
 
 def version():
-    print(
-        config.get(
-            "app",
-            "name",
-            default="DataVision X"
-        )
-    )
-
+    print(system_service.name())
     print(
         "Version :",
-        config.get(
-            "app",
-            "version",
-            default="unknown"
-        )
+        system_service.version()
     )
 
 
 def plugins():
-    plugin_manager.load_plugins()
+    plugin_service.load()
 
     print("DataVision X Plugins")
     print("==============================")
 
-    plugins_list = plugin_manager.list_plugins()
-
-    if not plugins_list:
-        print("No plugins loaded")
-        return
-
-    for plugin in plugins_list:
-        print()
+    for plugin in plugin_service.list():
         print(f"Name   : {plugin['name']}")
         print(f"Version: {plugin['version']}")
         print(f"Status : {plugin['status']}")
         print(f"Info   : {plugin['description']}")
+        print()
 
 
 def logs():
@@ -119,13 +104,20 @@ def config_show():
     print("DataVision X Config")
     print("==============================")
 
-    for section, values in config.all().items():
-
+    for section, values in config_service.all().items():
         print(f"\n[{section}]")
 
         if isinstance(values, dict):
             for key, value in values.items():
                 print(f"{key}: {value}")
+
+
+def system():
+    print("DataVision X System")
+    print("==============================")
+
+    for key, value in system_service.info().items():
+        print(f"{key}: {value}")
 
 
 def help_menu():
@@ -142,6 +134,7 @@ version
 plugins
 logs
 config
+system
 help
 """)
 
@@ -163,6 +156,7 @@ def main():
         "plugins": plugins,
         "logs": logs,
         "config": config_show,
+        "system": system,
         "help": help_menu,
     }
 
