@@ -6,14 +6,18 @@ from core.logger import logger
 
 
 class PluginManager:
+
     def __init__(self):
-        self.plugins = []
+        self.plugins = {}
 
     def load_plugins(self):
+
         plugins_dir = Path("plugins")
 
         if not plugins_dir.exists():
-            logger.warning("Plugins directory not found.")
+            logger.warning(
+                "Plugins directory not found."
+            )
             return
 
         for file in plugins_dir.glob("*.py"):
@@ -27,14 +31,39 @@ class PluginManager:
                 continue
 
             try:
-                module = importlib.import_module(module_name)
+                module = importlib.import_module(
+                    module_name
+                )
 
                 if hasattr(module, "register"):
                     module.register(event_bus)
 
-                self.plugins.append(module_name)
+                info = getattr(
+                    module,
+                    "PLUGIN_INFO",
+                    {}
+                )
 
-                logger.info(f"Plugin loaded: {module_name}")
+                self.plugins[module_name] = {
+                    "module": module_name,
+                    "name": info.get(
+                        "name",
+                        module_name
+                    ),
+                    "version": info.get(
+                        "version",
+                        "unknown"
+                    ),
+                    "description": info.get(
+                        "description",
+                        ""
+                    ),
+                    "status": "LOADED",
+                }
+
+                logger.info(
+                    f"Plugin loaded: {module_name}"
+                )
 
             except Exception as e:
                 logger.error(
@@ -42,10 +71,14 @@ class PluginManager:
                 )
 
     def list_plugins(self):
-        return self.plugins.copy()
+        return list(
+            self.plugins.values()
+        )
 
     def count(self):
-        return len(self.plugins)
+        return len(
+            self.plugins
+        )
 
 
 plugin_manager = PluginManager()

@@ -6,17 +6,25 @@ from core.plugins import plugin_manager
 class HealthMonitor:
 
     def report(self):
-        data = runtime.read()
+
+        running = service.is_running()
+
+        if running:
+            status = "RUNNING"
+            runtime_status = runtime.read()["status"]
+            pid = service.read_pid()
+            uptime = runtime.uptime()
+        else:
+            status = "STOPPED"
+            runtime_status = "STOPPED"
+            pid = None
+            uptime = 0
 
         return {
-            "status": data.get("status", "UNKNOWN"),
-            "uptime": runtime.uptime(),
-            "pid": service.read_pid(),
-            "process": (
-                "RUNNING"
-                if service.is_running()
-                else "STOPPED"
-            ),
+            "status": runtime_status,
+            "uptime": uptime,
+            "pid": pid,
+            "process": status,
             "plugins": plugin_manager.count(),
         }
 

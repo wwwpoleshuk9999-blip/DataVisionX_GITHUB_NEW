@@ -84,11 +84,21 @@ def version():
 def plugins():
     plugin_manager.load_plugins()
 
-    print("Loaded plugins")
+    print("DataVision X Plugins")
     print("==============================")
 
-    for plugin in plugin_manager.list_plugins():
-        print(plugin)
+    plugins_list = plugin_manager.list_plugins()
+
+    if not plugins_list:
+        print("No plugins loaded")
+        return
+
+    for plugin in plugins_list:
+        print()
+        print(f"Name   : {plugin['name']}")
+        print(f"Version: {plugin['version']}")
+        print(f"Status : {plugin['status']}")
+        print(f"Info   : {plugin['description']}")
 
 
 def logs():
@@ -110,6 +120,7 @@ def config_show():
     print("==============================")
 
     for section, values in config.all().items():
+
         print(f"\n[{section}]")
 
         if isinstance(values, dict):
@@ -136,6 +147,7 @@ help
 
 
 def main():
+
     if len(sys.argv) < 2:
         help_menu()
         return
