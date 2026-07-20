@@ -23,6 +23,9 @@ class PluginManager:
 
             module_name = f"plugins.{file.stem}"
 
+            if module_name in self.plugins:
+                continue
+
             try:
                 module = importlib.import_module(module_name)
 
@@ -34,7 +37,15 @@ class PluginManager:
                 logger.info(f"Plugin loaded: {module_name}")
 
             except Exception as e:
-                logger.error(f"Failed to load {module_name}: {e}")
+                logger.error(
+                    f"Failed to load {module_name}: {e}"
+                )
+
+    def list_plugins(self):
+        return self.plugins.copy()
+
+    def count(self):
+        return len(self.plugins)
 
 
 plugin_manager = PluginManager()

@@ -1,50 +1,120 @@
 import sys
+import subprocess
+from pathlib import Path
 
 from core.kernel import Kernel
 from core.health import health
+from core.plugins import plugin_manager
+from core.service import service
 
 
-kernel = Kernel()
+VERSION = "0.1.0"
+NAME = "DataVision X"
 
 
 def start():
-    kernel.start()
+    if service.is_running():
+        print("DataVision X already running")
+        return
+
+    process = subprocess.Popen(
+        [
+            sys.executable,
+            "-m",
+            "core.daemon"
+        ],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+
+    service.save_pid(process.pid)
+
     print("DataVision X started")
+    print(f"PID: {process.pid}")
 
 
 def stop():
-    kernel.stop()
-    print("DataVision X stopped")
+    if service.stop():
+        print("DataVision X stopped")
+    else:
+        print("DataVision X is not running")
 
 
 def status():
+    data = health.report()
+
     print("DataVision X Status")
-    print("=" * 30)
-
-    report = health.report()
-
-    print(f"Status : {report['status']}")
-    print(f"Uptime : {report['uptime']} sec")
+    print("==============================")
+    print(f"Status : {data['status']}")
+    print(f"Process: {data['process']}")
+    print(f"PID    : {data['pid']}")
+    print(f"Uptime : {data['uptime']} sec")
 
 
 def doctor():
-    report = health.report()
+    plugin_manager.load_plugins()
 
-    print("DataVision X Health")
-    print("=" * 30)
-    print(f"Status : {report['status']}")
-    print(f"Uptime : {report['uptime']} sec")
+    data = health.report()
 
-    if report["status"] == "RUNNING":
-        print("System : HEALTHY")
-    else:
-        print("System : STOPPED")
+    print("DataVision X Doctor")
+    print("==============================")
+    print(f"Kernel  : OK")
+    print(f"Runtime : {data['status']}")
+    print(f"Process : {data['process']}")
+    print(f"PID     : {data['pid']}")
+    print(f"Plugins : {data['plugins']}")
+    print(f"Health  : HEALTHY")
+
+
+def version():
+    print(NAME)
+    print(f"Version : {VERSION}")
+
+
+def plugins():
+    plugin_manager.load_plugins()
+
+    print("Loaded plugins")
+    print("==============================")
+
+    for item in plugin_manager.list_plugins():
+        print(item)
+
+
+def logs():
+    log_file = Path("logs/datavisionx.log")
+
+    if not log_file.exists():
+        print("Log file not found")
+        return
+
+    print(
+        log_file.read_text(
+            encoding="utf-8"
+        )[-2000:]
+    )
+
+
+def help_menu():
+    print("""
+DataVision X CLI
+
+Commands:
+
+start
+stop
+status
+doctor
+version
+plugins
+logs
+help
+""")
 
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: dvx <command>")
-        print("Commands: start, stop, status, doctor")
+        help_menu()
         return
 
     command = sys.argv[1]
@@ -54,6 +124,10 @@ def main():
         "stop": stop,
         "status": status,
         "doctor": doctor,
+        "version": version,
+        "plugins": plugins,
+        "logs": logs,
+        "help": help_menu,
     }
 
     action = commands.get(command)
@@ -61,7 +135,8 @@ def main():
     if action:
         action()
     else:
-        print(f"Unknown command: {command}")
+        print("Unknown command")
+        help_menu()
 
 
 if __name__ == "__main__":
