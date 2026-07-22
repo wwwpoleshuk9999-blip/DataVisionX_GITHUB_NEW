@@ -1,29 +1,38 @@
-from fastapi import Request
-from fastapi.responses import JSONResponse
+from fastapi import Request, HTTPException
 
-from auth.token import token_manager
+
+PUBLIC_PATHS = [
+    "/auth/login",
+    "/docs",
+    "/docs/",
+    "/openapi.json",
+    "/redoc",
+    "/favicon.ico"
+]
 
 
 async def auth_middleware(request: Request, call_next):
 
-    public_paths = [
-        "/",
-        "/health",
-        "/docs",
-        "/openapi.json"
-    ]
+    path = request.url.path
 
-    if request.url.path in public_paths:
+
+    if path in PUBLIC_PATHS:
+
         return await call_next(request)
 
-    token = request.headers.get("X-API-Key")
 
-    if not token or not token_manager.verify(token):
-        return JSONResponse(
+
+    authorization = request.headers.get(
+        "Authorization"
+    )
+
+
+    if not authorization:
+
+        raise HTTPException(
             status_code=401,
-            content={
-                "detail": "Invalid API Key"
-            }
+            detail="Authorization header missing"
         )
+
 
     return await call_next(request)
