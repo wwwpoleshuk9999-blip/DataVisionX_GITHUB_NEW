@@ -427,4 +427,15 @@ class PluginManager:
 
 
 
-plugin_manager = PluginManager()
+plugin_manager = None
+
+
+def get_plugin_manager():
+
+    global plugin_manager
+
+    if plugin_manager is None:
+
+        plugin_manager = PluginManager()
+
+    return plugin_manager
