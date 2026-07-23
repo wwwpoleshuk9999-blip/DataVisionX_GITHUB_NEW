@@ -2,11 +2,75 @@ import os
 import json
 import importlib
 import traceback
+import datetime
 
 
 PLUGINS_DIR = "plugins"
 RUNTIME_FILE = "runtime/plugins.json"
 LOG_FILE = "runtime/plugins.log"
+SECURITY_LOG = "runtime/security.log"
+
+
+class PermissionManager:
+
+    def __init__(self, manager):
+        self.manager = manager
+
+
+    def check(self, plugin_id, permission):
+
+        plugin = self.manager.plugins.get(
+            plugin_id,
+            {}
+        )
+
+        permissions = plugin.get(
+            "permissions",
+            {}
+        )
+
+        return permissions.get(
+            permission,
+            False
+        )
+
+
+    def require(self, plugin_id, permission):
+
+        result = self.check(
+            plugin_id,
+            permission
+        )
+
+        if not result:
+
+            self.audit(
+                plugin_id,
+                permission
+            )
+
+        return result
+
+
+    def audit(self, plugin_id, permission):
+
+        os.makedirs(
+            "runtime",
+            exist_ok=True
+        )
+
+        with open(
+            SECURITY_LOG,
+            "a",
+            encoding="utf-8"
+        ) as f:
+
+            f.write(
+                f"{datetime.datetime.now()} | "
+                f"{plugin_id} | "
+                f"{permission} | BLOCKED\n"
+            )
+
 
 
 class PluginManager:
@@ -16,9 +80,14 @@ class PluginManager:
         self.plugins = {}
         self.instances = {}
 
+        self.permissions = PermissionManager(
+            self
+        )
+
         self.load_state()
         self.scan_plugins()
         self.auto_start()
+
 
 
     def log(self, message):
@@ -34,7 +103,10 @@ class PluginManager:
             encoding="utf-8"
         ) as f:
 
-            f.write(message + "\n")
+            f.write(
+                message + "\n"
+            )
+
 
 
     def load_state(self):
@@ -44,7 +116,9 @@ class PluginManager:
             exist_ok=True
         )
 
-        if os.path.exists(RUNTIME_FILE):
+        if os.path.exists(
+            RUNTIME_FILE
+        ):
 
             with open(
                 RUNTIME_FILE,
@@ -52,7 +126,10 @@ class PluginManager:
                 encoding="utf-8"
             ) as f:
 
-                self.plugins = json.load(f)
+                self.plugins = json.load(
+                    f
+                )
+
 
 
     def save_state(self):
@@ -71,6 +148,7 @@ class PluginManager:
             )
 
 
+
     def scan_plugins(self):
 
         os.makedirs(
@@ -78,14 +156,18 @@ class PluginManager:
             exist_ok=True
         )
 
-        for name in os.listdir(PLUGINS_DIR):
+        for name in os.listdir(
+            PLUGINS_DIR
+        ):
 
             path = os.path.join(
                 PLUGINS_DIR,
                 name
             )
 
-            if not os.path.isdir(path):
+            if not os.path.isdir(
+                path
+            ):
                 continue
 
 
@@ -94,7 +176,9 @@ class PluginManager:
                 "manifest.json"
             )
 
-            if not os.path.exists(manifest_path):
+            if not os.path.exists(
+                manifest_path
+            ):
                 continue
 
 
@@ -104,7 +188,9 @@ class PluginManager:
                 encoding="utf-8"
             ) as f:
 
-                data = json.load(f)
+                data = json.load(
+                    f
+                )
 
 
             if name not in self.plugins:
@@ -145,11 +231,13 @@ class PluginManager:
         self.save_state()
 
 
+
     def list_plugins(self):
 
         return list(
             self.plugins.values()
         )
+
 
 
     def load_plugin(self, name):
@@ -181,32 +269,36 @@ class PluginManager:
             return None
 
 
+
     def check_permission(
         self,
         name,
         permission
     ):
 
-        plugin = self.plugins.get(
+        return self.permissions.check(
             name,
-            {}
+            permission
         )
 
-        permissions = plugin.get(
-            "permissions",
-            {}
+
+
+    def require_permission(
+        self,
+        name,
+        permission
+    ):
+
+        return self.permissions.require(
+            name,
+            permission
         )
 
-        return permissions.get(
-            permission,
-            False
-        )
 
 
     def start(self, name):
 
         if name not in self.plugins:
-
             return False
 
 
@@ -251,17 +343,16 @@ class PluginManager:
             return False
 
 
+
     def stop(self, name):
 
         plugin = self.instances.get(
             name
         )
 
-
         try:
 
             if plugin:
-
                 plugin.stop()
 
 
@@ -289,13 +380,12 @@ class PluginManager:
             return False
 
 
+
     def auto_start(self):
 
         for name, data in self.plugins.items():
 
-            if data.get(
-                "status"
-            ) == "RUNNING":
+            if data.get("status") == "RUNNING":
 
                 self.start(name)
 
