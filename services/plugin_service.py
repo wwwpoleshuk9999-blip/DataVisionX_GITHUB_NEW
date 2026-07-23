@@ -1,17 +1,17 @@
-from core.plugins import plugin_manager
+from plugin_manager.manager import plugin_manager
 
 
 class PluginService:
     """Service for managing DataVision X plugins."""
 
     def load(self):
-        plugin_manager.load_plugins()
+        plugin_manager.scan_plugins()
 
     def list(self):
         return plugin_manager.list_plugins()
 
     def count(self):
-        return plugin_manager.count()
+        return len(plugin_manager.list_plugins())
 
 
 plugin_service = PluginService()

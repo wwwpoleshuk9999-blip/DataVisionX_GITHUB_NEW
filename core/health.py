@@ -1,6 +1,6 @@
 from core.runtime import runtime
 from core.service import service
-from core.plugins import plugin_manager
+from plugin_manager.manager import plugin_manager
 
 
 class HealthMonitor:
@@ -25,7 +25,7 @@ class HealthMonitor:
             "uptime": uptime,
             "pid": pid,
             "process": status,
-            "plugins": plugin_manager.count(),
+            "plugins": len(plugin_manager.list_plugins()),
         }
 
 
