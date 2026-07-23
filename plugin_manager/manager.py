@@ -4,6 +4,8 @@ import importlib
 import traceback
 import datetime
 
+from plugin_manager.sandbox import PluginSandbox
+
 
 PLUGINS_DIR = "plugins"
 RUNTIME_FILE = "runtime/plugins.json"
@@ -43,7 +45,6 @@ class PermissionManager:
         )
 
         if not result:
-
             self.audit(
                 plugin_id,
                 permission
@@ -79,6 +80,7 @@ class PluginManager:
 
         self.plugins = {}
         self.instances = {}
+        self.sandboxes = {}
 
         self.permissions = PermissionManager(
             self
@@ -165,9 +167,7 @@ class PluginManager:
                 name
             )
 
-            if not os.path.isdir(
-                path
-            ):
+            if not os.path.isdir(path):
                 continue
 
 
@@ -188,9 +188,7 @@ class PluginManager:
                 encoding="utf-8"
             ) as f:
 
-                data = json.load(
-                    f
-                )
+                data = json.load(f)
 
 
             if name not in self.plugins:
@@ -255,7 +253,27 @@ class PluginManager:
 
             instance = plugin_class()
 
+
+            sandbox = PluginSandbox(
+                name,
+                self.permissions
+            )
+
+            self.sandboxes[name] = sandbox
+
+
+            if hasattr(
+                instance,
+                "set_sandbox"
+            ):
+
+                instance.set_sandbox(
+                    sandbox
+                )
+
+
             self.instances[name] = instance
+
 
             return instance
 
@@ -267,6 +285,14 @@ class PluginManager:
             )
 
             return None
+
+
+
+    def get_sandbox(self, name):
+
+        return self.sandboxes.get(
+            name
+        )
 
 
 
