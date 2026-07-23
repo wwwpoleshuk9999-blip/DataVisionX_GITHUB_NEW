@@ -9,15 +9,10 @@ RUNTIME_FILE = "runtime/plugins.json"
 LOG_FILE = "runtime/plugins.log"
 
 
-STATUS_INSTALLED = "INSTALLED"
-STATUS_STOPPED = "STOPPED"
-STATUS_RUNNING = "RUNNING"
-STATUS_ERROR = "ERROR"
-
-
 class PluginManager:
 
     def __init__(self):
+
         self.plugins = {}
         self.instances = {}
 
@@ -27,27 +22,47 @@ class PluginManager:
 
 
     def log(self, message):
-        os.makedirs("runtime", exist_ok=True)
 
-        with open(LOG_FILE, "a", encoding="utf-8") as f:
+        os.makedirs(
+            "runtime",
+            exist_ok=True
+        )
+
+        with open(
+            LOG_FILE,
+            "a",
+            encoding="utf-8"
+        ) as f:
+
             f.write(message + "\n")
 
 
     def load_state(self):
-        os.makedirs("runtime", exist_ok=True)
+
+        os.makedirs(
+            "runtime",
+            exist_ok=True
+        )
 
         if os.path.exists(RUNTIME_FILE):
-            try:
-                with open(RUNTIME_FILE, "r", encoding="utf-8") as f:
-                    self.plugins = json.load(f)
-            except Exception:
-                self.plugins = {}
+
+            with open(
+                RUNTIME_FILE,
+                "r",
+                encoding="utf-8"
+            ) as f:
+
+                self.plugins = json.load(f)
 
 
     def save_state(self):
-        os.makedirs("runtime", exist_ok=True)
 
-        with open(RUNTIME_FILE, "w", encoding="utf-8") as f:
+        with open(
+            RUNTIME_FILE,
+            "w",
+            encoding="utf-8"
+        ) as f:
+
             json.dump(
                 self.plugins,
                 f,
@@ -58,7 +73,10 @@ class PluginManager:
 
     def scan_plugins(self):
 
-        os.makedirs(PLUGINS_DIR, exist_ok=True)
+        os.makedirs(
+            PLUGINS_DIR,
+            exist_ok=True
+        )
 
         for name in os.listdir(PLUGINS_DIR):
 
@@ -70,51 +88,68 @@ class PluginManager:
             if not os.path.isdir(path):
                 continue
 
-            manifest = os.path.join(
+
+            manifest_path = os.path.join(
                 path,
                 "manifest.json"
             )
 
-            if not os.path.exists(manifest):
+            if not os.path.exists(manifest_path):
                 continue
 
-            try:
-                with open(
-                    manifest,
-                    "r",
-                    encoding="utf-8"
-                ) as f:
-                    data = json.load(f)
 
-            except Exception:
-                continue
+            with open(
+                manifest_path,
+                "r",
+                encoding="utf-8"
+            ) as f:
+
+                data = json.load(f)
 
 
             if name not in self.plugins:
 
                 self.plugins[name] = {
-                    "name": data.get("name", name),
-                    "version": data.get("version", "1.0"),
-                    "description": data.get("description", ""),
-                    "status": STATUS_INSTALLED
+
+                    "name": data.get(
+                        "name",
+                        name
+                    ),
+
+                    "version": data.get(
+                        "version",
+                        "1.0"
+                    ),
+
+                    "description": data.get(
+                        "description",
+                        ""
+                    ),
+
+                    "permissions": data.get(
+                        "permissions",
+                        {}
+                    ),
+
+                    "status": "STOPPED"
                 }
+
+            else:
+
+                self.plugins[name]["permissions"] = data.get(
+                    "permissions",
+                    {}
+                )
 
 
         self.save_state()
 
 
     def list_plugins(self):
-        return list(self.plugins.values())
 
-
-    def get_status(self, name):
-
-        plugin = self.plugins.get(name)
-
-        if not plugin:
-            return None
-
-        return plugin.get("status")
+        return list(
+            self.plugins.values()
+        )
 
 
     def load_plugin(self, name):
@@ -139,27 +174,50 @@ class PluginManager:
 
         except Exception:
 
-            self.log(traceback.format_exc())
+            self.log(
+                traceback.format_exc()
+            )
 
             return None
 
+
+    def check_permission(
+        self,
+        name,
+        permission
+    ):
+
+        plugin = self.plugins.get(
+            name,
+            {}
+        )
+
+        permissions = plugin.get(
+            "permissions",
+            {}
+        )
+
+        return permissions.get(
+            permission,
+            False
+        )
 
 
     def start(self, name):
 
         if name not in self.plugins:
+
             return False
 
 
-        if self.get_status(name) == STATUS_RUNNING:
-            return True
+        plugin = self.load_plugin(
+            name
+        )
 
-
-        plugin = self.load_plugin(name)
 
         if not plugin:
 
-            self.plugins[name]["status"] = STATUS_ERROR
+            self.plugins[name]["status"] = "ERROR"
             self.save_state()
 
             return False
@@ -169,7 +227,7 @@ class PluginManager:
 
             plugin.start()
 
-            self.plugins[name]["status"] = STATUS_RUNNING
+            self.plugins[name]["status"] = "RUNNING"
 
             self.save_state()
 
@@ -182,7 +240,7 @@ class PluginManager:
 
         except Exception:
 
-            self.plugins[name]["status"] = STATUS_ERROR
+            self.plugins[name]["status"] = "ERROR"
 
             self.save_state()
 
@@ -193,22 +251,21 @@ class PluginManager:
             return False
 
 
-
     def stop(self, name):
 
-        if name not in self.plugins:
-            return False
+        plugin = self.instances.get(
+            name
+        )
 
-
-        plugin = self.instances.get(name)
 
         try:
 
-            if plugin and hasattr(plugin, "stop"):
+            if plugin:
+
                 plugin.stop()
 
 
-            self.plugins[name]["status"] = STATUS_STOPPED
+            self.plugins[name]["status"] = "STOPPED"
 
             self.save_state()
 
@@ -221,7 +278,7 @@ class PluginManager:
 
         except Exception:
 
-            self.plugins[name]["status"] = STATUS_ERROR
+            self.plugins[name]["status"] = "ERROR"
 
             self.save_state()
 
@@ -232,45 +289,13 @@ class PluginManager:
             return False
 
 
-
-    def restart(self, name):
-
-        self.stop(name)
-
-        return self.start(name)
-
-
-
-    def remove(self, name):
-
-        if name not in self.plugins:
-            return False
-
-
-        self.stop(name)
-
-        self.plugins.pop(name)
-
-        self.instances.pop(
-            name,
-            None
-        )
-
-        self.save_state()
-
-        self.log(
-            f"{name}: removed"
-        )
-
-        return True
-
-
-
     def auto_start(self):
 
         for name, data in self.plugins.items():
 
-            if data.get("status") == STATUS_RUNNING:
+            if data.get(
+                "status"
+            ) == "RUNNING":
 
                 self.start(name)
 

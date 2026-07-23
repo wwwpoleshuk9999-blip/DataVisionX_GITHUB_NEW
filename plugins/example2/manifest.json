@@ -1,5 +1,10 @@
 {
     "name": "Example 2 Plugin",
     "version": "1.0.0",
-    "description": "Test installed plugin"
+    "description": "Test installed plugin",
+    "permissions": {
+        "events": true,
+        "storage": false,
+        "network": false
+    }
 }

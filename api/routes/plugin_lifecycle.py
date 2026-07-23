@@ -2,6 +2,7 @@ from fastapi import APIRouter, Header, HTTPException
 
 from auth.session import session_manager
 from auth.users.service import user_service
+
 from plugin_manager.manager import plugin_manager
 
 
@@ -24,7 +25,9 @@ def get_current_user(authorization: str):
         ""
     )
 
-    username = session_manager.get_user(token)
+    username = session_manager.get_user(
+        token
+    )
 
     if not username:
         raise HTTPException(
@@ -32,7 +35,9 @@ def get_current_user(authorization: str):
             detail="Invalid token"
         )
 
-    user = user_service.get(username)
+    user = user_service.get(
+        username
+    )
 
     if not user:
         raise HTTPException(
@@ -44,124 +49,111 @@ def get_current_user(authorization: str):
 
 
 
-def find_plugin(name):
+@router.get("/{plugin_id}/status")
+def plugin_status(
+    plugin_id: str,
+    authorization: str = Header(None)
+):
+
+    get_current_user(
+        authorization
+    )
 
     plugins = plugin_manager.plugins
 
-    if name in plugins:
-        return name
+    if plugin_id not in plugins:
+        raise HTTPException(
+            status_code=404,
+            detail="Plugin not found"
+        )
 
-    for key, data in plugins.items():
+    data = plugins[plugin_id]
 
-        if data.get("name") == name:
-            return key
+    return {
+        "id": plugin_id,
+        "name": data["name"],
+        "version": data["version"],
+        "description": data["description"],
+        "status": data["status"]
+    }
 
-    return None
+
+
+@router.get("/{plugin_id}/permissions")
+def plugin_permissions(
+    plugin_id: str,
+    authorization: str = Header(None)
+):
+
+    get_current_user(
+        authorization
+    )
+
+    if plugin_id not in plugin_manager.plugins:
+        raise HTTPException(
+            status_code=404,
+            detail="Plugin not found"
+        )
+
+
+    return {
+        "plugin": plugin_id,
+        "permissions": plugin_manager.plugins[plugin_id].get(
+            "permissions",
+            {}
+        )
+    }
 
 
 
-@router.post("/{name}/start")
+@router.post("/{plugin_id}/start")
 def start_plugin(
-    name: str,
+    plugin_id: str,
     authorization: str = Header(None)
 ):
 
-    get_current_user(authorization)
+    get_current_user(
+        authorization
+    )
 
-    plugin = find_plugin(name)
+    if plugin_manager.start(
+        plugin_id
+    ):
 
-    if not plugin:
-        raise HTTPException(
-            status_code=404,
-            detail="Plugin not found"
-        )
+        return {
+            "plugin": plugin_id,
+            "status": "RUNNING"
+        }
 
-    if not plugin_manager.start(plugin):
-        raise HTTPException(
-            status_code=400,
-            detail="Failed to start plugin"
-        )
 
-    return {
-        "plugin": plugin,
-        "status": "RUNNING"
-    }
+    raise HTTPException(
+        status_code=400,
+        detail="Failed to start plugin"
+    )
 
 
 
-@router.post("/{name}/stop")
+@router.post("/{plugin_id}/stop")
 def stop_plugin(
-    name: str,
+    plugin_id: str,
     authorization: str = Header(None)
 ):
 
-    get_current_user(authorization)
+    get_current_user(
+        authorization
+    )
 
-    plugin = find_plugin(name)
+    if plugin_manager.stop(
+        plugin_id
+    ):
 
-    if not plugin:
-        raise HTTPException(
-            status_code=404,
-            detail="Plugin not found"
-        )
-
-    plugin_manager.stop(plugin)
-
-    return {
-        "plugin": plugin,
-        "status": "STOPPED"
-    }
+        return {
+            "plugin": plugin_id,
+            "status": "STOPPED"
+        }
 
 
-
-@router.post("/{name}/restart")
-def restart_plugin(
-    name: str,
-    authorization: str = Header(None)
-):
-
-    get_current_user(authorization)
-
-    plugin = find_plugin(name)
-
-    if not plugin:
-        raise HTTPException(
-            status_code=404,
-            detail="Plugin not found"
-        )
-
-    plugin_manager.stop(plugin)
-
-    if not plugin_manager.start(plugin):
-        raise HTTPException(
-            status_code=400,
-            detail="Restart failed"
-        )
-
-    return {
-        "plugin": plugin,
-        "status": "RUNNING"
-    }
-
-
-
-@router.get("/{name}/status")
-def plugin_status(
-    name: str,
-    authorization: str = Header(None)
-):
-
-    get_current_user(authorization)
-
-    plugin = find_plugin(name)
-
-    if not plugin:
-        raise HTTPException(
-            status_code=404,
-            detail="Plugin not found"
-        )
-
-    return {
-        "id": plugin,
-        **plugin_manager.plugins[plugin]
-    }
+    raise HTTPException(
+        status_code=400,
+        detail="Failed to stop plugin"
+    )
