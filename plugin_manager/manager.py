@@ -5,6 +5,7 @@ import traceback
 import datetime
 
 from plugin_manager.sandbox import PluginSandbox
+from plugin_manager.event_bus import EventBus
 
 
 PLUGINS_DIR = "plugins"
@@ -84,6 +85,10 @@ class PluginManager:
 
         self.permissions = PermissionManager(
             self
+        )
+
+        self.event_bus = EventBus(
+            self.permissions
         )
 
         self.load_state()
@@ -176,9 +181,7 @@ class PluginManager:
                 "manifest.json"
             )
 
-            if not os.path.exists(
-                manifest_path
-            ):
+            if not os.path.exists(manifest_path):
                 continue
 
 
@@ -259,6 +262,7 @@ class PluginManager:
                 self.permissions
             )
 
+
             self.sandboxes[name] = sandbox
 
 
@@ -293,6 +297,12 @@ class PluginManager:
         return self.sandboxes.get(
             name
         )
+
+
+
+    def get_event_bus(self):
+
+        return self.event_bus
 
 
 
