@@ -1,4 +1,4 @@
 {
-    "status": "RUNNING",
-    "uptime": 0
+    "status": "STOPPED",
+    "started_at": 0
 }

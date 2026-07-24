@@ -5,6 +5,8 @@ from auth.users.service import user_service
 
 from plugin_manager.manager import plugin_manager
 
+from core.events import add_event
+
 
 router = APIRouter(
     prefix="/plugins",
@@ -20,14 +22,17 @@ def get_current_user(authorization: str):
             detail="Authorization header missing"
         )
 
+
     token = authorization.replace(
         "Bearer ",
         ""
     )
 
+
     username = session_manager.get_user(
         token
     )
+
 
     if not username:
         raise HTTPException(
@@ -35,15 +40,18 @@ def get_current_user(authorization: str):
             detail="Invalid token"
         )
 
+
     user = user_service.get(
         username
     )
+
 
     if not user:
         raise HTTPException(
             status_code=404,
             detail="User not found"
         )
+
 
     return user
 
@@ -59,37 +67,15 @@ def plugin_status(
         authorization
     )
 
-    plugins = plugin_manager.plugins
-
-    if plugin_id not in plugins:
-        raise HTTPException(
-            status_code=404,
-            detail="Plugin not found"
-        )
-
-    data = plugins[plugin_id]
-
-    return {
-        "id": plugin_id,
-        "name": data["name"],
-        "version": data["version"],
-        "description": data["description"],
-        "status": data["status"]
-    }
+    plugin_manager.discover()
 
 
-
-@router.get("/{plugin_id}/permissions")
-def plugin_permissions(
-    plugin_id: str,
-    authorization: str = Header(None)
-):
-
-    get_current_user(
-        authorization
+    plugin = plugin_manager.plugins.get(
+        plugin_id
     )
 
-    if plugin_id not in plugin_manager.plugins:
+
+    if not plugin:
         raise HTTPException(
             status_code=404,
             detail="Plugin not found"
@@ -97,11 +83,11 @@ def plugin_permissions(
 
 
     return {
-        "plugin": plugin_id,
-        "permissions": plugin_manager.plugins[plugin_id].get(
-            "permissions",
-            {}
-        )
+        "id": plugin.id,
+        "name": plugin.name,
+        "version": plugin.version,
+        "description": plugin.description,
+        "status": plugin.status
     }
 
 
@@ -112,13 +98,27 @@ def start_plugin(
     authorization: str = Header(None)
 ):
 
-    get_current_user(
+    user = get_current_user(
         authorization
     )
 
-    if plugin_manager.start(
+
+    plugin_manager.discover()
+
+
+    result = plugin_manager.start(
         plugin_id
-    ):
+    )
+
+
+    if result:
+
+        add_event(
+            "START",
+            plugin_id,
+            user.username
+        )
+
 
         return {
             "plugin": plugin_id,
@@ -139,13 +139,24 @@ def stop_plugin(
     authorization: str = Header(None)
 ):
 
-    get_current_user(
+    user = get_current_user(
         authorization
     )
 
-    if plugin_manager.stop(
+
+    result = plugin_manager.stop(
         plugin_id
-    ):
+    )
+
+
+    if result:
+
+        add_event(
+            "STOP",
+            plugin_id,
+            user.username
+        )
+
 
         return {
             "plugin": plugin_id,
@@ -156,4 +167,45 @@ def stop_plugin(
     raise HTTPException(
         status_code=400,
         detail="Failed to stop plugin"
+    )
+
+
+
+@router.post("/{plugin_id}/restart")
+def restart_plugin(
+    plugin_id: str,
+    authorization: str = Header(None)
+):
+
+    user = get_current_user(
+        authorization
+    )
+
+
+    plugin_manager.discover()
+
+
+    result = plugin_manager.restart(
+        plugin_id
+    )
+
+
+    if result:
+
+        add_event(
+            "RESTART",
+            plugin_id,
+            user.username
+        )
+
+
+        return {
+            "plugin": plugin_id,
+            "status": "RUNNING"
+        }
+
+
+    raise HTTPException(
+        status_code=400,
+        detail="Failed to restart plugin"
     )

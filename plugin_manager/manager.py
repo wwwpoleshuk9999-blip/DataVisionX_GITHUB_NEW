@@ -3,6 +3,8 @@ from plugin_manager.validator import PluginValidator
 from plugin_manager.lifecycle import PluginLifecycle
 from plugin_manager.installer import PluginInstaller
 
+from core.plugin_registry import register_plugin
+
 
 class PluginManager:
 
@@ -15,38 +17,237 @@ class PluginManager:
 
         self.plugins = {}
 
+
     def discover(self):
 
-        self.plugins = {}
+        discovered = {}
+
 
         for plugin in self.loader.discover():
 
             valid, errors = self.validator.validate(plugin)
 
+
             if valid:
 
-                self.plugins[plugin.id] = plugin
+                if plugin.id in self.plugins:
+
+                    plugin.status = self.plugins[
+                        plugin.id
+                    ].status
+
+
+                discovered[
+                    plugin.id
+                ] = plugin
+
+
+                register_plugin(
+
+                    plugin.id,
+
+                    plugin.name,
+
+                    plugin.version,
+
+                    getattr(
+                        plugin,
+                        "path",
+                        ""
+                    )
+
+                )
+
 
             else:
 
-                print(f"{plugin.id}: {errors}")
+                print(
+                    f"{plugin.id}: {errors}"
+                )
+
+
+        self.plugins = discovered
+
 
         return self.plugins
 
-    def start(self, plugin_id):
 
-        plugin = self.plugins.get(plugin_id)
+
+    def list_plugins(self):
+
+        return self.plugins
+
+
+
+    def start(
+        self,
+        plugin_id
+    ):
+
+        self.discover()
+
+
+        plugin = self.plugins.get(
+            plugin_id
+        )
+
 
         if not plugin:
+
             return False
 
-        self.lifecycle.start(plugin)
 
-        return True
+        try:
 
-    def stop(self, plugin_id):
+            instance = self.lifecycle.start(
+                plugin
+            )
 
-        return self.lifecycle.stop(plugin_id)
+
+            if instance:
+
+                plugin.status = "RUNNING"
+
+                return True
+
+
+        except Exception as e:
+
+            print(
+                "START ERROR:",
+                e
+            )
+
+
+        return False
+
+
+
+
+    def stop(
+        self,
+        plugin_id
+    ):
+
+
+        plugin = self.plugins.get(
+            plugin_id
+        )
+
+
+        if not plugin:
+
+            return False
+
+
+        try:
+
+            result = self.lifecycle.stop(
+                plugin_id
+            )
+
+
+            if result:
+
+                plugin.status = "STOPPED"
+
+
+            return result
+
+
+        except Exception as e:
+
+            print(
+                "STOP ERROR:",
+                e
+            )
+
+
+        return False
+
+
+
+
+
+    def restart(
+        self,
+        plugin_id
+    ):
+
+
+        plugin = self.plugins.get(
+            plugin_id
+        )
+
+
+        if not plugin:
+
+            return False
+
+
+        try:
+
+            self.lifecycle.stop(
+                plugin_id
+            )
+
+
+            instance = self.lifecycle.start(
+                plugin
+            )
+
+
+            if instance:
+
+                plugin.status = "RUNNING"
+
+                return True
+
+
+
+        except Exception as e:
+
+            print(
+                "RESTART ERROR:",
+                e
+            )
+
+
+        return False
+
+
+
+
+    def install(
+        self,
+        plugin
+    ):
+
+        return self.installer.install(
+            plugin
+        )
+
+
+
+
+    def remove(
+        self,
+        plugin_id
+    ):
+
+
+        if plugin_id in self.plugins:
+
+            del self.plugins[
+                plugin_id
+            ]
+
+            return True
+
+
+        return False
+
+
 
 
 plugin_manager = PluginManager()

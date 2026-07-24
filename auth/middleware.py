@@ -1,12 +1,12 @@
 from fastapi import Request, HTTPException
 
-
 PUBLIC_PATHS = [
     "/",
     "/health",
     "/system",
     "/plugins",
     "/dashboard",
+    "/dashboard/status",
 
     "/auth/login",
 
@@ -20,16 +20,17 @@ PUBLIC_PATHS = [
 
 
 async def auth_middleware(request: Request, call_next):
-
     path = request.url.path
 
-    # Разрешаем всё внутри /web
+    # Разрешаем все статические файлы Dashboard
     if path.startswith("/web"):
         return await call_next(request)
 
+    # Разрешаем публичные маршруты
     if path in PUBLIC_PATHS:
         return await call_next(request)
 
+    # Проверяем авторизацию
     authorization = request.headers.get("Authorization")
 
     if not authorization:

@@ -6,25 +6,36 @@ class PluginLifecycle:
     def __init__(self):
         self.instances = {}
 
+
     def start(self, plugin):
 
-        module = importlib.import_module(
-            f"plugins.{plugin.id}.plugin"
-        )
+        try:
+            module = importlib.import_module(
+                f"plugins.{plugin.id}.plugin"
+            )
 
-        plugin_class = getattr(
-            module,
-            "Plugin"
-        )
+            plugin_class = getattr(
+                module,
+                "Plugin"
+            )
 
-        instance = plugin_class()
+            instance = plugin_class()
 
-        if hasattr(instance, "start"):
-            instance.start()
+            if hasattr(instance, "start"):
+                instance.start()
 
-        self.instances[plugin.id] = instance
+            self.instances[plugin.id] = instance
 
-        return instance
+            plugin.status = "RUNNING"
+
+            return instance
+
+        except Exception as e:
+            print(
+                f"Plugin start error: {e}"
+            )
+            return None
+
 
     def stop(self, plugin_id):
 
@@ -33,9 +44,16 @@ class PluginLifecycle:
         if not instance:
             return False
 
-        if hasattr(instance, "stop"):
-            instance.stop()
+        try:
+            if hasattr(instance, "stop"):
+                instance.stop()
 
-        del self.instances[plugin_id]
+            del self.instances[plugin_id]
 
-        return True
+            return True
+
+        except Exception as e:
+            print(
+                f"Plugin stop error: {e}"
+            )
+            return False

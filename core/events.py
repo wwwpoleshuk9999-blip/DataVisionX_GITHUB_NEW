@@ -1,31 +1,142 @@
-from collections import defaultdict
-from typing import Callable, Any
+import sqlite3
+import os
+import time
 
 
-class EventBus:
-    def __init__(self):
-        self._events: dict[str, list[Callable]] = defaultdict(list)
-
-    def subscribe(self, event_name: str, callback: Callable[[Any], None]):
-        """Подписаться на событие."""
-        self._events[event_name].append(callback)
-
-    def unsubscribe(self, event_name: str, callback: Callable[[Any], None]):
-        """Отписаться от события."""
-        if callback in self._events[event_name]:
-            self._events[event_name].remove(callback)
-
-    def publish(self, event_name: str, data: Any = None):
-        """Отправить событие всем подписчикам."""
-        for callback in self._events[event_name]:
-            try:
-                callback(data)
-            except Exception as e:
-                print(f"EventBus error: {e}")
-
-    def subscribers(self, event_name: str) -> int:
-        """Количество подписчиков."""
-        return len(self._events[event_name])
+DB_PATH = "data/events.db"
 
 
-event_bus = EventBus()
+
+def init_db():
+
+    os.makedirs(
+        "data",
+        exist_ok=True
+    )
+
+    conn = sqlite3.connect(DB_PATH)
+
+    cur = conn.cursor()
+
+
+    cur.execute(
+        """
+        CREATE TABLE IF NOT EXISTS events (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            time TEXT,
+
+            action TEXT,
+
+            plugin TEXT,
+
+            user TEXT
+
+        )
+        """
+    )
+
+
+    conn.commit()
+
+    conn.close()
+
+
+
+def add_event(
+    action,
+    plugin=None,
+    user="system"
+):
+
+    conn = sqlite3.connect(
+        DB_PATH
+    )
+
+    cur = conn.cursor()
+
+
+    cur.execute(
+        """
+        INSERT INTO events
+        (
+            time,
+            action,
+            plugin,
+            user
+        )
+
+        VALUES
+        (?,?,?,?)
+        """,
+
+        (
+            time.strftime(
+                "%Y-%m-%d %H:%M:%S"
+            ),
+            action,
+            plugin,
+            user
+        )
+    )
+
+
+    conn.commit()
+
+    conn.close()
+
+
+
+def get_events():
+
+    conn = sqlite3.connect(
+        DB_PATH
+    )
+
+    cur = conn.cursor()
+
+
+    cur.execute(
+        """
+        SELECT
+        time,
+        action,
+        plugin,
+        user
+
+        FROM events
+
+        ORDER BY id DESC
+
+        LIMIT 50
+        """
+    )
+
+
+    rows = cur.fetchall()
+
+
+    conn.close()
+
+
+    events = []
+
+
+    for row in rows:
+
+        events.append(
+            {
+                "time": row[0],
+                "action": row[1],
+                "plugin": row[2],
+                "user": row[3]
+            }
+        )
+
+
+    return events
+
+
+
+init_db()
