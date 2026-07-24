@@ -1,0 +1,43 @@
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+from api.routes.plugins import router as plugins_router
+from api.routes.system import router as system_router
+
+app = FastAPI(
+    title="DataVisionX API",
+    version="0.5 Phoenix"
+)
+
+# API
+app.include_router(plugins_router)
+app.include_router(system_router)
+
+# Статические файлы Dashboard
+app.mount(
+    "/web",
+    StaticFiles(directory="web"),
+    name="web"
+)
+
+
+@app.get("/")
+def home():
+    return {
+        "name": "DataVisionX",
+        "version": "0.5 Phoenix",
+        "status": "RUNNING"
+    }
+
+
+@app.get("/health")
+def health():
+    return {
+        "status": "healthy"
+    }
+
+
+@app.get("/dashboard")
+def dashboard():
+    return FileResponse("web/index.html")

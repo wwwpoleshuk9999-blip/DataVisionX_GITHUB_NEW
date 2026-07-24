@@ -1,11 +1,23 @@
 from fastapi import APIRouter
-
-from services.system_service import system_service
-
+import platform
+import sys
+import time
 
 router = APIRouter()
+
+START_TIME = time.time()
 
 
 @router.get("/system")
 def system():
-    return system_service.info()
+
+    uptime = int(time.time() - START_TIME)
+
+    return {
+        "status": "RUNNING",
+        "health": "HEALTHY",
+        "version": "0.5 Phoenix",
+        "python": sys.version.split()[0],
+        "platform": platform.system(),
+        "uptime": uptime
+    }
