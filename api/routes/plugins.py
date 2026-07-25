@@ -13,14 +13,14 @@ def get_plugins():
 
     result = []
 
-    for plugin in plugins.values():
+    for plugin in plugins:
 
         result.append(
             {
                 "id": plugin.id,
                 "name": plugin.name,
                 "version": plugin.version,
-                "status": plugin.status
+                "status": getattr(plugin, "status", "STOPPED")
             }
         )
 

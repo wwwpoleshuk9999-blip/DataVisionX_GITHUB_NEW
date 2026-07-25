@@ -1,4 +1,6 @@
 {
-    "status": "STOPPED",
-    "started_at": 0
+    "status": "RUNNING",
+    "started_at": 1784986409,
+    "last_action": "START",
+    "restart_count": 2
 }

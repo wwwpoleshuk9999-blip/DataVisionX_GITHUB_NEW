@@ -1,140 +1,133 @@
+import os
 import json
 import time
 from pathlib import Path
-
-from core.service_registry import ServiceRegistry
-
-
-STATE_FILE = Path("runtime/state.json")
 
 
 class RuntimeManager:
 
     def __init__(self):
+        self.base_dir = Path("runtime")
+        self.base_dir.mkdir(exist_ok=True)
 
-        STATE_FILE.parent.mkdir(exist_ok=True)
+        self.state_file = self.base_dir / "state.json"
 
-        # Центральный реестр сервисов
-        self.registry = ServiceRegistry()
+        if not self.state_file.exists():
+            self._create_default_state()
 
-        if not STATE_FILE.exists():
-            self._save({
-                "status": "STOPPED",
-                "started_at": 0
-            })
+
+    def _create_default_state(self):
+
+        data = {
+            "status": "STOPPED",
+            "started_at": None,
+            "last_action": "INIT",
+            "restart_count": 0
+        }
+
+        self._save(data)
 
 
     def _load(self):
 
-        if not STATE_FILE.exists():
-            return {
-                "status": "STOPPED",
-                "started_at": 0
-            }
+        try:
+            with open(self.state_file, "r") as f:
+                data = json.load(f)
 
+        except Exception:
 
-        data = json.loads(
-            STATE_FILE.read_text(
-                encoding="utf-8"
-            )
-        )
+            data = {}
 
+        # миграция старых state.json
+        defaults = {
+            "status": "STOPPED",
+            "started_at": None,
+            "last_action": "INIT",
+            "restart_count": 0
+        }
 
-        if "started_at" not in data:
+        for key, value in defaults.items():
 
-            status = data.get(
-                "status",
-                "STOPPED"
-            )
-
-            started_at = (
-                int(time.time())
-                if status == "RUNNING"
-                else 0
-            )
-
-            data = {
-                "status": status,
-                "started_at": started_at
-            }
-
-            self._save(data)
-
+            if key not in data:
+                data[key] = value
 
         return data
 
 
-
     def _save(self, data):
 
-        STATE_FILE.write_text(
-            json.dumps(
+        with open(self.state_file, "w") as f:
+            json.dump(
                 data,
+                f,
                 indent=4
-            ),
-            encoding="utf-8"
-        )
-
+            )
 
 
     def read(self):
-        return self._load()
 
+        return self._load()
 
 
     def start(self):
 
-        self._save({
-            "status": "RUNNING",
-            "started_at": int(time.time())
-        })
+        data = self._load()
 
+        data["status"] = "RUNNING"
+        data["started_at"] = int(time.time())
+        data["last_action"] = "START"
+
+        self._save(data)
+
+        return data
 
 
     def stop(self):
 
-        self._save({
-            "status": "STOPPED",
-            "started_at": 0
-        })
+        data = self._load()
 
+        data["status"] = "STOPPED"
+        data["last_action"] = "STOP"
+
+        self._save(data)
+
+        return data
+
+
+    def reload(self):
+
+        data = self._load()
+
+        data["status"] = "RUNNING"
+        data["last_action"] = "RELOAD"
+
+        # безопасный счётчик рестартов
+        data["restart_count"] = data.get(
+            "restart_count",
+            0
+        ) + 1
+
+
+        if data.get("started_at") is None:
+            data["started_at"] = int(time.time())
+
+
+        self._save(data)
+
+        return data
 
 
     def uptime(self):
 
         data = self._load()
 
-        if data["status"] != "RUNNING":
+        started = data.get("started_at")
+
+        if not started:
             return 0
 
-        return max(
-            0,
-            int(time.time()) - data["started_at"]
-        )
 
-
-
-    def register_service(
-        self,
-        name,
-        service
-    ):
-
-        self.registry.register(
-            name,
-            service
-        )
-
-
-
-    def get_service(
-        self,
-        name
-    ):
-
-        return self.registry.get(
-            name
-        )
+        return int(time.time() - started)
 
 
 

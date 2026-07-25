@@ -73,3 +73,11 @@ def dashboard():
     return FileResponse(
         "web/index.html"
     )
+
+
+@app.get("/web/")
+def web_home():
+
+    return FileResponse(
+        "web/index.html"
+    )

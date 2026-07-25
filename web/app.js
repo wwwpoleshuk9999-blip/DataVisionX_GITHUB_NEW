@@ -1,324 +1,138 @@
-function saveToken(){
-
-    const token =
-    document.getElementById("token").value;
-
-    localStorage.setItem(
-        "token",
-        token
-    );
+function saveToken() {
+    const token = document.getElementById("token").value;
+    localStorage.setItem("token", token);
 
     alert("Token saved");
 
     loadDashboard();
+    loadRuntime();
     loadPlugins();
     loadRegistry();
     loadEvents();
-
 }
 
-
-
-function headers(){
-
+function headers() {
     return {
-
-        "Authorization":
-        "Bearer " +
-        localStorage.getItem("token")
-
+        "Authorization": "Bearer " + localStorage.getItem("token")
     };
-
 }
 
-
-
-
-async function loadDashboard(){
-
-    const r = await fetch(
-        "/dashboard/status",
-        {
-            headers:headers()
-        }
-    );
+async function loadRuntime() {
+    const r = await fetch("/health", {
+        headers: headers()
+    });
 
     const data = await r.json();
 
-
-    document.getElementById("system").innerHTML = `
-
+    document.getElementById("runtime").innerHTML = `
     <div class="card">
-
-    🚀 <b>${data.platform}</b>
-
-    <br>
-    Status: <b>${data.status}</b>
-
-    <br>
-    Health: <b>${data.health}</b>
-
-    <br>
-    Python: ${data.python}
-
-    <br>
-    OS: ${data.os}
-
-    <br>
-    Uptime: ${data.uptime_seconds} sec
-
-    <br>
-    Plugins:
-    ${data.plugins_total}
-
-    <br>
-    Running:
-    🟢 ${data.plugins_running}
-
-    <br>
-    Stopped:
-    🔴 ${data.plugins_stopped}
-
+        Status: <b>${data.health.status}</b><br>
+        Process: <b>${data.health.process}</b><br>
+        PID: ${data.health.pid}<br>
+        Plugins: ${data.health.plugins}
     </div>
-
     `;
 
 }
+async function loadDashboard() {
 
-
-
-
-
-async function loadPlugins(){
-
-    const r = await fetch(
-        "/plugins",
-        {
-            headers:headers()
-        }
-    );
-
+    const r = await fetch("/dashboard/status", {
+        headers: headers()
+    });
 
     const data = await r.json();
 
-
-    let html="";
-
-
-    data.plugins.forEach(p=>{
-
-        html += `
-
-        <div class="card">
-
-        🧩 <b>${p.name}</b>
-
-        <br>
-        ID: ${p.id}
-
-        <br>
-        Version: ${p.version}
-
-        <br>
-        Status:
-        <b>${p.status}</b>
-
-        <br><br>
-
-
-        <button onclick="action('${p.id}','start')">
-        ▶ START
-        </button>
-
-
-        <button onclick="action('${p.id}','stop')">
-        ⏹ STOP
-        </button>
-
-
-        <button onclick="action('${p.id}','restart')">
-        🔄 RESTART
-        </button>
-
-
-        </div>
-
-        `;
-
-    });
-
-
-    document.getElementById("plugins").innerHTML =
-    html;
-
+    document.getElementById("system").innerHTML = `
+    <div class="card">
+        🚀 <b>${data.platform}</b><br>
+        Status: <b>${data.status}</b><br>
+        Health: <b>${data.health}</b><br>
+        Python: ${data.python}<br>
+        OS: ${data.os}<br>
+        Uptime: ${data.uptime_seconds} sec<br>
+        Plugins: ${data.plugins_total}<br>
+        Running: 🟢 ${data.plugins_running}<br>
+        Stopped: 🔴 ${data.plugins_stopped}
+    </div>
+    `;
 }
 
 
+async function loadPlugins() {
 
-
-
-async function loadRegistry(){
-
-    const r = await fetch(
-
-        "/registry",
-
-        {
-            headers:headers()
-        }
-
-    );
-
-
-    const data = await r.json();
-
-
-    let html="";
-
-
-    data.registry.forEach(p=>{
-
-
-        html += `
-
-        <div class="card">
-
-        📦 <b>${p.name}</b>
-
-        <br>
-
-        ID:
-        ${p.id}
-
-        <br>
-
-        Version:
-        ${p.version}
-
-        <br>
-
-        Installed:
-        ${p.installed}
-
-        <br>
-
-        Status:
-        ${p.status}
-
-        </div>
-
-        `;
-
-
+    const r = await fetch("/plugins", {
+        headers: headers()
     });
 
+    const plugins = await r.json();
 
+    let html = "";
 
-    document.getElementById("registry").innerHTML =
-    html;
+    plugins.forEach(p => {
+        html += `
+        <div class="card">
+            <b>${p.id}</b><br>
+            Version: ${p.version}<br>
+            Status: ${p.status}
+        </div>
+        `;
+    });
 
-
+    document.getElementById("plugins").innerHTML = html;
 }
 
 
+async function loadRegistry() {
+
+    const r = await fetch("/registry", {
+        headers: headers()
+    });
+
+    const registry = await r.json();
+
+    let html = "";
+
+    registry.forEach(item => {
+        html += `
+        <div class="card">
+            <b>${item.id}</b><br>
+            Version: ${item.version}
+        </div>
+        `;
+    });
+
+    document.getElementById("registry").innerHTML = html;
+}
 
 
+async function loadEvents() {
 
-async function action(id,cmd){
+    const r = await fetch("/events", {
+        headers: headers()
+    });
 
-    await fetch(
+    const events = await r.json();
 
-        `/plugins/${id}/${cmd}`,
+    let html = "";
 
-        {
+    events.forEach(e => {
+        html += `
+        <div class="card">
+            <b>${e.action}</b><br>
+            Source: ${e.source}<br>
+            User: ${e.user}
+        </div>
+        `;
+    });
 
-            method:"POST",
+    document.getElementById("events").innerHTML = html;
+}
 
-            headers:headers()
-
-        }
-
-    );
-
-
+window.onload = function() {
     loadDashboard();
+    loadRuntime();
     loadPlugins();
     loadRegistry();
     loadEvents();
+};
 
-}
-
-
-
-
-
-
-async function loadEvents(){
-
-    const r = await fetch(
-
-        "/events",
-
-        {
-
-            headers:headers()
-
-        }
-
-    );
-
-
-    const data = await r.json();
-
-
-    let html="";
-
-
-    data.events.reverse().forEach(e=>{
-
-
-        html += `
-
-        <div class="card">
-
-        🕒 ${e.time}
-
-        <br>
-
-        ⚙ ${e.action}
-
-        <br>
-
-        Plugin:
-        ${e.plugin}
-
-        <br>
-
-        User:
-        ${e.user}
-
-        </div>
-
-        `;
-
-
-    });
-
-
-    document.getElementById("events").innerHTML =
-    html;
-
-}
-
-
-
-
-
-window.onload=function(){
-
-    loadDashboard();
-    loadPlugins();
-    loadRegistry();
-    loadEvents();
-
-}

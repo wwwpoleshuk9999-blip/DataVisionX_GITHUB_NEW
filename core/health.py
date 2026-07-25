@@ -7,25 +7,32 @@ class HealthMonitor:
 
     def report(self):
 
-        running = service.is_running()
+        runtime_data = runtime.read()
 
-        if running:
-            status = "RUNNING"
-            runtime_status = runtime.read()["status"]
-            pid = service.read_pid()
-            uptime = runtime.uptime()
-        else:
-            status = "STOPPED"
-            runtime_status = "STOPPED"
-            pid = None
-            uptime = 0
+        process_running = service.is_running()
+
+        total_plugins = len(plugin_manager.list_plugins())
+
+        running_plugins = 0
+
+        try:
+            for plugin in plugin_manager.list_plugins():
+                status = plugin.get("status", "").upper()
+                if status == "RUNNING":
+                    running_plugins += 1
+        except Exception:
+            running_plugins = 0
 
         return {
-            "status": runtime_status,
-            "uptime": uptime,
-            "pid": pid,
-            "process": status,
-            "plugins": len(plugin_manager.list_plugins()),
+            "status": runtime_data.get("status", "UNKNOWN"),
+            "uptime": runtime.uptime(),
+            "pid": service.read_pid(),
+            "process": "RUNNING" if process_running else "STOPPED",
+            "plugins": total_plugins,
+            "plugins_running": running_plugins,
+            "plugins_stopped": total_plugins - running_plugins,
+            "last_action": runtime_data.get("last_action"),
+            "restart_count": runtime_data.get("restart_count", 0),
         }
 
 
