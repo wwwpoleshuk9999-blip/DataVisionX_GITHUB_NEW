@@ -21,3 +21,4 @@ backups/
 *.broken
 *.bak
 *.backup
+data/ai_memory.db

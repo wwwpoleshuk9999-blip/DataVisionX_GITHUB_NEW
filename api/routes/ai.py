@@ -26,9 +26,7 @@ def ai_status():
 
 
 @router.post("/ai/chat")
-def ai_chat(
-    request: ChatRequest
-):
+def ai_chat(request: ChatRequest):
 
     ai = runtime.get_service("ai_service")
 
@@ -41,3 +39,19 @@ def ai_chat(
     return ai.chat(
         request.message
     )
+
+
+@router.get("/ai/history")
+def ai_history(limit: int = 20):
+
+    ai = runtime.get_service("ai_service")
+
+    if not ai:
+        raise HTTPException(
+            status_code=503,
+            detail="AI service unavailable"
+        )
+
+    return {
+        "history": ai.history(limit)
+    }
