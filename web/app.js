@@ -1,340 +1,222 @@
-function saveToken() {
-
-    const token = document.getElementById("token").value;
-
-    localStorage.setItem(
-        "token",
-        token
-    );
-
-    alert("Token saved");
-
-    loadAll();
-}
-
-
+const API = "";
 
 function headers() {
-
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token") || "";
 
     return {
         "Authorization": "Bearer " + token,
         "Content-Type": "application/json"
     };
-
 }
 
+function saveToken() {
+    const token = document.getElementById("token").value;
 
+    localStorage.setItem("token", token);
 
-async function loadDashboard(){
+    loadAll();
+}
 
-    const r = await fetch(
-        "/dashboard/status",
-        {
-            headers: headers()
-        }
-    );
+function statusClass(status) {
+
+    switch ((status || "").toUpperCase()) {
+
+        case "RUNNING":
+            return "status-running";
+
+        case "STOPPED":
+            return "status-stopped";
+
+        default:
+            return "status-loading";
+    }
+}
+
+async function loadDashboard() {
+
+    const r = await fetch(API + "/dashboard/status", {
+        headers: headers()
+    });
 
     const data = await r.json();
-
 
     document.getElementById("system").innerHTML = `
-
-    <div class="card">
-
-    🚀 <b>${data.platform}</b><br>
-
-    Version: ${data.version}<br>
-
-    Status:
-    <b>${data.status}</b><br>
-
-    Health:
-    <b>${data.health}</b><br>
-
-    Python:
-    ${data.python}<br>
-
-    OS:
-    ${data.os}<br>
-
-    Uptime:
-    ${data.uptime_seconds}s<br>
-
-    Plugins:
-    ${data.plugins_total}<br>
-
-    Running:
-    🟢 ${data.plugins_running}<br>
-
-    Stopped:
-    🔴 ${data.plugins_stopped}
-
-    </div>
-
-    `;
-
+<div class="card">
+<h3>🚀 ${data.platform}</h3>
+<b>Version:</b> ${data.version}<br>
+<b>Status:</b> <span class="${statusClass(data.status)}">${data.status}</span><br>
+<b>Health:</b> ${data.health}<br>
+<b>Python:</b> ${data.python}<br>
+<b>OS:</b> ${data.os}<br>
+<b>Uptime:</b> ${data.uptime_seconds}s<br>
+<b>Plugins:</b> ${data.plugins_running}/${data.plugins_total}
+</div>`;
 }
 
+async function loadRuntime() {
 
-
-
-async function loadRuntime(){
-
-    const r = await fetch(
-        "/health",
-        {
-            headers: headers()
-        }
-    );
-
+    const r = await fetch(API + "/system", {
+        headers: headers()
+    });
 
     const data = await r.json();
-
 
     document.getElementById("runtime").innerHTML = `
+<div class="card">
+<b>Status:</b>
+<span class="${statusClass(data.status)}">${data.status}</span><br>
 
-    <div class="card">
+<b>Health:</b>
+${data.health}<br>
 
-    Status:
-    <b>${data.health.status}</b><br>
+<b>Version:</b>
+${data.version}<br>
 
-    Process:
-    ${data.health.process}<br>
+<b>Python:</b>
+${data.python}<br>
 
-    PID:
-    ${data.health.pid}<br>
+<b>Platform:</b>
+${data.platform}<br>
 
-    Plugins:
-    ${data.health.plugins}
-
-    </div>
-
-    `;
-
+<b>Uptime:</b>
+${data.uptime}
+</div>`;
 }
 
+async function loadPlugins() {
 
+    const r = await fetch(API + "/plugins", {
+        headers: headers()
+    });
 
+    const data = await r.json();
 
-async function loadPlugins(){
+    let html = "";
+
+    data.plugins.forEach(p => {
+
+        html += `
+<div class="card">
+
+<h3>📦 ${p.name}</h3>
+
+ID: ${p.id}<br>
+
+Version: ${p.version}<br>
+
+Status:
+<span class="${statusClass(p.status)}">${p.status}</span>
+
+<br><br>
+
+<button onclick="pluginAction('${p.id}','start')">
+▶ START
+</button>
+
+<button onclick="pluginAction('${p.id}','stop')">
+⏹ STOP
+</button>
+
+<button onclick="pluginAction('${p.id}','restart')">
+🔄 RESTART
+</button>
+
+</div>`;
+    });
+
+    document.getElementById("plugins").innerHTML = html;
+}async function pluginAction(id, action) {
 
     const r = await fetch(
-        "/plugins",
+        API + `/plugins/${id}/${action}`,
         {
+            method: "POST",
             headers: headers()
         }
     );
 
-
     const data = await r.json();
 
-
-    let html="";
-
-
-    data.plugins.forEach(
-        p=>{
-
-
-        html += `
-
-        <div class="card">
-
-        <h3>
-        📦 ${p.name}
-        </h3>
-
-
-        ID:
-        ${p.id}<br>
-
-
-        Version:
-        ${p.version}<br>
-
-
-        Status:
-        <b>${p.status}</b>
-
-
-        <br><br>
-
-
-        <button onclick="pluginAction('${p.id}','start')">
-        ▶ START
-        </button>
-
-
-        <button onclick="pluginAction('${p.id}','stop')">
-        ⏹ STOP
-        </button>
-
-
-        <button onclick="pluginAction('${p.id}','restart')">
-        🔄 RESTART
-        </button>
-
-
-        </div>
-
-        `;
-
-
-        }
-    );
-
-
-    document.getElementById("plugins").innerHTML = html;
-
-
-}
-
-
-
-
-async function pluginAction(
-    id,
-    action
-){
-
-
-    const r = await fetch(
-
-        `/plugins/${id}/${action}`,
-
-        {
-
-            method:"POST",
-
-            headers:headers()
-
-        }
-
-    );
-
-
-    const data = await r.json();
-
-
-    alert(
-        `${id}: ${data.status || data.detail}`
-    );
-
+    alert(data.status || data.detail || "Done");
 
     loadPlugins();
-
-    loadEvents();
-
 }
 
+async function loadRegistry() {
 
+    try {
 
+        const r = await fetch(API + "/registry", {
+            headers: headers()
+        });
 
-
-async function loadRegistry(){
-
-    const r = await fetch(
-        "/registry",
-        {
-            headers:headers()
+        if (!r.ok) {
+            document.getElementById("registry").innerHTML =
+                `<div class="card">Registry API unavailable</div>`;
+            return;
         }
-    );
 
+        const data = await r.json();
 
-    const data = await r.json();
+        let html = "";
 
+        data.forEach(item => {
 
-    let html="";
+            html += `
+<div class="card">
+<b>${item.id}</b><br>
+Version: ${item.version}
+</div>`;
+        });
 
+        document.getElementById("registry").innerHTML = html;
 
-    data.forEach(
-        item=>{
+    } catch {
 
-
-        html += `
-
-        <div class="card">
-
-        Plugin:
-        <b>${item.id}</b><br>
-
-        Version:
-        ${item.version}
-
-        </div>
-
-        `;
-
-
-        }
-    );
-
-
-    document.getElementById(
-        "registry"
-    ).innerHTML = html;
-
-
+        document.getElementById("registry").innerHTML =
+            `<div class="card">Registry unavailable</div>`;
+    }
 }
 
+async function loadEvents() {
 
+    try {
 
+        const r = await fetch(API + "/events", {
+            headers: headers()
+        });
 
-async function loadEvents(){
+        if (!r.ok) {
 
-    const r = await fetch(
-        "/events",
-        {
-            headers:headers()
+            document.getElementById("events").innerHTML =
+                `<div class="card">Event API unavailable</div>`;
+            return;
         }
-    );
 
+        const data = await r.json();
 
-    const data = await r.json();
+        let html = "";
 
+        data.forEach(e => {
 
-    let html="";
+            html += `
+<div class="card">
+<b>${e.action}</b><br>
+Source: ${e.source}<br>
+User: ${e.user}
+</div>`;
+        });
 
+        document.getElementById("events").innerHTML = html;
 
-    data.forEach(
-        e=>{
+    } catch {
 
-
-        html += `
-
-        <div class="card">
-
-        Action:
-        <b>${e.action}</b><br>
-
-        Source:
-        ${e.source}<br>
-
-        User:
-        ${e.user}
-
-        </div>
-
-        `;
-
-
-        }
-    );
-
-
-    document.getElementById(
-        "events"
-    ).innerHTML = html;
-
-
+        document.getElementById("events").innerHTML =
+            `<div class="card">Events unavailable</div>`;
+    }
 }
 
-
-
-
-function loadAll(){
+function loadAll() {
 
     loadDashboard();
 
@@ -345,23 +227,18 @@ function loadAll(){
     loadRegistry();
 
     loadEvents();
-
 }
-
 
 window.onload = function () {
 
+    const token = localStorage.getItem("token");
+
+    if (token) {
+
+        document.getElementById("token").value = token;
+    }
+
     loadAll();
 
-    // Автообновление Dashboard каждые 2 секунды
-    setInterval(() => {
-
-        loadDashboard();
-        loadRuntime();
-        loadPlugins();
-        loadRegistry();
-        loadEvents();
-
-    }, 2000);
-
+    setInterval(loadAll, 5000);
 };

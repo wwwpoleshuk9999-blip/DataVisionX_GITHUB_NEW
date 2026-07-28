@@ -1,72 +1,103 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 
 <head>
 
-<title>DataVision X Phoenix</title>
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>DataVisionX Phoenix Dashboard</title>
 
 <link rel="stylesheet" href="/web/style.css">
 
 </head>
 
-
 <body>
 
+<div class="container">
 
-<h1>🚀 DataVision X Phoenix</h1>
+<header>
+
+<h1>🚀 DataVisionX Phoenix</h1>
+
+<p>Live Dashboard</p>
+
+</header>
 
 
-<div class="card">
+<section class="card">
 
-<input id="token" placeholder="Вставь API Token">
+<h2>🔐 API Token</h2>
+
+<input
+    id="token"
+    placeholder="Вставьте API Token">
 
 <button onclick="saveToken()">
-💾 Save Token
+💾 Сохранить Token
 </button>
 
-</div>
+</section>
 
 
+<section>
 
-<h2>🟢 Runtime</h2>
-<div id="runtime">
-Loading...
-</div>
-
-<h2>System</h2>
+<h2>🖥️ Система</h2>
 
 <div id="system">
 Loading...
 </div>
 
+</section>
 
 
-<h2>Plugins</h2>
+<section>
+
+<h2>⚙ Runtime</h2>
+
+<div id="runtime">
+Loading...
+</div>
+
+</section>
+
+
+<section>
+
+<h2>📦 Плагины</h2>
 
 <div id="plugins">
 Loading...
 </div>
 
+</section>
 
 
-<h2>📦 Plugin Registry</h2>
+<section>
+
+<h2>📚 Plugin Registry</h2>
 
 <div id="registry">
 Loading...
 </div>
 
+</section>
 
 
-<h2>📜 Event Log</h2>
+<section>
+
+<h2>📜 Журнал событий</h2>
 
 <div id="events">
 Loading...
 </div>
 
+</section>
 
+</div>
 
 <script src="/web/app.js"></script>
-
 
 </body>
 
