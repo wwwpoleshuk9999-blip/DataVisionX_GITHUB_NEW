@@ -349,9 +349,19 @@ function loadAll(){
 }
 
 
-
-window.onload=function(){
+window.onload = function () {
 
     loadAll();
+
+    // Автообновление Dashboard каждые 2 секунды
+    setInterval(() => {
+
+        loadDashboard();
+        loadRuntime();
+        loadPlugins();
+        loadRegistry();
+        loadEvents();
+
+    }, 2000);
 
 };
