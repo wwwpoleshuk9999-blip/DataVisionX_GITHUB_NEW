@@ -1,4 +1,6 @@
 from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+from fastapi import HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
@@ -8,6 +10,8 @@ from api.routes.plugin_lifecycle import router as plugin_lifecycle_router
 from api.routes.config import router as config_router
 from api.routes.system import router as system_router
 from api.routes.dashboard import router as dashboard_router
+from api.routes.registry import router as registry_router
+from api.routes.events import router as events_router
 from api.routes.auth.login import router as auth_router
 from api.routes.users import router as users_router
 
@@ -26,10 +30,13 @@ async def security_middleware(request: Request, call_next):
     if request.url.path.startswith("/auth/login"):
         return await call_next(request)
 
-    return await auth_middleware(
-        request,
-        call_next
-    )
+    try:
+        return await auth_middleware(request, call_next)
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"detail": e.detail}
+        )
 
 
 # -----------------------
@@ -44,6 +51,8 @@ app.include_router(config_router)
 app.include_router(auth_router)
 app.include_router(users_router)
 app.include_router(dashboard_router)
+app.include_router(registry_router)
+app.include_router(events_router)
 
 
 # -----------------------
