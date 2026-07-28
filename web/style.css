@@ -77,3 +77,48 @@ button:hover{
 h2{
     color:#38bdf8;
 }
+
+/* Phoenix 0.6 Live Dashboard */
+
+.websocket-status {
+    display: inline-block;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.ws-online {
+    background: #166534;
+    color: #4ade80;
+}
+
+.ws-offline {
+    background: #7f1d1d;
+    color: #fca5a5;
+}
+
+.event-item {
+    background: #0f172a;
+    border-left: 4px solid #38bdf8;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    font-family: monospace;
+}
+
+.event-time {
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.plugin-running {
+    color: #4ade80;
+    font-weight: bold;
+}
+
+.plugin-stopped {
+    color: #f87171;
+    font-weight: bold;
+}
+

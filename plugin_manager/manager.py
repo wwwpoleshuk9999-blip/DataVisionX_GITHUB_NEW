@@ -4,6 +4,7 @@ from plugin_manager.lifecycle import PluginLifecycle
 from plugin_manager.installer import PluginInstaller
 
 from core.plugin_registry import register_plugin
+from core.runtime import runtime
 
 
 class PluginManager:
@@ -11,7 +12,14 @@ class PluginManager:
     def __init__(self):
         self.loader = PluginLoader()
         self.validator = PluginValidator()
-        self.lifecycle = PluginLifecycle()
+
+        self.event_bus = runtime.get_service(
+            "event_bus"
+        )
+
+        self.lifecycle = PluginLifecycle(
+            self.event_bus
+        )
         self.installer = PluginInstaller()
         self.plugins = {}
 

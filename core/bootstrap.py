@@ -3,6 +3,7 @@ from core.runtime import runtime
 from plugin_manager.permissions import PermissionManager
 from plugin_manager.event_bus import EventBus
 from plugin_manager.storage import PluginStorage
+from services.websocket_bridge import websocket_event_listener
 
 
 def register_core_services():
@@ -43,6 +44,25 @@ def register_core_services():
             )
         )
 
+
+
+    event_bus = runtime.get_service(
+        "event_bus"
+    )
+
+    if event_bus:
+
+        event_bus.register(
+            "system",
+            "plugin_started",
+            websocket_event_listener
+        )
+
+        event_bus.register(
+            "system",
+            "plugin_stopped",
+            websocket_event_listener
+        )
 
     return runtime.registry.list_services()
 

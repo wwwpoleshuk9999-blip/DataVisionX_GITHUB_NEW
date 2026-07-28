@@ -1,10 +1,12 @@
 import importlib
+from core.runtime import runtime
 
 
 class PluginLifecycle:
 
-    def __init__(self):
+    def __init__(self, event_bus=None):
         self.instances = {}
+        self.event_bus = event_bus
 
 
     def start(self, plugin):
@@ -28,6 +30,24 @@ class PluginLifecycle:
 
             plugin.status = "RUNNING"
 
+            print("LIFECYCLE EVENT: plugin_started", plugin.id)
+
+            event_bus = self.event_bus or runtime.get_service("event_bus")
+
+            if event_bus:
+                print("EVENT BUS FOUND")
+
+                event_bus.emit(
+                    "system",
+                    "plugin_started",
+                    {
+                        "plugin": plugin.id,
+                        "status": "RUNNING"
+                    }
+                )
+            else:
+                print("EVENT BUS MISSING")
+
             return instance
 
         except Exception as e:
@@ -49,6 +69,18 @@ class PluginLifecycle:
                 instance.stop()
 
             del self.instances[plugin_id]
+
+            event_bus = self.event_bus or runtime.get_service("event_bus")
+
+            if event_bus:
+                event_bus.emit(
+                    "system",
+                    "plugin_stopped",
+                    {
+                        "plugin": plugin_id,
+                        "status": "STOPPED"
+                    }
+                )
 
             return True
 

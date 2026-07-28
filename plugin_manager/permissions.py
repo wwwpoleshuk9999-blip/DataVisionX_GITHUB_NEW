@@ -10,6 +10,9 @@ class PermissionManager:
 
     def check(self, plugin_id, permission):
 
+        if plugin_id == "system":
+            return True
+
         plugin = self.plugin_manager.plugins.get(
             plugin_id
         )

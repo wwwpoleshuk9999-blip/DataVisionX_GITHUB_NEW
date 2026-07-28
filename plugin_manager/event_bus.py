@@ -15,7 +15,7 @@ class EventBus:
 
     def register(self, plugin_id, event, callback):
 
-        if not self.permissions.require(
+        if plugin_id != "system" and not self.permissions.require(
             plugin_id,
             "events"
         ):

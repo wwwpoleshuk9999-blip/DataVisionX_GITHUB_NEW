@@ -1,3 +1,4 @@
+from core.service_registry import ServiceRegistry
 import os
 import json
 import time
@@ -7,6 +8,8 @@ from pathlib import Path
 class RuntimeManager:
 
     def __init__(self):
+        self.registry = ServiceRegistry()
+
         self.base_dir = Path("runtime")
         self.base_dir.mkdir(exist_ok=True)
 
@@ -14,6 +17,18 @@ class RuntimeManager:
 
         if not self.state_file.exists():
             self._create_default_state()
+
+
+    def register_service(self, name, service):
+        self.registry.register(
+            name,
+            service
+        )
+
+
+    def get_service(self, name):
+        return self.registry.get(name)
+
 
 
     def _create_default_state(self):
