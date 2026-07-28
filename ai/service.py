@@ -1,5 +1,8 @@
 from ai.memory import AIMemory
 from ai.context import AIContext
+from ai.events import AIEvent
+
+from core.runtime import runtime
 
 
 class AIService:
@@ -7,7 +10,7 @@ class AIService:
     def __init__(self):
 
         self.name = "DataVisionX AI Assistant"
-        self.version = "0.7.2"
+        self.version = "0.7.3"
         self.status = "READY"
 
         self.memory = AIMemory()
@@ -23,24 +26,58 @@ class AIService:
         }
 
 
+    def emit_event(self, event):
+
+        bus = runtime.get_service(
+            "event_bus"
+        )
+
+        if bus:
+
+            bus.emit(
+                "system",
+                event.event,
+                event.payload()
+            )
+
+
     def chat(self, message):
 
-        self.context.update(message)
+        self.context.update(
+            message
+        )
 
         self.memory.save(
             "user",
             message
         )
 
+
         response = (
             "AI Core is online. "
-            "Memory and Context active."
+            "Memory, Context and Events active."
         )
+
 
         self.memory.save(
             "assistant",
             response
         )
+
+
+        event = AIEvent(
+            "ai_chat_completed",
+            {
+                "message": message,
+                "response": response
+            }
+        )
+
+
+        self.emit_event(
+            event
+        )
+
 
         return {
             "assistant": self.name,
@@ -53,7 +90,9 @@ class AIService:
 
     def history(self, limit=20):
 
-        return self.memory.history(limit)
+        return self.memory.history(
+            limit
+        )
 
 
     def context_info(self):
