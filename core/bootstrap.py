@@ -4,6 +4,7 @@ from plugin_manager.permissions import PermissionManager
 from plugin_manager.event_bus import EventBus
 from plugin_manager.storage import PluginStorage
 from services.websocket_bridge import websocket_event_listener
+from ai.service import AIService
 
 
 def register_core_services():
@@ -45,6 +46,14 @@ def register_core_services():
         )
 
 
+
+
+    if not runtime.registry.exists("ai_service"):
+
+        runtime.register_service(
+            "ai_service",
+            AIService()
+        )
 
     event_bus = runtime.get_service(
         "event_bus"

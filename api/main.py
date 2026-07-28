@@ -15,6 +15,7 @@ from api.routes.events import router as events_router
 from api.routes.auth.login import router as auth_router
 from api.routes.users import router as users_router
 from api.routes.websocket import router as websocket_router
+from api.routes.ai import router as ai_router
 
 from auth.middleware import auth_middleware
 from core.bootstrap import register_core_services
@@ -61,6 +62,7 @@ app.include_router(dashboard_router)
 app.include_router(websocket_router)
 app.include_router(registry_router)
 app.include_router(events_router)
+app.include_router(ai_router)
 
 
 # -----------------------
