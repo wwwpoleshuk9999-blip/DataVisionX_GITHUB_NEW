@@ -1,4 +1,5 @@
 from ai.memory import AIMemory
+from ai.context import AIContext
 
 
 class AIService:
@@ -6,10 +7,11 @@ class AIService:
     def __init__(self):
 
         self.name = "DataVisionX AI Assistant"
-        self.version = "0.7.1"
+        self.version = "0.7.2"
         self.status = "READY"
 
         self.memory = AIMemory()
+        self.context = AIContext()
 
 
     def status_info(self):
@@ -23,6 +25,8 @@ class AIService:
 
     def chat(self, message):
 
+        self.context.update(message)
+
         self.memory.save(
             "user",
             message
@@ -30,7 +34,7 @@ class AIService:
 
         response = (
             "AI Core is online. "
-            "Memory system active."
+            "Memory and Context active."
         )
 
         self.memory.save(
@@ -42,6 +46,7 @@ class AIService:
             "assistant": self.name,
             "input": message,
             "response": response,
+            "context": self.context.info(),
             "memory": self.memory.history(10)
         }
 
@@ -49,3 +54,8 @@ class AIService:
     def history(self, limit=20):
 
         return self.memory.history(limit)
+
+
+    def context_info(self):
+
+        return self.context.info()
