@@ -1,7 +1,7 @@
 import importlib
 from pathlib import Path
 
-from core.events import event_bus
+from core.runtime import runtime
 from core.logger import logger
 
 
@@ -36,7 +36,10 @@ class PluginManager:
                 )
 
                 if hasattr(module, "register"):
-                    module.register(event_bus)
+                    event_bus = runtime.get_service("event_bus")
+
+                    if event_bus:
+                        module.register(event_bus)
 
                 info = getattr(
                     module,

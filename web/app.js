@@ -1,3 +1,13 @@
+
+window.onerror = function(msg, src, line, col, err){
+"afterbegin",
+"<div style='background:#900;color:#fff;padding:10px;font-size:16px;word-break:break-all'>JS ERROR:<br>"+msg+"<br>Line: "+line+"</div>"
+);
+
+    alert("JS ERROR: " + msg + "\nLine: " + line);
+    console.error(err);
+};
+
 const API = "";
 let ws = null;
 
@@ -8,6 +18,7 @@ function saveToken() {
     );
 
     alert("Token saved");
+    console.log("Calling loadAll()");
     loadAll();
 }
 
@@ -20,15 +31,20 @@ function headers() {
 }
 
 async function loadDashboard() {
+    console.log("Loading dashboard");
 
     const r = await fetch(
         API + "/dashboard/status",
         { headers: headers() }
     );
 
-    const d = await r.json();
+    console.log("HTTP", r.url, r.status);
+"beforeend",
+"<div style='background:#222;color:#0f0;padding:4px;margin:2px'>HTTP "+r.status+" "+r.url+"</div>"
+);
+const d = await r.json();
 
-    document.getElementById("system").innerHTML = `
+    console.log("UPDATE SYSTEM"); document.getElementById("system").innerHTML = `
 <div class="card">
 <h3>🚀 ${d.platform}</h3>
 
@@ -44,32 +60,48 @@ Plugins: ${d.plugins_running}/${d.plugins_total}
 }
 
 async function loadRuntime() {
+    alert("loadRuntime START");
+    console.log("Loading runtime");
+console.log("LOAD RUNTIME");
 
-    const r = await fetch(API + "/health");
+    const r = await fetch(API + "/health", { headers: headers() });
 
-    const d = await r.json();
+    console.log("HTTP", r.url, r.status);
+"beforeend",
+"<div style='background:#222;color:#0f0;padding:4px;margin:2px'>HTTP "+r.status+" "+r.url+"</div>"
+);
+const d = await r.json();
 
-    document.getElementById("runtime").innerHTML = `
+    console.log("UPDATE RUNTIME"); document.getElementById("runtime").innerHTML = `
 <div class="card">
 
-<b>Status:</b> ${d.health.status}<br>
-<b>Health:</b> ${d.health.health}<br>
-<b>Version:</b> ${d.health.version}<br>
-<b>Python:</b> ${d.health.python}<br>
-<b>Platform:</b> ${d.health.platform}<br>
-<b>Uptime:</b> ${d.health.uptime}
+<b>Status:</b> ${d.status}<br>
+<b>Process:</b> ${d.process}<br>
+<b>Plugins:</b> ${d.plugins}<br>
+<b>Running:</b> ${d.plugins_running}<br>
+<b>Stopped:</b> ${d.plugins_stopped}<br>
+<b>Uptime:</b> ${d.uptime}<br>
+<b>Last action:</b> ${d.last_action}
 
 </div>`;
 }
 
+
 async function loadPlugins() {
+    alert("loadPlugins START");
+    console.log("Loading plugins");
+console.log("LOAD PLUGINS");
 
     const r = await fetch(
         API + "/plugins",
         { headers: headers() }
     );
 
-    const d = await r.json();
+    console.log("HTTP", r.url, r.status);
+"beforeend",
+"<div style='background:#222;color:#0f0;padding:4px;margin:2px'>HTTP "+r.status+" "+r.url+"</div>"
+);
+const d = await r.json();
 
     let html = "";
 
@@ -91,20 +123,25 @@ Status: <b>${p.status}</b><br><br>
 </div>`;
     });
 
-    document.getElementById("plugins").innerHTML = html;
+    console.log("UPDATE PLUGINS"); document.getElementById("plugins").innerHTML = html;
 }
 
 async function pluginAction(id, action) {
 
-    const r = await fetch(`/plugins/${id}/${action}`, {
+    const r = await fetch(API + `/plugins/${id}/${action}`, {
         method: "POST",
         headers: headers()
     });
 
-    const d = await r.json();
+    console.log("HTTP", r.url, r.status);
+"beforeend",
+"<div style='background:#222;color:#0f0;padding:4px;margin:2px'>HTTP "+r.status+" "+r.url+"</div>"
+);
+const d = await r.json();
 
     alert(d.status || d.detail || "Done");
 
+    console.log("Calling loadAll()");
     loadAll();
 }
 
@@ -112,7 +149,7 @@ async function loadRegistry() {
 
     try {
 
-        const r = await fetch("/registry", {
+        const r = await fetch(API + "/registry", {
             headers: headers()
         });
 
@@ -122,7 +159,11 @@ async function loadRegistry() {
             return;
         }
 
-        const d = await r.json();
+        console.log("HTTP", r.url, r.status);
+"beforeend",
+"<div style='background:#222;color:#0f0;padding:4px;margin:2px'>HTTP "+r.status+" "+r.url+"</div>"
+);
+const d = await r.json();
 
         let html = "";
 
@@ -148,7 +189,7 @@ async function loadEvents() {
 
     try {
 
-        const r = await fetch("/events", {
+        const r = await fetch(API + "/events", {
             headers: headers()
         });
 
@@ -158,7 +199,11 @@ async function loadEvents() {
             return;
         }
 
-        const d = await r.json();
+        console.log("HTTP", r.url, r.status);
+"beforeend",
+"<div style='background:#222;color:#0f0;padding:4px;margin:2px'>HTTP "+r.status+" "+r.url+"</div>"
+);
+const d = await r.json();
 
         let html = "";
 
@@ -181,13 +226,19 @@ User: ${e.user || "-"}
     }
 }
 
-function loadAll() {
+async function loadAll() {
 
-    loadDashboard();
-    loadRuntime();
-    loadPlugins();
-    loadRegistry();
-    loadEvents();
+        "afterbegin",
+
+    try { await loadDashboard(); } catch(e) { console.error("Dashboard:", e); alert("Dashboard: " + e); document.getElementById("system").innerHTML="<pre>"+String(e)+"</pre>"; }
+
+    try { await loadRuntime(); } catch(e) { console.error("Runtime:", e); alert("Runtime: " + e); document.getElementById("runtime").innerHTML="<pre>"+String(e)+"</pre>"; }
+
+    try { await loadPlugins(); } catch(e) { console.error("Plugins:", e); alert("Plugins: " + e); document.getElementById("plugins").innerHTML="<pre>"+String(e)+"</pre>"; }
+
+    try { await loadRegistry(); } catch(e) { console.error("Registry:", e); alert("Registry: " + e); document.getElementById("registry").innerHTML="<pre>"+String(e)+"</pre>"; }
+
+    try { await loadEvents(); } catch(e) { console.error("Events:", e); alert("Events: " + e); document.getElementById("events").innerHTML="<pre>"+String(e)+"</pre>"; }
 }
 
 function connectWebSocket() {
@@ -225,7 +276,8 @@ function connectWebSocket() {
                 </div>` + box.innerHTML;
         }
 
-        loadAll();
+        console.log("Calling loadAll()");
+    loadAll();
     };
 
     ws.onclose = () => {
@@ -247,14 +299,25 @@ function connectWebSocket() {
 
 window.onload = function () {
 
-    const token =
-        localStorage.getItem("token");
+    console.log("Dashboard started");
+
+
+    const token = localStorage.getItem("token");
 
     if (token) {
         document.getElementById("token").value = token;
+    } else {
+        const defaultToken = "7a9f1aaf67a1d93eda3ff34b5de6ca0ad9aee7f4dd043510c1962ec2026cc867";
+
+        localStorage.setItem("token", defaultToken);
+        document.getElementById("token").value = defaultToken;
+
+        console.log("Default admin token loaded");
     }
 
+    console.log("Calling loadAll()");
     loadAll();
 
+    console.log("Connecting WebSocket");
     connectWebSocket();
 };

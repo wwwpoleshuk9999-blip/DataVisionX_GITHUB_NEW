@@ -21,11 +21,38 @@ from auth.middleware import auth_middleware
 from core.bootstrap import register_core_services
 from services.websocket_bridge import set_loop
 import asyncio
+from contextlib import asynccontextmanager
+from core.runtime import runtime
+from core.service import service
 
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    service.save_pid()
+    runtime.start()
+    set_loop(asyncio.get_running_loop())
+
+    from plugin_manager.manager import plugin_manager
+
+    plugin_manager.discover()
+
+    for plugin in plugin_manager.list_plugins():
+        try:
+            plugin_manager.start(plugin.id)
+        except Exception as e:
+            logger.error(f"Failed to start plugin {plugin.id}: {e}")
+
+    try:
+        yield
+    finally:
+        runtime.stop()
+        service.remove_pid()
 
 app = FastAPI(
     title="DataVisionX API",
-    version="0.5 Phoenix Beta"
+    version="0.5 Phoenix Beta",
+    lifespan=lifespan,
 )
 
 
@@ -102,6 +129,3 @@ def web_home():
     )
 
 
-@app.on_event("startup")
-async def websocket_loop_init():
-    set_loop(asyncio.get_running_loop())

@@ -1,34 +1,40 @@
-from core.events import event_bus
+from fastapi import FastAPI
+
 from core.kernel import Kernel
 from core.health import health
+from api.ai import router as ai_router
 
 
-def on_kernel_started(data):
-    print("=" * 50)
-    print("EVENT RECEIVED")
-    print(f"Kernel : {data['name']}")
-    print(f"Version: {data['version']}")
-    print("=" * 50)
+app = FastAPI(
+    title="DataVisionX API",
+    version="0.5.0"
+)
 
 
-def on_kernel_stopped(data):
-    print("=" * 50)
-    print("EVENT RECEIVED")
-    print("Kernel stopped")
-    print("=" * 50)
-
-
-event_bus.subscribe("kernel.started", on_kernel_started)
-event_bus.subscribe("kernel.stopped", on_kernel_stopped)
+app.include_router(ai_router)
 
 
 kernel = Kernel()
 
-kernel.start()
 
-print("=" * 50)
-print("HEALTH REPORT")
-print(health.report())
-print("=" * 50)
+@app.on_event("startup")
+def startup():
+    kernel.start()
 
-kernel.stop()
+
+@app.on_event("shutdown")
+def shutdown():
+    kernel.stop()
+
+
+@app.get("/")
+def root():
+    return {
+        "name": "DataVisionX",
+        "status": "ONLINE"
+    }
+
+
+@app.get("/health")
+def health_check():
+    return health.report()

@@ -59,8 +59,6 @@ class PluginManager:
         return self.plugins.get(plugin_id)
 
     def start(self, plugin_id):
-        self.discover()
-
         plugin = self.plugins.get(plugin_id)
 
         if not plugin:
