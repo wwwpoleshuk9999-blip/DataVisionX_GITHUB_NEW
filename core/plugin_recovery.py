@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 
 from plugin_manager.manager import plugin_manager
+from core.runtime import runtime
 
 EVENT_LOG = Path("runtime/events.log")
 
@@ -40,6 +41,29 @@ class PluginRecovery:
                         "PLUGIN_RECOVERY_SUCCESS",
                         plugin.id
                     )
+
+                    health = getattr(
+                        plugin_manager,
+                        "health",
+                        None
+                    )
+
+                    if health:
+                        health.recovered(plugin.id)
+
+                    event_bus = runtime.get_service(
+                        "event_bus"
+                    )
+
+                    if event_bus:
+                        event_bus.emit(
+                            "system",
+                            "plugin_recovered",
+                            {
+                                "plugin": plugin.id,
+                                "status": "RUNNING"
+                            }
+                        )
 
                     recovered.append(plugin.id)
 
