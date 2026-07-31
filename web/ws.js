@@ -64,7 +64,9 @@ function connectWebSocket() {
 
                 if (
                     data.event === "plugin_started" ||
-                    data.event === "plugin_stopped"
+                    data.event === "plugin_stopped" ||
+                    data.event === "plugin_failed" ||
+                    data.event === "plugin_recoveredd"
                 ) {
 
                     if (typeof loadPlugins === "function")
@@ -72,6 +74,9 @@ function connectWebSocket() {
 
                     if (typeof loadRegistry === "function")
                         loadRegistry();
+
+                    if (typeof loadHealth === "function")
+                        loadHealth();
 
                     if (typeof loadDashboard === "function")
                         loadDashboard();
