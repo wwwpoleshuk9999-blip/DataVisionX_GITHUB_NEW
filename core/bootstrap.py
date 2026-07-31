@@ -4,6 +4,7 @@ from plugin_manager.permissions import PermissionManager
 from plugin_manager.event_bus import EventBus
 from plugin_manager.storage import PluginStorage
 from services.websocket_bridge import websocket_event_listener
+from services.plugin_registry_listener import plugin_registry_listener
 from ai.service import AIService
 
 
@@ -71,6 +72,18 @@ def register_core_services():
             "system",
             "plugin_stopped",
             websocket_event_listener
+        )
+
+        event_bus.register(
+            "system",
+            "plugin_started",
+            plugin_registry_listener
+        )
+
+        event_bus.register(
+            "system",
+            "plugin_stopped",
+            plugin_registry_listener
         )
 
         event_bus.register(

@@ -14,4 +14,12 @@ class EventBus:
             except Exception as e:
                 print(f"[EventBus] listener error: {e}")
 
+    def emit(self, source, event_name, data=None):
+        payload = {
+            "source": source,
+            "event": event_name,
+            "data": data or {}
+        }
+        self.publish(event_name, payload)
+
 event_bus = EventBus()
