@@ -171,8 +171,12 @@ const d = await r.json();
 
             html += `
 <div class="card">
-<b>${item.id}</b><br>
-Version: ${item.version}
+<h3>🧩 ${item.name}</h3>
+ID: ${item.id}<br>
+Version: ${item.version}<br>
+Status: <b>${item.status}</b><br>
+Path: ${item.path}<br>
+Installed: ${item.installed}
 </div>`;
         });
 
