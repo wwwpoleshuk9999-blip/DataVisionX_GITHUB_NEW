@@ -1,4 +1,6 @@
 from core.service_registry import ServiceRegistry
+from core.plugin_registry_manager import PluginRegistryManager
+from core.plugin_registry_manager import PluginRegistryManager
 import os
 import json
 import time
@@ -9,6 +11,8 @@ class RuntimeManager:
 
     def __init__(self):
         self.registry = ServiceRegistry()
+        self.plugin_registry = PluginRegistryManager()
+        self.plugin_registry = PluginRegistryManager()
 
         self.base_dir = Path("runtime")
         self.base_dir.mkdir(exist_ok=True)
