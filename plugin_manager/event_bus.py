@@ -64,7 +64,11 @@ class EventBus:
             try:
 
                 listener["callback"](
-                    data
+                    {
+                        "event": event,
+                        "source": plugin_id,
+                        "data": data or {}
+                    }
                 )
 
             except Exception as e:
