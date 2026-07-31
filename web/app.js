@@ -319,6 +319,19 @@ async function loadAll() {
             "<pre>"+String(e)+"</pre>"; 
     }
 
+
+    try {
+        await loadRecovery();
+    } catch(e) {
+        console.error("Recovery:", e);
+    }
+
+    try {
+        await loadWatchdog();
+    } catch(e) {
+        console.error("Watchdog:", e);
+    }
+
     try { await loadEvents(); } catch(e) { console.error("Events:", e); alert("Events: " + e); document.getElementById("events").innerHTML="<pre>"+String(e)+"</pre>"; }
 }
 
@@ -402,3 +415,51 @@ window.onload = function () {
     console.log("Connecting WebSocket");
     connectWebSocket();
 };
+
+
+async function loadRecovery() {
+
+    const r = await fetch(API + "/recovery/info", {
+        headers: headers()
+    });
+
+    const d = await r.json();
+
+    document.getElementById("recovery").innerHTML = `
+<div class="card">
+Last action: ${d.status.last_action}<br>
+Attempts: ${d.status.attempts}<br>
+History: ${d.status.history_count}<br><br>
+
+<button onclick="runRecovery()">
+▶ Run Recovery
+</button>
+</div>`;
+}
+
+async function runRecovery() {
+
+    await fetch(API + "/recovery/run", {
+        method: "POST",
+        headers: headers()
+    });
+
+    loadAll();
+}
+
+async function loadWatchdog() {
+
+    const r = await fetch(API + "/watchdog/info", {
+        headers: headers()
+    });
+
+    const d = await r.json();
+
+    document.getElementById("watchdog").innerHTML = `
+<div class="card">
+Status: ${d.watchdog.status}<br>
+Healthy: ${d.watchdog.healthy_count}<br>
+Warnings: ${d.watchdog.warning_count}<br>
+History: ${d.watchdog.history_count}
+</div>`;
+}
