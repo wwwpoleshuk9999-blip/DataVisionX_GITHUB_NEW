@@ -44,3 +44,25 @@ function connectWebSocket() {
 }
 
 window.addEventListener("load", connectWebSocket);
+
+if (typeof ws !== "undefined" && ws) {
+    ws.onmessage = function(event) {
+        try {
+            const data = JSON.parse(event.data);
+
+            console.log("WS EVENT:", data);
+
+            if (
+                data.event === "plugin_started" ||
+                data.event === "plugin_stopped"
+            ) {
+                loadRegistry();
+                loadPlugins();
+                loadDashboard();
+            }
+
+        } catch(e) {
+            console.log("WS DATA:", event.data);
+        }
+    };
+}
