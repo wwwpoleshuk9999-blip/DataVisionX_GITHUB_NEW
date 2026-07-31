@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from plugin_manager.manager import plugin_manager
+from core.plugin_registry import get_registry
 import platform
 import sys
 import time
@@ -12,16 +12,14 @@ START_TIME = time.time()
 @router.get("/dashboard/status")
 def dashboard_status():
 
-    plugin_manager.discover()
-
-    plugins = plugin_manager.plugins
+    plugins = {p["id"]: p for p in get_registry()}
 
     running = 0
     stopped = 0
 
     for plugin in plugins.values():
 
-        if plugin.status == "RUNNING":
+        if plugin.get("status") == "RUNNING":
             running += 1
         else:
             stopped += 1

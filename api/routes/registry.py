@@ -71,3 +71,23 @@ def registry(
         get_registry()
 
     }
+
+
+@router.get("/{plugin_id}")
+def registry_plugin(
+    plugin_id: str,
+    authorization: str = Header(None)
+):
+
+    check_user(authorization)
+
+    registry = get_registry()
+
+    for plugin in registry:
+        if plugin.get("id") == plugin_id:
+            return {"plugin": plugin}
+
+    raise HTTPException(
+        status_code=404,
+        detail="Plugin not found"
+    )
