@@ -4,6 +4,7 @@ from pathlib import Path
 
 from core.runtime import runtime
 from core.service import service
+from core.recovery import recovery
 
 
 WATCHDOG_LOG = Path("runtime/watchdog.log")
@@ -61,6 +62,8 @@ class Watchdog:
 
             action = "WATCHDOG_WARNING"
 
+            recovery_result = recovery.check_and_recover()
+
 
         self.last_check = int(time.time())
 
@@ -71,6 +74,9 @@ class Watchdog:
             "pid": service.read_pid(),
             "checked_at": self.last_check
         }
+
+        if self.status == "WARNING" and recovery_result:
+            result["recovery"] = recovery_result
 
         self.write_json_log(
             WATCHDOG_LOG,
