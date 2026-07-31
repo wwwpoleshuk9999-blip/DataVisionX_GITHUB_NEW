@@ -1,6 +1,5 @@
 
 window.onerror = function(msg, src, line, col, err){
-"afterbegin",
 "<div style='background:#900;color:#fff;padding:10px;font-size:16px;word-break:break-all'>JS ERROR:<br>"+msg+"<br>Line: "+line+"</div>"
 );
 
@@ -39,7 +38,6 @@ async function loadDashboard() {
     );
 
     console.log("HTTP", r.url, r.status);
-"beforeend",
 "<div style='background:#222;color:#0f0;padding:4px;margin:2px'>HTTP "+r.status+" "+r.url+"</div>"
 );
 const d = await r.json();
@@ -67,7 +65,6 @@ console.log("LOAD RUNTIME");
     const r = await fetch(API + "/health", { headers: headers() });
 
     console.log("HTTP", r.url, r.status);
-"beforeend",
 "<div style='background:#222;color:#0f0;padding:4px;margin:2px'>HTTP "+r.status+" "+r.url+"</div>"
 );
 const d = await r.json();
@@ -98,7 +95,6 @@ console.log("LOAD PLUGINS");
     );
 
     console.log("HTTP", r.url, r.status);
-"beforeend",
 "<div style='background:#222;color:#0f0;padding:4px;margin:2px'>HTTP "+r.status+" "+r.url+"</div>"
 );
 const d = await r.json();
@@ -134,7 +130,6 @@ async function pluginAction(id, action) {
     });
 
     console.log("HTTP", r.url, r.status);
-"beforeend",
 "<div style='background:#222;color:#0f0;padding:4px;margin:2px'>HTTP "+r.status+" "+r.url+"</div>"
 );
 const d = await r.json();
@@ -160,7 +155,6 @@ async function loadRegistry() {
         }
 
         console.log("HTTP", r.url, r.status);
-"beforeend",
 "<div style='background:#222;color:#0f0;padding:4px;margin:2px'>HTTP "+r.status+" "+r.url+"</div>"
 );
 const d = await r.json();
@@ -204,7 +198,6 @@ async function loadEvents() {
         }
 
         console.log("HTTP", r.url, r.status);
-"beforeend",
 "<div style='background:#222;color:#0f0;padding:4px;margin:2px'>HTTP "+r.status+" "+r.url+"</div>"
 );
 const d = await r.json();
@@ -230,9 +223,59 @@ User: ${e.user || "-"}
     }
 }
 
-async function loadAll() {
 
-        "afterbegin",
+
+async function loadHealth() {
+
+    const r = await fetch(
+        API + "/health/plugins",
+        {
+            headers: headers()
+        }
+    );
+
+    if (!r.ok) {
+        document.getElementById("health").innerHTML =
+            '<div class="card">Health unavailable</div>';
+        return;
+    }
+
+    const d = await r.json();
+
+    let html = "";
+
+    Object.entries(d.plugins || {}).forEach(([id, p]) => {
+
+        html += `
+<div class="card">
+
+<h3>❤️ ${id}</h3>
+
+Status:
+<b>${p.status}</b><br>
+
+Health:
+<b>${p.health}</b><br>
+
+Last start:
+${p.last_start || "-"}<br>
+
+Restarts:
+${p.restart_count}<br>
+
+Error:
+${p.last_error || "none"}
+
+</div>
+`;
+
+    });
+
+    document.getElementById("health").innerHTML = html;
+}
+
+
+async function loadAll() {
 
     try { await loadDashboard(); } catch(e) { console.error("Dashboard:", e); alert("Dashboard: " + e); document.getElementById("system").innerHTML="<pre>"+String(e)+"</pre>"; }
 
@@ -240,7 +283,20 @@ async function loadAll() {
 
     try { await loadPlugins(); } catch(e) { console.error("Plugins:", e); alert("Plugins: " + e); document.getElementById("plugins").innerHTML="<pre>"+String(e)+"</pre>"; }
 
-    try { await loadRegistry(); } catch(e) { console.error("Registry:", e); alert("Registry: " + e); document.getElementById("registry").innerHTML="<pre>"+String(e)+"</pre>"; }
+    try { 
+        await loadHealth(); 
+    } catch(e) { 
+        console.error("Health:", e); 
+        document.getElementById("health").innerHTML =
+            "<pre>"+String(e)+"</pre>";
+    }
+
+    try { await loadRegistry(); } catch(e) { 
+        console.error("Registry:", e); 
+        alert("Registry: " + e); 
+        document.getElementById("registry").innerHTML =
+            "<pre>"+String(e)+"</pre>"; 
+    }
 
     try { await loadEvents(); } catch(e) { console.error("Events:", e); alert("Events: " + e); document.getElementById("events").innerHTML="<pre>"+String(e)+"</pre>"; }
 }
