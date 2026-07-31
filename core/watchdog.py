@@ -17,6 +17,9 @@ class Watchdog:
         self.last_check = None
         self.status = "INIT"
         self.last_event = None
+        self.history = []
+        self.warning_count = 0
+        self.healthy_count = 0
 
     def write_json_log(self, file, data):
 
@@ -44,6 +47,23 @@ class Watchdog:
 
         self.last_event = action
 
+    def status_info(self):
+
+        return {
+            "status": self.status,
+            "last_check": self.last_check,
+            "last_event": self.last_event,
+            "warning_count": self.warning_count,
+            "healthy_count": self.healthy_count,
+            "history_count": len(self.history)
+        }
+
+
+    def get_history(self):
+
+        return self.history[-50:]
+
+
     def check(self):
 
         runtime_data = runtime.read()
@@ -67,6 +87,11 @@ class Watchdog:
 
         self.last_check = int(time.time())
 
+        if self.status == "WARNING":
+            self.warning_count += 1
+        else:
+            self.healthy_count += 1
+
         result = {
             "status": self.status,
             "runtime": runtime_data.get("status"),
@@ -84,6 +109,8 @@ class Watchdog:
         )
 
         self.write_event(action)
+
+        self.history.append(result)
 
         return result
 
