@@ -3,7 +3,7 @@ from plugin_manager.validator import PluginValidator
 from plugin_manager.lifecycle import PluginLifecycle
 from plugin_manager.installer import PluginInstaller
 
-from core.plugin_registry import register_plugin
+from core.plugin_registry import register_plugin, update_plugin_status
 from core.runtime import runtime
 
 
@@ -69,6 +69,10 @@ class PluginManager:
 
             if instance:
                 plugin.status = "RUNNING"
+                update_plugin_status(
+                    plugin.id,
+                    "RUNNING"
+                )
                 return True
 
         except Exception as e:
@@ -88,6 +92,10 @@ class PluginManager:
 
             if result:
                 plugin.status = "STOPPED"
+                update_plugin_status(
+                    plugin.id,
+                    "STOPPED"
+                )
 
             return result
 
@@ -110,6 +118,10 @@ class PluginManager:
 
             if instance:
                 plugin.status = "RUNNING"
+                update_plugin_status(
+                    plugin.id,
+                    "RUNNING"
+                )
                 return True
 
         except Exception as e:

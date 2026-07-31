@@ -108,6 +108,22 @@ def register_plugin(
 
 
 
+def update_plugin_status(plugin_id, status):
+
+    registry = load_registry()
+
+    for plugin in registry:
+
+        if plugin["id"] == plugin_id:
+
+            plugin["status"] = status
+            save_registry(registry)
+            return plugin
+
+    return None
+
+
+
 def get_registry():
 
     return load_registry()

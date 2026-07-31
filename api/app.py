@@ -28,6 +28,7 @@ from core.runtime import runtime
 async def lifespan(app: FastAPI):
     service.save_pid()
     runtime.start()
+    runtime.auto_start_plugins()
 
     try:
         yield

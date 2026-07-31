@@ -21,6 +21,6 @@
         "version": "1.0.0",
         "path": "plugins/test_plugin",
         "installed": "2026-07-31 12:58:36",
-        "status": "STOPPED"
+        "status": "RUNNING"
     }
 ]

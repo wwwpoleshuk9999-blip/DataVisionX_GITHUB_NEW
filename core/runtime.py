@@ -1,6 +1,5 @@
 from core.service_registry import ServiceRegistry
 from core.plugin_registry_manager import PluginRegistryManager
-from core.plugin_registry_manager import PluginRegistryManager
 import os
 import json
 import time
@@ -99,6 +98,39 @@ class RuntimeManager:
         self._save(data)
 
         return data
+
+
+    def auto_start_plugins(self):
+
+        plugin_manager = self.get_service(
+            "plugin_manager"
+        )
+
+        if not plugin_manager:
+            return []
+
+        started = []
+
+        plugin_manager.discover()
+
+        for plugin in plugin_manager.list_plugins():
+
+            try:
+                result = plugin_manager.start(
+                    plugin.id
+                )
+
+                if result:
+                    started.append(
+                        plugin.id
+                    )
+
+            except Exception as e:
+                print(
+                    f"Auto start failed {plugin.id}: {e}"
+                )
+
+        return started
 
 
     def stop(self):
