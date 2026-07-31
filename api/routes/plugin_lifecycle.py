@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Header, HTTPException
+from core.runtime import runtime
 
 from auth.session import session_manager
 from auth.users.service import user_service
@@ -119,6 +120,19 @@ def start_plugin(
             user.username
         )
 
+        event_bus = runtime.get_service("event_bus")
+
+        if event_bus:
+            event_bus.emit(
+                "system",
+                "plugin_started",
+                {
+                    "plugin": plugin_id,
+                    "user": user.username,
+                    "status": "RUNNING"
+                }
+            )
+
 
         return {
             "plugin": plugin_id,
@@ -156,6 +170,19 @@ def stop_plugin(
             plugin_id,
             user.username
         )
+
+        event_bus = runtime.get_service("event_bus")
+
+        if event_bus:
+            event_bus.emit(
+                "system",
+                "plugin_stopped",
+                {
+                    "plugin": plugin_id,
+                    "user": user.username,
+                    "status": "STOPPED"
+                }
+            )
 
 
         return {
@@ -197,6 +224,19 @@ def restart_plugin(
             plugin_id,
             user.username
         )
+
+        event_bus = runtime.get_service("event_bus")
+
+        if event_bus:
+            event_bus.emit(
+                "system",
+                "plugin_restarted",
+                {
+                    "plugin": plugin_id,
+                    "user": user.username,
+                    "status": "RUNNING"
+                }
+            )
 
 
         return {
