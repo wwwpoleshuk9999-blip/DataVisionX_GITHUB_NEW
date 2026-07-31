@@ -12,6 +12,7 @@ from api.routes.system import router as system_router
 from api.routes.dashboard import router as dashboard_router
 from api.routes.registry import router as registry_router
 from api.routes.events import router as events_router
+from api.routes.plugin_health import router as plugin_health_router
 from api.routes.auth.login import router as auth_router
 from api.routes.users import router as users_router
 from api.routes.websocket import router as websocket_router
@@ -92,6 +93,7 @@ app.include_router(dashboard_router)
 app.include_router(websocket_router)
 app.include_router(registry_router)
 app.include_router(events_router)
+app.include_router(plugin_health_router)
 app.include_router(ai_router)
 
 

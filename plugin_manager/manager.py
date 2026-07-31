@@ -2,6 +2,7 @@ from plugin_manager.loader import PluginLoader
 from plugin_manager.validator import PluginValidator
 from plugin_manager.lifecycle import PluginLifecycle
 from plugin_manager.installer import PluginInstaller
+from plugin_manager.health import PluginHealthManager
 
 from core.plugin_registry import register_plugin, update_plugin_status
 from core.runtime import runtime
@@ -22,6 +23,7 @@ class PluginManager:
         )
         self.installer = PluginInstaller()
         self.plugins = {}
+        self.health = PluginHealthManager()
 
     def discover(self):
         discovered = {}
@@ -69,13 +71,24 @@ class PluginManager:
 
             if instance:
                 plugin.status = "RUNNING"
+
                 update_plugin_status(
                     plugin.id,
                     "RUNNING"
                 )
+
+                self.health.started(
+                    plugin.id
+                )
+
                 return True
 
         except Exception as e:
+            self.health.failed(
+                plugin_id,
+                e
+            )
+
             print("START ERROR:", e)
 
         return False
@@ -92,9 +105,14 @@ class PluginManager:
 
             if result:
                 plugin.status = "STOPPED"
+
                 update_plugin_status(
                     plugin.id,
                     "STOPPED"
+                )
+
+                self.health.stopped(
+                    plugin.id
                 )
 
             return result
@@ -118,10 +136,16 @@ class PluginManager:
 
             if instance:
                 plugin.status = "RUNNING"
+
                 update_plugin_status(
                     plugin.id,
                     "RUNNING"
                 )
+
+                self.health.started(
+                    plugin.id
+                )
+
                 return True
 
         except Exception as e:
