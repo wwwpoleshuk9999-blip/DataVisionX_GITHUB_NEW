@@ -140,6 +140,27 @@ const d = await r.json();
     loadAll();
 }
 
+
+async function recoverPlugin(id) {
+
+    const r = await fetch(
+        API + `/plugins/${id}/restart`,
+        {
+            method: "POST",
+            headers: headers()
+        }
+    );
+
+    const d = await r.json();
+
+    alert(
+        d.status || d.message || "Recovery requested"
+    );
+
+    loadAll();
+}
+
+
 async function loadRegistry() {
 
     try {
