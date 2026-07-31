@@ -8,6 +8,7 @@ from core.plugin_recovery import plugin_recovery
 
 
 EVENT_LOG = Path("runtime/events.log")
+RECOVERY_LOG = Path("runtime/recovery.log")
 
 
 class RecoveryManager:
@@ -18,26 +19,47 @@ class RecoveryManager:
         self.attempts = 0
         self.last_action = None
         self.last_recovery = None
+        self.history = []
 
-    def write_event(self, action):
+    def write_event(self, action, data=None):
 
         event = {
             "time": time.strftime("%Y-%m-%d %H:%M:%S"),
             "action": action,
             "source": "recovery",
-            "user": "system"
+            "user": "system",
+            "data": data or {}
         }
 
         EVENT_LOG.parent.mkdir(exist_ok=True)
 
         with EVENT_LOG.open("a", encoding="utf-8") as f:
-            f.write(
-                json.dumps(event, ensure_ascii=False)
-                + "\n"
-            )
+            f.write(json.dumps(event, ensure_ascii=False) + "\n")
+
+
+        with RECOVERY_LOG.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(event, ensure_ascii=False) + "\n")
+
+
+        self.history.append(event)
 
         self.last_action = action
         self.last_recovery = int(time.time())
+
+
+    def status(self):
+
+        return {
+            "last_action": self.last_action,
+            "last_recovery": self.last_recovery,
+            "attempts": self.attempts,
+            "history_count": len(self.history)
+        }
+
+
+    def get_history(self):
+
+        return self.history[-50:]
 
 
     def check_and_recover(self):
@@ -49,6 +71,7 @@ class RecoveryManager:
             runtime_data.get("status") == "RUNNING"
             and process_running
         )
+
 
         if healthy:
             return {
@@ -67,9 +90,7 @@ class RecoveryManager:
 
             return {
                 "status": "FAILED",
-                "action": self.last_action,
-                "attempts": self.attempts,
-                "message": "Recovery limit reached"
+                "attempts": self.attempts
             }
 
 
@@ -79,21 +100,24 @@ class RecoveryManager:
             "RECOVERY_STARTED"
         )
 
-        # Безопасная подготовка.
-        # Реальный restart подключим после теста.
 
         recovered = plugin_recovery.recover()
 
+
         self.write_event(
-            "RECOVERY_SUCCESS"
+            "RECOVERY_SUCCESS",
+            {
+                "plugins": recovered
+            }
         )
+
 
         self.attempts = 0
 
+
         return {
             "status": "RECOVERED",
-            "action": self.last_action,
-            "attempts": self.attempts,
+            "plugins": recovered,
             "last_recovery": self.last_recovery
         }
 
