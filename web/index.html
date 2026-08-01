@@ -13,7 +13,7 @@
 
 </head>
 
-<body><script>alert('INDEX TEST');</script>
+<body>
 
 <div class="container">
 
@@ -108,6 +108,16 @@ Loading...
 
 <section>
 
+<h2>📊 System Metrics</h2>
+
+<div id="metrics">
+Loading...
+</div>
+
+</section>
+
+<section>
+
 <h2>📚 Plugin Registry</h2>
 
 <div id="registry">
@@ -150,12 +160,37 @@ white-space:pre-wrap;">
 </section>
 
 <!-- AI DISABLED -->
-<script>alert("BEFORE APP");</script>
 
-<script src="/web/app.js"></script>
-<script src="/web/ws.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>console.log("HTML SCRIPT START");</script>
+<script src="/web/js/api.js"></script>
+<script src="/web/js/dashboard.js"></script>
+<script src="/web/js/plugins.js"></script>
+<script src="/web/js/events.js"></script>
+<script src="/web/js/websocket.js"></script>
+<script src="/web/js/ui.js"></script>
+<script src="/web/js/i18n.js"></script>
+<script src="/web/js/main.js"></script>
+<script src="/web/app.js?v=999"></script>
+
+
+<section>
+
+<h2>📈 Live Metrics</h2>
+
+<div class="card">
+<canvas id="cpuChart" height="120"></canvas>
+</div>
+
+<div class="card">
+<canvas id="memoryChart" height="120"></canvas>
+</div>
+
+</section>
 
 <div id="toast"></div>
+
 </body>
 
 </html>

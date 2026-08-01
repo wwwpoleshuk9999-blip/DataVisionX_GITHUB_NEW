@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from core.kernel import Kernel
 from core.health import health
 from api.ai import router as ai_router
+from api.routes.metrics import router as metrics_router
 
 
 app = FastAPI(
@@ -12,6 +13,7 @@ app = FastAPI(
 
 
 app.include_router(ai_router)
+app.include_router(metrics_router)
 
 
 kernel = Kernel()

@@ -17,7 +17,7 @@ class HealthMonitor:
 
         try:
             for plugin in plugin_manager.list_plugins():
-                status = plugin.get("status", "").upper()
+                status = getattr(plugin, "status", "").upper()
                 if status == "RUNNING":
                     running_plugins += 1
         except Exception:

@@ -7,6 +7,9 @@ class EventBus:
     def subscribe(self, event_name, callback):
         self._listeners[event_name].append(callback)
 
+    def register(self, source, event_name, callback):
+        self.subscribe(event_name, callback)
+
     def publish(self, event_name, data=None):
         for callback in self._listeners.get(event_name, []):
             try:

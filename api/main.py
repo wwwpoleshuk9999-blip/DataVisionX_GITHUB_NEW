@@ -20,7 +20,6 @@ from api.routes.ai import router as ai_router
 
 from auth.middleware import auth_middleware
 
-import services.register_eventbus
 from core.bootstrap import register_core_services
 from services.websocket_bridge import set_loop
 import asyncio
@@ -103,7 +102,7 @@ app.include_router(ai_router)
 
 app.mount(
     "/web",
-    StaticFiles(directory="web"),
+    StaticFiles(directory="web", html=True),
     name="web"
 )
 
@@ -140,15 +139,15 @@ from services.websocket_manager import manager
 from fastapi import WebSocket, WebSocketDisconnect
 import asyncio
 
-@app.websocket("/ws")
-async def websocket_direct(websocket: WebSocket):
-    await manager.connect(websocket)
-    try:
-        await manager.send(websocket, "Connected to DataVisionX Phoenix")
-        while True:
-            await asyncio.sleep(30)
-            await manager.send(websocket, "ping")
-    except WebSocketDisconnect:
-        pass
-    finally:
-        manager.disconnect(websocket)
+# @app.websocket("/ws")
+# async def websocket_direct(websocket: WebSocket):
+#     await manager.connect(websocket)
+#     try:
+#         await manager.send(websocket, "Connected to DataVisionX Phoenix")
+#         while True:
+#             await asyncio.sleep(30)
+#             await manager.send(websocket, "ping")
+#     except WebSocketDisconnect:
+#         pass
+#     finally:
+#         manager.disconnect(websocket)

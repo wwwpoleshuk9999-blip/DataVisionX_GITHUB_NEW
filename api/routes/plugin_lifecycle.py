@@ -120,20 +120,6 @@ def start_plugin(
             user.username
         )
 
-        event_bus = runtime.get_service("event_bus")
-
-        if event_bus:
-            event_bus.emit(
-                "system",
-                "plugin_started",
-                {
-                    "plugin": plugin_id,
-                    "user": user.username,
-                    "status": "RUNNING"
-                }
-            )
-
-
         return {
             "plugin": plugin_id,
             "status": "RUNNING"
@@ -170,20 +156,6 @@ def stop_plugin(
             plugin_id,
             user.username
         )
-
-        event_bus = runtime.get_service("event_bus")
-
-        if event_bus:
-            event_bus.emit(
-                "system",
-                "plugin_stopped",
-                {
-                    "plugin": plugin_id,
-                    "user": user.username,
-                    "status": "STOPPED"
-                }
-            )
-
 
         return {
             "plugin": plugin_id,
@@ -224,20 +196,6 @@ def restart_plugin(
             plugin_id,
             user.username
         )
-
-        event_bus = runtime.get_service("event_bus")
-
-        if event_bus:
-            event_bus.emit(
-                "system",
-                "plugin_restarted",
-                {
-                    "plugin": plugin_id,
-                    "user": user.username,
-                    "status": "RUNNING"
-                }
-            )
-
 
         return {
             "plugin": plugin_id,
