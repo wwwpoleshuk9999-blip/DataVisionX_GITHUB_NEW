@@ -30,3 +30,36 @@ async function loadRuntime() {
 </div>`;
 }
 
+
+async function loadRegistry() {
+
+    try {
+        const r = await fetch("/registry", {
+            headers: headers()
+        });
+
+        if (!r.ok) {
+            document.getElementById("registry").innerHTML =
+                '<div class="card">Registry API unavailable</div>';
+            return;
+        }
+
+        const d = await r.json();
+
+        let html = "";
+
+        (d.registry || []).forEach(item => {
+            html += `
+<div class="card">
+<b>${item.id}</b><br>
+Version: ${item.version}
+</div>`;
+        });
+
+        document.getElementById("registry").innerHTML = html;
+
+    } catch {
+        document.getElementById("registry").innerHTML =
+            '<div class="card">Registry unavailable</div>';
+    }
+}

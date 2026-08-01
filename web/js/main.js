@@ -8,4 +8,22 @@ window.addEventListener("load", () => {
     if (typeof connectWebSocket === "function") {
         connectWebSocket();
     }
+
+    setInterval(() => {
+        if (typeof loadRuntime === "function") {
+            loadRuntime();
+        }
+
+        if (typeof loadDashboard === "function") {
+            loadDashboard();
+        }
+    }, 5000);
 });
+
+function loadAll() {
+    loadDashboard();
+    loadRuntime();
+    loadPlugins();
+    loadRegistry();
+    loadEvents();
+}
