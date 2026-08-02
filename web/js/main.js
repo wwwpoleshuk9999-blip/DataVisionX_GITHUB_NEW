@@ -27,3 +27,10 @@ function loadAll() {
     loadRegistry();
     loadEvents();
 }
+
+console.log("=== MAIN.JS LOADED ===");
+console.log(typeof loadDashboard);
+console.log(typeof loadPlugins);
+console.log(typeof loadEvents);
+console.log(typeof connectWebSocket);
+
