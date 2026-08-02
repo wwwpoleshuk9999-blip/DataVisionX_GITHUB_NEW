@@ -35,6 +35,9 @@ function connectWebSocket() {
         try {
 
             const msg = JSON.parse(event.data);
+            if (typeof addLiveEvent === "function") {
+                addLiveEvent(msg);
+            }
 
             switch (msg.event) {
 
