@@ -1,6 +1,7 @@
 async function loadDashboard() {
     const r = await fetch(API + "/dashboard/status", { headers: headers() });
     const d = await r.json();
+        console.log("HEALTH DATA", d);
 
     document.getElementById("system").innerHTML = `
 <div class="card">
@@ -16,20 +17,35 @@ Plugins: ${d.plugins_running}/${d.plugins_total}
 }
 
 async function loadRuntime() {
-    const r = await fetch(API + "/health");
-    const d = await r.json();
+    console.log("LOAD RUNTIME START");
+    console.log('LOAD RUNTIME START');
+        console.log("RUNTIME FETCH START");
+    try {
+        const r = await fetch(API + "/health", {
+            headers: headers()
+        });
 
-    document.getElementById("runtime").innerHTML = `
-<div class="card">
-<b>Status:</b> ${d.health.status}<br>
-<b>Health:</b> ${d.health.health}<br>
-<b>Version:</b> ${d.health.version}<br>
-<b>Python:</b> ${d.health.python}<br>
-<b>Platform:</b> ${d.health.platform}<br>
-<b>Uptime:</b> ${d.health.uptime}
-</div>`;
+        const d = await r.json();
+
+        console.log("HEALTH DATA", d);
+
+        document.getElementById("runtime").innerHTML = `
+        <div class="card">
+        <b>Status:</b> ${d.status}<br>
+        <b>Process:</b> ${d.process}<br>
+        <b>Plugins:</b> ${d.plugins}<br>
+        <b>Running:</b> ${d.plugins_running}<br>
+        <b>Stopped:</b> ${d.plugins_stopped}<br>
+        <b>Last Action:</b> ${d.last_action}<br>
+        <b>Uptime:</b> ${d.uptime}s
+        </div>`;
+
+    } catch (e) {
+        console.log("RUNTIME ERROR", e);
+        document.getElementById("runtime").innerHTML =
+        '<div class="card">Runtime unavailable</div>';
+    }
 }
-
 
 async function loadRegistry() {
 
@@ -63,3 +79,82 @@ Version: ${item.version}
             '<div class="card">Registry unavailable</div>';
     }
 }
+
+
+async function loadPluginHealth() {
+    const r = await fetch("/health/plugins", {headers: headers()});
+    const d = await r.json();
+
+    let html = "";
+    for (const [id, p] of Object.entries(d.plugins || {})) {
+        html += `
+        <div class="card">
+        <b>${id}</b><br>
+        Status: ${p.status}<br>
+        Health: ${p.health}<br>
+        Restarts: ${p.restart_count}
+        </div>`;
+    }
+
+    document.getElementById("health").innerHTML = html;
+}
+
+
+
+async function loadRecovery() {
+    const r = await fetch("/recovery/status", {headers: headers()});
+    const d = await r.json();
+    const x = d.recovery || {};
+
+    document.getElementById("recovery").innerHTML = `
+    <div class="card">
+        <b>Status:</b> 🟢 ${x.status || "-"}<br>
+        <b>Action:</b> ${x.action || "-"}<br>
+        <b>Attempts:</b> ${x.attempts || 0}<br>
+        <b>Last Recovery:</b> ${x.last_recovery || "-"}
+    </div>`;
+}
+
+
+async function loadWatchdog() {
+    const r = await fetch("/watchdog/status", {headers: headers()});
+    const d = await r.json();
+    const x = d.watchdog || {};
+
+    document.getElementById("watchdog").innerHTML = `
+    <div class="card">
+        <b>Status:</b> 🟢 ${x.status || "-"}<br>
+        <b>Runtime:</b> ${x.runtime || "-"}<br>
+        <b>Process:</b> ${x.process || "-"}<br>
+        <b>PID:</b> ${x.pid || "-"}<br>
+    
+        <b>Checked:</b> ${x.checked_at || "-"}
+    </div>`;
+}
+
+
+async function loadMetrics() {
+    const r = await fetch("/metrics/system", {headers: headers()});
+    const x = await r.json();
+
+    document.getElementById("metrics").innerHTML = `
+    <div class="card">
+        <b>CPU:</b> ${x.cpu_percent}%<br>
+        <b>Memory:</b> ${x.memory_percent}%<br>
+        <b>Disk:</b> ${x.disk_percent}%<br><br>
+
+        Memory:
+        ${(x.memory_used/1024/1024/1024).toFixed(2)} GB /
+        ${(x.memory_total/1024/1024/1024).toFixed(2)} GB<br>
+
+        Disk:
+        ${(x.disk_used/1024/1024/1024).toFixed(2)} GB /
+        ${(x.disk_total/1024/1024/1024).toFixed(2)} GB<br><br>
+
+        Load:
+        ${(x.load_average || []).join(" | ")}
+    </div>`;
+    if (typeof updateCharts === "function") updateCharts(x);
+}
+
+    
