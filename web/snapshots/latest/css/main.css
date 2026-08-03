@@ -1,0 +1,142 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#0f172a;
+    color:#f1f5f9;
+}
+
+.container{
+    max-width:1400px;
+    margin:0 auto;
+    padding:20px;
+}
+
+header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    margin-bottom:20px;
+    padding:20px;
+    border-radius:12px;
+    background:#1e293b;
+}
+
+header h1{
+    font-size:2rem;
+}
+
+section{
+    margin-bottom:20px;
+}
+
+.card{
+    background:#1e293b;
+    border:1px solid #334155;
+    border-radius:12px;
+    padding:16px;
+    margin-bottom:12px;
+}
+
+button{
+    cursor:pointer;
+    border:none;
+    border-radius:8px;
+    padding:10px 14px;
+    margin:4px;
+    background:#2563eb;
+    color:white;
+    transition:.2s;
+}
+
+button:hover{
+    background:#1d4ed8;
+}
+
+input{
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+    border-radius:8px;
+    border:1px solid #475569;
+    background:#0f172a;
+    color:white;
+}
+
+.websocket-status{
+    padding:8px 14px;
+    border-radius:8px;
+    font-weight:bold;
+}
+
+.ws-online{
+    background:#166534;
+}
+
+.ws-offline{
+    background:#7f1d1d;
+}
+
+/* ===== Phoenix Build 008 Layout ===== */
+
+section{
+    margin-bottom:20px;
+}
+
+.card{
+    background:#1e293b;
+    border:1px solid #334155;
+    border-radius:12px;
+    padding:16px;
+    margin-bottom:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,.25);
+}
+
+button{
+    background:#2563eb;
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    padding:10px 16px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+button:hover{
+    background:#1d4ed8;
+}
+
+input{
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+    border-radius:8px;
+    border:1px solid #475569;
+    background:#0f172a;
+    color:#fff;
+}
+
+h2{
+    margin-bottom:12px;
+    color:#60a5fa;
+}
+
+.websocket-status{
+    padding:8px 14px;
+    border-radius:8px;
+    font-weight:bold;
+}
+
+.ws-online{
+    background:#166534;
+}
+
+.ws-offline{
+    background:#991b1b;
+}
+

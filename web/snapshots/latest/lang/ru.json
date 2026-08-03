@@ -1,0 +1,53 @@
+{
+  "app": {
+    "title": "DataVisionX Phoenix",
+    "language": "Язык"
+  },
+  "runtime": {
+    "title": "Runtime",
+    "start": "Старт",
+    "stop": "Стоп",
+    "restart": "Перезапуск",
+    "reload": "Перезагрузить",
+    "status": "Статус",
+    "uptime": "Время работы"
+  },
+  "plugins": {
+    "title": "Плагины",
+    "start": "Старт",
+    "stop": "Стоп",
+    "restart": "Перезапуск"
+  },
+  "metrics": {
+    "title": "Системные метрики",
+    "cpu": "CPU",
+    "memory": "Память",
+    "disk": "Диск"
+  },
+  "events": {
+    "title": "Журнал событий"
+  },
+  "ai": {
+    "title": "AI Console",
+    "console": "AI консоль",
+    "waiting": "Ожидание AI событий..."
+  },
+  "system": {
+    "title": "Система"
+  },
+  "health": {
+    "title": "Монитор здоровья плагинов"
+  },
+  "recovery": {
+    "title": "Центр восстановления"
+  },
+  "watchdog": {
+    "title": "Сторожевой контроль"
+  },
+  "registry": {
+    "title": "Реестр плагинов"
+  },
+  "live": {
+    "metrics": "Живые метрики"
+  }
+}

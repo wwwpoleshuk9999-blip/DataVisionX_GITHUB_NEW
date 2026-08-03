@@ -1,0 +1,53 @@
+{
+  "app": {
+    "title": "DataVisionX Phoenix",
+    "language": "Language"
+  },
+  "runtime": {
+    "title": "Runtime",
+    "start": "Start",
+    "stop": "Stop",
+    "restart": "Restart",
+    "reload": "Reload",
+    "status": "Status",
+    "uptime": "Uptime"
+  },
+  "plugins": {
+    "title": "Plugins",
+    "start": "Start",
+    "stop": "Stop",
+    "restart": "Restart"
+  },
+  "metrics": {
+    "title": "System Metrics",
+    "cpu": "CPU",
+    "memory": "Memory",
+    "disk": "Disk"
+  },
+  "events": {
+    "title": "Event Log"
+  },
+  "ai": {
+    "title": "AI Console",
+    "console": "AI Live Console",
+    "waiting": "Waiting for AI events..."
+  },
+  "system": {
+    "title": "System"
+  },
+  "health": {
+    "title": "Plugin Health Monitor"
+  },
+  "recovery": {
+    "title": "Recovery Center"
+  },
+  "watchdog": {
+    "title": "Watchdog"
+  },
+  "registry": {
+    "title": "Plugin Registry"
+  },
+  "live": {
+    "metrics": "Live Metrics"
+  }
+}

@@ -1,0 +1,40 @@
+.layout{
+    display:grid;
+    grid-template-columns:260px 1fr;
+    gap:20px;
+    min-height:100vh;
+}
+
+.sidebar{
+    background:#111827;
+    border-radius:12px;
+    padding:20px;
+}
+
+.sidebar h2{
+    margin-bottom:20px;
+}
+
+.sidebar a{
+    display:block;
+    color:#e5e7eb;
+    text-decoration:none;
+    padding:10px;
+    border-radius:8px;
+    margin-bottom:6px;
+}
+
+.sidebar a:hover{
+    background:#1f2937;
+}
+
+.content{
+    display:grid;
+    gap:20px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:20px;
+}
