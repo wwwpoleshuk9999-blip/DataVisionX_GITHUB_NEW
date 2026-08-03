@@ -69,6 +69,9 @@ def register_core_services():
         "event_bus"
     )
 
+    plugin_manager.event_bus = event_bus
+    plugin_manager.lifecycle.event_bus = event_bus
+
     if event_bus:
 
         event_bus.register(
@@ -105,4 +108,3 @@ def register_core_services():
 
 
 
-services = register_core_services()

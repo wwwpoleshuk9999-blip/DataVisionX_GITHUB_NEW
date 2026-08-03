@@ -182,4 +182,8 @@ class RuntimeManager:
 
 
 
+    def restart(self):
+        self.stop()
+        return self.start()
+
 runtime = RuntimeManager()

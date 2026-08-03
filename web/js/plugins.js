@@ -6,9 +6,9 @@ ID: ${p.id}<br>
 Version: ${p.version}<br>
 Status: <b>${p.status}</b><br><br>
 
-<button onclick="pluginAction('${p.id}','start')">▶ START</button>
-<button onclick="pluginAction('${p.id}','stop')">⏹ STOP</button>
-<button onclick="pluginAction('${p.id}','restart')">🔄 RESTART</button>
+<button onclick="pluginAction('${p.id}','start')">${t("plugins.start")}</button>
+<button onclick="pluginAction('${p.id}','stop')">${t("plugins.stop")}</button>
+<button onclick="pluginAction('${p.id}','restart')">${t("plugins.restart")}</button>
 
 </div>`;
 }

@@ -36,9 +36,20 @@ def ai_chat(request: ChatRequest):
             detail="AI service unavailable"
         )
 
-    return ai.chat(
-        request.message
-    )
+    result = ai.chat(request.message)
+
+    event_bus = runtime.get_service("event_bus")
+    if event_bus:
+        event_bus.emit(
+            "system",
+            "ai_chat_completed",
+            {
+                "message": request.message,
+                "response": result
+            }
+        )
+
+    return result
 
 
 @router.get("/ai/history")

@@ -12,6 +12,7 @@ def set_loop(loop):
 
 
 def websocket_event_listener(data):
+    print("=== BRIDGE RECEIVED EVENT ===")
     print("WEBSOCKET EVENT:", data)
     """
     Bridge: EventBus -> WebSocket

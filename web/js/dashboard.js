@@ -33,17 +33,21 @@ async function loadRuntime() {
         <div class="card">
         <b>Status:</b> ${d.status}<br>
         <b>Process:</b> ${d.process}<br>
-        <b>Plugins:</b> ${d.plugins}<br>
+        <b>${t("plugins.title")}:</b> ${d.plugins}<br>
         <b>Running:</b> ${d.plugins_running}<br>
-        <b>Stopped:</b> ${d.plugins_stopped}<br>
+        <b>${t("runtime.stop")}:</b> ${d.plugins_stopped}<br>
         <b>Last Action:</b> ${d.last_action}<br>
-        <b>Uptime:</b> ${d.uptime}s
+        <b>Uptime:</b> ${d.uptime}s<br><br>
+<button onclick="runtimeAction('start')">${t("runtime.start")}</button>
+<button onclick="runtimeAction('stop')">${t("runtime.stop")}</button>
+<button onclick="runtimeAction('restart')">${t("runtime.restart")}</button>
+<button onclick="runtimeAction('reload')">${t("runtime.reload")}</button>
         </div>`;
 
     } catch (e) {
         console.log("RUNTIME ERROR", e);
         document.getElementById("runtime").innerHTML =
-        '<div class="card">Runtime unavailable</div>';
+        `<div class="card">${t("runtime.title")} unavailable</div>`;
     }
 }
 

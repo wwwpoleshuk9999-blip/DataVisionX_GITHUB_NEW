@@ -5,6 +5,9 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
 from api.routes.health import router as health_router
+from api.routes.recovery import router as recovery_router
+from api.routes.watchdog import router as watchdog_router
+from api.routes.metrics import router as metrics_router
 from api.routes.plugins import router as plugins_router
 from api.routes.plugin_lifecycle import router as plugin_lifecycle_router
 from api.routes.config import router as config_router
@@ -34,6 +37,7 @@ from core.logger import logger
 async def lifespan(app: FastAPI):
     service.save_pid()
     runtime.start()
+    register_core_services()
     set_loop(asyncio.get_running_loop())
 
     from plugin_manager.manager import plugin_manager
@@ -82,6 +86,9 @@ async def security_middleware(request: Request, call_next):
 # -----------------------
 
 app.include_router(health_router)
+app.include_router(recovery_router)
+app.include_router(watchdog_router)
+app.include_router(metrics_router)
 app.include_router(system_router)
 app.include_router(plugins_router)
 app.include_router(plugin_lifecycle_router)

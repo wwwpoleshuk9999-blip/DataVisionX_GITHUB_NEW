@@ -6,7 +6,9 @@ router = APIRouter(tags=["WebSocket"])
 
 @router.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
+    print('WS REQUEST')
     await manager.connect(websocket)
+    print('WS CONNECTED:', len(manager.connections))
 
     try:
         await manager.send(
@@ -17,13 +19,9 @@ async def websocket_endpoint(websocket: WebSocket):
         while True:
             await asyncio.sleep(30)
 
-            try:
-                await manager.send(websocket, "ping")
-            except Exception:
-                break
-
-    except WebSocketDisconnect:
-        pass
+    except WebSocketDisconnect as e:
+        print('WS CLIENT DISCONNECT:', e)
 
     finally:
+        print('WS DISCONNECTED:', len(manager.connections))
         manager.disconnect(websocket)

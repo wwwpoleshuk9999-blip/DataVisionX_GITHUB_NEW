@@ -1,4 +1,6 @@
+let ws;
 function connectWebSocket() {
+    console.log("CONNECT WEBSOCKET START");
 
     if (ws) {
         try {
@@ -55,6 +57,7 @@ function connectWebSocket() {
                     break;
 
                 case "ai_chat_completed":
+                    if (typeof aiConsoleAdd === "function") aiConsoleAdd(msg);
                     loadEvents();
                     break;
 
