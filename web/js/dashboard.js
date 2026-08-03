@@ -1,3 +1,25 @@
+function statusBadge(status) {
+    const s = String(status || "").toLowerCase();
+
+    if (s.includes("run")) {
+        return `<span class="status-badge status-running">${status}</span>`;
+    }
+
+    if (s.includes("stop")) {
+        return `<span class="status-badge status-stopped">${status}</span>`;
+    }
+
+    if (s.includes("warn")) {
+        return `<span class="status-badge status-warning">${status}</span>`;
+    }
+
+    if (s.includes("ready") || s.includes("healthy")) {
+        return `<span class="status-badge status-ready">${status}</span>`;
+    }
+
+    return `<span class="status-badge">${status || "-"}</span>`;
+}
+
 async function loadDashboard() {
     const r = await fetch(API + "/dashboard/status", { headers: headers() });
     const d = await r.json();
@@ -7,7 +29,7 @@ async function loadDashboard() {
 <div class="card">
 <h3>🚀 ${d.platform}</h3>
 Version: ${d.version}<br>
-Status: <b>${d.status}</b><br>
+Status: ${statusBadge(d.status)}<br>
 Health: <b>${d.health}</b><br>
 Python: ${d.python}<br>
 OS: ${d.os}<br>
@@ -68,7 +90,7 @@ async function loadRuntime() {
         console.log("RUNTIME DATA", d);
         document.getElementById("runtime").innerHTML = `
         <div class="card">
-        <b>Status:</b> ${d.runtime.status}<br>
+        <b>Status:</b> ${statusBadge(d.runtime.status)}<br>
         <b>Last Action:</b> ${d.runtime.last_action}<br>
         <b>Restart Count:</b> ${d.runtime.restart_count}<br>
         <b>Uptime:</b> ${d.uptime}s<br><br>
@@ -128,7 +150,7 @@ async function loadPluginHealthh() {
         html += `
         <div class="card">
         <b>${id}</b><br>
-        Status: ${p.status}<br>
+        Status: ${statusBadge(p.status)}<br>
         Health: ${p.health}<br>
         Restarts: ${p.restart_count}
         </div>`;
