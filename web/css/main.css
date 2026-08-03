@@ -35,53 +35,6 @@ section{
     margin-bottom:20px;
 }
 
-.card{
-    background:#1e293b;
-    border:1px solid #334155;
-    border-radius:12px;
-    padding:16px;
-    margin-bottom:12px;
-}
-
-button{
-    cursor:pointer;
-    border:none;
-    border-radius:8px;
-    padding:10px 14px;
-    margin:4px;
-    background:#2563eb;
-    color:white;
-    transition:.2s;
-}
-
-button:hover{
-    background:#1d4ed8;
-}
-
-input{
-    width:100%;
-    padding:10px;
-    margin:10px 0;
-    border-radius:8px;
-    border:1px solid #475569;
-    background:#0f172a;
-    color:white;
-}
-
-.websocket-status{
-    padding:8px 14px;
-    border-radius:8px;
-    font-weight:bold;
-}
-
-.ws-online{
-    background:#166534;
-}
-
-.ws-offline{
-    background:#7f1d1d;
-}
-
 /* ===== Phoenix Build 008 Layout ===== */
 
 section{
