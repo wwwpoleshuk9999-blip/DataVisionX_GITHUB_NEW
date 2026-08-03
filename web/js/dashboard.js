@@ -16,12 +16,48 @@ Plugins: ${d.plugins_running}/${d.plugins_total}
 </div>`;
 }
 
+
+
+async function loadProjectCenter() {
+    console.log("PROJECT CENTER START");
+    const el = document.getElementById("project-center");
+    if (!el) return;
+
+    try {
+        const [rootRes, healthRes, pluginsRes, aiRes] = await Promise.all([
+            fetch(API + "/api/status"),
+            fetch(API + "/health"),
+            fetch(API + "/plugins"),
+            fetch(API + "/ai/status", { headers: headers() })
+        ]);
+
+        const root = await rootRes.json();
+        const health = await healthRes.json();
+        const plugins = await pluginsRes.json();
+        const ai = await aiRes.json();
+
+        el.innerHTML = `
+<div class="card">
+<b>🚀 ${root.name}</b><br>
+Version: ${root.version}<br>
+Status: ${root.status}<br>
+Runtime: ${health.status}<br>
+Plugins: ${plugins.plugins.length}<br>
+AI: ${ai.status}
+</div>`;
+    } catch (err) {
+        el.innerHTML = "<div class='card'><b>❌ Project Center Error</b><br>" + err + "</div>";
+        console.error(err);
+    }
+}
+
 async function loadRuntime() {
     console.log("LOAD RUNTIME START");
+    alert("LOAD RUNTIME CALLED");
     console.log('LOAD RUNTIME START');
         console.log("RUNTIME FETCH START");
     try {
-        const r = await fetch(API + "/health", {
+        const r = await fetch(API + "/runtime", {
             headers: headers()
         });
 
@@ -29,14 +65,12 @@ async function loadRuntime() {
 
         console.log("HEALTH DATA", d);
 
+        console.log("RUNTIME DATA", d);
         document.getElementById("runtime").innerHTML = `
         <div class="card">
-        <b>Status:</b> ${d.status}<br>
-        <b>Process:</b> ${d.process}<br>
-        <b>${t("plugins.title")}:</b> ${d.plugins}<br>
-        <b>Running:</b> ${d.plugins_running}<br>
-        <b>${t("runtime.stop")}:</b> ${d.plugins_stopped}<br>
-        <b>Last Action:</b> ${d.last_action}<br>
+        <b>Status:</b> ${d.runtime.status}<br>
+        <b>Last Action:</b> ${d.runtime.last_action}<br>
+        <b>Restart Count:</b> ${d.runtime.restart_count}<br>
         <b>Uptime:</b> ${d.uptime}s<br><br>
 <button onclick="runtimeAction('start')">${t("runtime.start")}</button>
 <button onclick="runtimeAction('stop')">${t("runtime.stop")}</button>
@@ -47,7 +81,7 @@ async function loadRuntime() {
     } catch (e) {
         console.log("RUNTIME ERROR", e);
         document.getElementById("runtime").innerHTML =
-        `<div class="card">${t("runtime.title")} unavailable</div>`;
+        `<div class="card">${t("runtime.title")} unavailable<br>${e}</div>`;
     }
 }
 

@@ -7,7 +7,7 @@ window.addEventListener("load", async () => {
         }
         console.log("LANGUAGE LOADED:", localStorage.getItem("dvx_lang"), LANG);
     }
-    console.log("WINDOW LOAD FIRED"); alert("DVX JS WORKING");
+    
     console.log("DataVisionX Phoenix Build 007");
 
     if (typeof loadAll === "function") {
@@ -26,19 +26,37 @@ window.addEventListener("load", async () => {
         if (typeof loadDashboard === "function") {
             loadDashboard();
         }
+
+        if (typeof loadProjectCenter === "function") {
+            loadProjectCenter();
+        }
     }, 5000);
 });
 
 function loadAll() {
-    loadDashboard();
-    loadRuntime();
-    loadPlugins();
-    loadRegistry();
-    loadEvents();
-    loadPluginHealth();
-    loadRecovery();
-    loadWatchdog();
-    loadMetrics();
+    console.log("LOAD ALL START");
+
+    [
+        loadDashboard,
+        loadProjectCenter,
+        loadRuntime,
+        loadPlugins,
+        loadRegistry,
+        loadEvents,
+        loadPluginHealth,
+        loadRecovery,
+        loadWatchdog,
+        loadMetrics
+    ].forEach(fn => {
+        try {
+            if (typeof fn === "function") {
+                console.log("CALLING:", fn.name);
+                fn().then(() => console.log("DONE:", fn.name)).catch(e => console.error("FAIL:", fn.name, e));
+            }
+        } catch(e) {
+            console.error("LOAD ERROR:", fn.name, e);
+        }
+    });
 }
 
 

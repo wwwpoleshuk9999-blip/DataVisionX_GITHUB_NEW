@@ -2,7 +2,8 @@ let LANG = localStorage.getItem("dvx_lang") || "ru";
 let I18N = {};
 
 async function loadLanguage(lang = LANG) {
-    console.log("LOAD LANG FILE:", `/web/lang/${lang}.json`);\n    const r = await fetch(`/web/lang/${lang}.json`);
+    console.log("LOAD LANG FILE:", `/web/lang/${lang}.json`);
+    const r = await fetch(`/web/lang/${lang}.json`);
     I18N = await r.json();
     LANG = lang;
     localStorage.setItem("dvx_lang", lang);
