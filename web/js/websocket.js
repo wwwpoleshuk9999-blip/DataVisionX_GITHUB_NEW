@@ -35,50 +35,81 @@ function connectWebSocket() {
         console.log("WS:", event.data);
 
         try {
+            if (event.data === "ping") {
+                return;
+            }
 
             const msg = JSON.parse(event.data);
+
             if (typeof addLiveEvent === "function") {
                 addLiveEvent(msg);
             }
 
-            switch (msg.event) {
-
-                case "plugin_started":
-                case "plugin_stopped":
-                case "plugin_failed":
-
-                    fetch(API + "/plugins/" + msg.data.plugin + "/status", {
-                        headers: headers()
-                    })
-                    .then(r => r.json())
-                    .then(updatePluginCard)
-                    .catch(() => loadPlugins());
-
-                    break;
-
-                case "ai_chat_completed":
-                    if (typeof aiConsoleAdd === "function") aiConsoleAdd(msg);
-                    loadEvents();
-                    break;
-
-                default:
-                    loadRuntime();
-            }
+            handleLiveEvent(msg);
 
         } catch (e) {
-
-            if (event.data !== "ping") {
-                console.error("WS parse error:", e);
-            }
-
+            console.error("WS parse error:", e);
         }
 
     };
 }
 
 
+
+
 // =========================
-// Phoenix Build 006.1
-// Auto start
+// Phoenix Build 009
+// Live Event Router
 // =========================
 
+function handleLiveEvent(msg) {
+
+    if (!msg || !msg.event) {
+        return;
+    }
+
+    console.log("LIVE EVENT:", msg.event);
+
+
+    switch(msg.event) {
+
+        case "plugin_started":
+        case "plugin_stopped":
+        case "plugin_failed":
+
+            if (typeof loadPlugins === "function") {
+                loadPlugins();
+            }
+
+            if (typeof loadPluginHealth === "function") {
+                loadPluginHealth();
+            }
+
+            break;
+
+
+        case "runtime_start":
+        case "runtime_stop":
+        case "runtime_restart":
+        case "runtime_reload":
+
+            if (typeof loadRuntime === "function") {
+                loadRuntime();
+            }
+
+            break;
+
+
+        case "ai_chat_completed":
+
+            if (typeof aiConsoleAdd === "function") {
+                aiConsoleAdd(msg);
+            }
+
+            break;
+
+
+        default:
+            console.log("Unhandled event:", msg.event);
+    }
+}

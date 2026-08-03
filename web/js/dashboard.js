@@ -119,7 +119,7 @@ Version: ${item.version}
 }
 
 
-async function loadPluginHealth() {
+async function loadPluginHealthh() {
     const r = await fetch("/health/plugins", {headers: headers()});
     const d = await r.json();
 
