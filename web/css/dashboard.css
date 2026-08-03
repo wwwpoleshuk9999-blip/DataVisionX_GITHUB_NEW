@@ -264,3 +264,43 @@
     }
 }
 
+
+/* =====================================
+   Phoenix Build 010.8
+   Data Visualization Layer
+===================================== */
+
+#cpuChart,
+#memoryChart {
+    width:100% !important;
+    height:250px !important;
+}
+
+
+.dashboard-section .card:has(canvas) {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(30,41,59,.95),
+            rgba(15,23,42,.95)
+        );
+
+    border:1px solid rgba(56,189,248,.18);
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.35),
+        inset 0 0 30px rgba(56,189,248,.05);
+
+    transition:.3s;
+}
+
+
+.dashboard-section .card:has(canvas):hover {
+    transform:translateY(-4px);
+    border-color:#38bdf8;
+}
+
+
+.dashboard-section canvas {
+    padding:8px;
+}
+
