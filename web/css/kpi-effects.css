@@ -1,0 +1,28 @@
+/* ===== Phoenix Build 011.2 KPI Effects ===== */
+
+.kpi-good{
+    border-left:5px solid #22c55e;
+}
+
+.kpi-warning{
+    border-left:5px solid #facc15;
+}
+
+.kpi-danger{
+    border-left:5px solid #ef4444;
+}
+
+.kpi-update{
+    animation:kpiFlash .35s ease;
+}
+
+@keyframes kpiFlash{
+    0%{transform:scale(1)}
+    50%{transform:scale(1.03)}
+    100%{transform:scale(1)}
+}
+
+.kpi-trend{
+    margin-left:8px;
+    font-size:0.9rem;
+}
