@@ -1,4 +1,5 @@
 import json
+import subprocess
 from pathlib import Path
 from datetime import datetime, UTC
 
@@ -14,19 +15,66 @@ class TechnicalAuditor:
             "services": self._exists("services"),
             "web": self._exists("web"),
             "plugins": self._exists("plugins"),
-            "runtime": self._exists("runtime"),
-            "tests": self._exists("tests"),
+            "devtools": self._exists("devtools"),
+            "recovery": self._exists("tools/recovery"),
         }
+
+        runtime = self._exists("runtime")
+        tests = self._exists("tests")
+
+        git = self._git_info()
+
+        critical_missing = [
+            name for name, value in checks.items()
+            if not value
+        ]
+
+        if critical_missing:
+            status = "CRITICAL"
+        elif not runtime or not tests:
+            status = "WARNING"
+        else:
+            status = "HEALTHY"
 
         return {
             "project": self.root.name,
             "timestamp": datetime.now(UTC).isoformat(),
             "checks": checks,
-            "status": "OK" if all(checks.values()) else "WARNING"
+            "runtime": {
+                "present": runtime,
+                "classification": "runtime-layer"
+            },
+            "tests": {
+                "present": tests,
+                "classification": "optional"
+            },
+            "git": git,
+            "missing_critical": critical_missing,
+            "status": status
         }
 
     def _exists(self, path):
         return (self.root / path).exists()
+
+    def _git_info(self):
+        def run(command):
+            try:
+                return subprocess.check_output(
+                    command,
+                    cwd=self.root,
+                    stderr=subprocess.DEVNULL,
+                    text=True
+                ).strip()
+            except (subprocess.CalledProcessError, FileNotFoundError):
+                return None
+
+        return {
+            "branch": run(["git", "branch", "--show-current"]),
+            "commit": run(["git", "rev-parse", "HEAD"]),
+            "status": "CLEAN"
+            if run(["git", "status", "--porcelain"]) == ""
+            else "DIRTY"
+        }
 
 
 def save_report(data, output="audit_report.json"):

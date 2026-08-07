@@ -23,3 +23,5 @@ backups/
 *.backup
 data/ai_memory.db
 runtime/state.json
+
+audit_report.json
