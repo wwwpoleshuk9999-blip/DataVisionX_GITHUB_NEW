@@ -20,6 +20,7 @@ from api.routes.runtime import router as runtime_router
 from api.routes.recovery import router as recovery_router
 from api.routes.plugin_health import router as plugin_health_router
 from api.routes.websocket import router as websocket_router
+from api.routes.devtools import router as devtools_router
 
 
 
@@ -45,6 +46,7 @@ app.include_router(runtime_router)
 app.include_router(recovery_router)
 app.include_router(plugin_health_router)
 app.include_router(websocket_router)
+app.include_router(devtools_router)
 
 
 app.mount('/web', StaticFiles(directory='web'), name='web')
