@@ -1,0 +1,27 @@
+{
+    "policy_source": "runtime/recovery/policy_report.json",
+    "selection_field": "selected.file",
+    "selected_checkpoint": "checkpoint_20260807_133322.json",
+    "consumers": [
+        "tools/recovery/policy.py",
+        "tools/recovery/checks/verify_backup.py",
+        "tools/recovery/restore.py",
+        "tools/recovery/restore_v2.py",
+        "tools/recovery/cli.py",
+        "tools/recovery/policy_score.py"
+    ],
+    "checks": {
+        "policy_exists": true,
+        "selected_file_present": true,
+        "selected_status_ready": true,
+        "selected_backup_verified": true,
+        "selected_checkpoint_exists": true,
+        "checkpoint_status_ready": true,
+        "checkpoint_backup_verified": true,
+        "policy_checkpoint_matches": true
+    },
+    "status": "READY",
+    "engine": "DTA-048.1",
+    "mode": "CROSS_CONSUMER_CONTRACT",
+    "timestamp": "2026-08-09T05:23:22.948441+00:00"
+}
