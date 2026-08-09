@@ -1,0 +1,19 @@
+{
+    "dta": "DTA-051",
+    "title": "Restore non-empty target safety contract",
+    "timestamp": "2026-08-09T05:32:44.051074+00:00",
+    "status": "READY",
+    "execution": {
+        "return_code": 1,
+        "expected_nonzero": true,
+        "sentinel_unchanged": true,
+        "root_file_count_after_rejection": 1,
+        "temporary_target_removed": true
+    },
+    "assertions": {
+        "non_empty_target_rejected": true,
+        "existing_files_preserved": true,
+        "partial_restore_prevented": true,
+        "cleanup_completed": true
+    }
+}
