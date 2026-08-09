@@ -1,0 +1,67 @@
+{
+    "project": "",
+    "engine": "DTA-046",
+    "purpose": "deterministic_checkpoint_selection_in_backup_pipeline",
+    "consumer": "tools/recovery/backup_now.sh",
+    "selection_source": "stdout_of_tools/recovery/checkpoint.py",
+    "selection_contract": "CHECKPOINT_OUTPUT -> saved_path",
+    "legacy_selector_removed": {
+        "ls_mtime_checkpoint_selection": false,
+        "selector": "ls -t \"$BACKUP_DIR\"/checkpoint_*.json | head -1"
+    },
+    "checks": [
+        {
+            "check": "checkpoint_created_by_checkpoint_py",
+            "valid": true
+        },
+        {
+            "check": "checkpoint_path_extracted_from_saved_output",
+            "valid": true
+        },
+        {
+            "check": "checkpoint_file_exists",
+            "valid": true
+        },
+        {
+            "check": "checkpoint_json_valid",
+            "valid": true
+        },
+        {
+            "check": "code_archive_exists",
+            "valid": true
+        },
+        {
+            "check": "runtime_archive_exists",
+            "valid": true
+        },
+        {
+            "check": "code_sha256_present",
+            "valid": true
+        },
+        {
+            "check": "runtime_sha256_present",
+            "valid": true
+        },
+        {
+            "check": "backup_status_verified",
+            "valid": true
+        },
+        {
+            "check": "git_commit_matches_checkpoint",
+            "valid": true
+        },
+        {
+            "check": "full_backup_pipeline_test",
+            "valid": true
+        }
+    ],
+    "tested_checkpoint": "checkpoint_20260809_101609.json",
+    "tested_git_commit": "fd2fd7e3eed66aa58c5b64a964b1b0fd3b142e9b",
+    "contract": {
+        "checkpoint_selection": "DETERMINISTIC_CHECKPOINT_PATH_FROM_CREATOR_OUTPUT",
+        "mtime_based_selection": false,
+        "filesystem_order_selection": false,
+        "selection_source": "checkpoint.py saved output"
+    },
+    "status": "READY"
+}

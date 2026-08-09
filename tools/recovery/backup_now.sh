@@ -47,9 +47,13 @@ sha256sum "$CODE_ARCHIVE" | tee "$CODE_SHA"
 sha256sum "$RUNTIME_ARCHIVE" | tee "$RUNTIME_SHA"
 
 echo "[5/5] Creating checkpoint"
-python tools/recovery/checkpoint.py
-
-CHECKPOINT="$(ls -t "$BACKUP_DIR"/checkpoint_*.json | head -1)"
+CHECKPOINT_OUTPUT="$(python tools/recovery/checkpoint.py)"
+printf "%s\n" "$CHECKPOINT_OUTPUT"
+CHECKPOINT="$(printf "%s\n" "$CHECKPOINT_OUTPUT" | sed -n "s/^saved: //p")"
+if [ -z "$CHECKPOINT" ] || [ ! -f "$CHECKPOINT" ]; then
+    echo "ERROR: checkpoint.py did not return a valid checkpoint path" >&2
+    exit 1
+fi
 
 python - "$CHECKPOINT" "$CODE_ARCHIVE" "$RUNTIME_ARCHIVE" "$CODE_SHA" "$RUNTIME_SHA" <<'PY'
 import json
