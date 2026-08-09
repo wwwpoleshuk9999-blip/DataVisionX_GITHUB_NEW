@@ -11,32 +11,62 @@ BASE = Path(__file__).resolve().parents[2]
 BACKUP_DIR = BASE / "backups" / "phoenix"
 
 
-def get_checkpoints():
-    return sorted(
-        BACKUP_DIR.glob("checkpoint_*.json"),
-        key=lambda p: p.stat().st_mtime,
-        reverse=True,
-    )
+def load_policy():
+    policy_file = BASE / "runtime" / "recovery" / "policy_report.json"
+
+    if not policy_file.is_file():
+        raise RuntimeError(f"Policy report not found: {policy_file}")
+
+    return json.loads(policy_file.read_text(encoding="utf-8"))
+
+
+def get_policy_selected_checkpoint():
+    policy = load_policy()
+    selected = policy.get("selected") or {}
+
+    checkpoint_name = selected.get("file")
+    if not checkpoint_name:
+        raise RuntimeError("Policy does not contain selected.file")
+
+    if selected.get("status") != "READY":
+        raise RuntimeError("Policy-selected checkpoint is not READY")
+
+    if selected.get("backup") != "VERIFIED":
+        raise RuntimeError("Policy-selected checkpoint is not VERIFIED")
+
+    checkpoint = BACKUP_DIR / checkpoint_name
+
+    if not checkpoint.is_file():
+        raise RuntimeError(
+            f"Policy-selected checkpoint not found: {checkpoint}"
+        )
+
+    data = json.loads(checkpoint.read_text(encoding="utf-8"))
+    backup = data.get("backup") or {}
+
+    if backup.get("status") != "VERIFIED":
+        raise RuntimeError("Checkpoint backup is not VERIFIED")
+
+    return checkpoint, data
 
 
 def list_checkpoints():
-    checkpoints = get_checkpoints()
-
-    if not checkpoints:
-        print("No recovery checkpoints found")
-        return
+    try:
+        checkpoint, data = get_policy_selected_checkpoint()
+    except RuntimeError as exc:
+        print(f"Policy error: {exc}")
+        return 1
 
     print("=== DataVisionX Recovery Checkpoints ===")
+    print()
+    print("[POLICY SELECTED]")
+    print("File:", checkpoint.name)
+    print("Created:", data.get("created"))
+    print("Commit:", data.get("git", {}).get("commit"))
+    print("Status:", data.get("status"))
+    print("Backup:", data.get("backup", {}).get("status"))
+    return 0
 
-    for index, checkpoint in enumerate(checkpoints, 1):
-        data = json.loads(checkpoint.read_text(encoding="utf-8"))
-
-        print()
-        print(f"[{index}]")
-        print("File:", checkpoint.name)
-        print("Created:", data.get("created"))
-        print("Commit:", data.get("git", {}).get("commit"))
-        print("Status:", data.get("status"))
 
 
 def restore_policy_selected(target):

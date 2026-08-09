@@ -1,0 +1,45 @@
+{
+    "project": "DataVisionX",
+    "engine": "DTA-042",
+    "purpose": "policy_bound_cli_checkpoint_listing",
+    "selection_source": "runtime/recovery/policy_report.json",
+    "selection_field": "selected.file",
+    "consumer": "tools/recovery/cli.py",
+    "contract": {
+        "cli_list_selection": "POLICY_SELECTED_CHECKPOINT",
+        "mtime_based_checkpoint_selection": false,
+        "glob_based_checkpoint_selection": false,
+        "invalid_policy_checkpoint_rejected": true,
+        "restore_executor": "tools/recovery/restore_v2.py"
+    },
+    "checks": [
+        {
+            "check": "policy_selector_present",
+            "valid": true
+        },
+        {
+            "check": "mtime_selector_removed",
+            "valid": true
+        },
+        {
+            "check": "glob_checkpoint_selector_removed",
+            "valid": true
+        },
+        {
+            "check": "positive_policy_selection_test",
+            "test_checkpoint": "checkpoint_20260807_133322.json",
+            "valid": true
+        },
+        {
+            "check": "negative_invalid_checkpoint_rejected",
+            "test_checkpoint": "checkpoint_20260807_133141.json",
+            "valid": true
+        },
+        {
+            "check": "policy_restored_after_tests",
+            "selected_file": "checkpoint_20260807_133322.json",
+            "valid": true
+        }
+    ],
+    "status": "READY"
+}
