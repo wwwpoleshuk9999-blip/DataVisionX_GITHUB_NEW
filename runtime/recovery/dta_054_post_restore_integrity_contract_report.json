@@ -1,0 +1,28 @@
+{
+  "dta": "DTA-054",
+  "title": "Post-Restore Integrity Contract",
+  "status": "READY",
+  "checkpoint": "checkpoint_20260807_133322.json",
+  "code_archive": "DataVisionX_20260807_133321.tar.gz",
+  "runtime_archive": "runtime_20260807_133321.tar.gz",
+  "checks": {
+    "checkpoint_selected": true,
+    "code_archive_exists": true,
+    "runtime_archive_exists": true,
+    "runtime_structure_valid": true,
+    "expected_files_present": true,
+    "no_unexpected_files": true,
+    "file_hashes_match": true,
+    "restored_runtime_present": true
+  },
+  "counts": {
+    "code_archive_files": 225,
+    "runtime_archive_files": 13,
+    "expected_files": 238,
+    "restored_files": 238,
+    "missing_files": 0,
+    "extra_files": 0,
+    "hash_mismatches": 0
+  },
+  "result": "READY"
+}
