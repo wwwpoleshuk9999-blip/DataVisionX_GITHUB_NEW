@@ -1,0 +1,20 @@
+{
+    "dta": "DTA-052",
+    "title": "Restore path traversal security contract",
+    "timestamp": "2026-08-09T05:37:31.883609+00:00",
+    "status": "READY",
+    "execution": {
+        "safe_extract_rejection": true,
+        "expected_security_error": true,
+        "escape_file_created": false,
+        "temporary_test_cleanup": true
+    },
+    "assertions": {
+        "path_traversal_blocked": true,
+        "target_boundary_preserved": true,
+        "no_escape_file_created": true,
+        "cleanup_completed": true
+    },
+    "attack_path": "../../ESCAPE.txt",
+    "expected_error": "Unsafe archive path"
+}
