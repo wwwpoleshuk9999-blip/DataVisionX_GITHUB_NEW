@@ -1,0 +1,41 @@
+{
+    "project": "",
+    "engine": "DTA-038",
+    "purpose": "policy_score_policy_bound_checkpoint_selection_contract_audit",
+    "selection_source": "runtime/recovery/policy_report.json:selected.file",
+    "selection_field": "selected.file",
+    "policy_selected_checkpoint": "checkpoint_20260807_133322.json",
+    "score_selected_checkpoint": "checkpoint_20260807_133322.json",
+    "checks": [
+        {
+            "check": "policy_report_exists",
+            "valid": true
+        },
+        {
+            "check": "policy_selected_file_present",
+            "valid": true
+        },
+        {
+            "check": "policy_selected_status_ready",
+            "valid": true
+        },
+        {
+            "check": "policy_selected_backup_verified",
+            "valid": true
+        },
+        {
+            "check": "policy_score_consumes_same_checkpoint",
+            "valid": true
+        },
+        {
+            "check": "policy_score_report_ready",
+            "valid": true
+        },
+        {
+            "check": "independent_mtime_selection_removed",
+            "valid": true
+        }
+    ],
+    "status": "READY",
+    "timestamp": "2026-08-09T04:23:31.729996+00:00"
+}
