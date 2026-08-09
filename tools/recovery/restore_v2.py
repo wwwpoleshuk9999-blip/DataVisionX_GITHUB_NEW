@@ -55,19 +55,6 @@ def safe_extract(tar_path: Path, destination: Path):
         tar.extractall(destination, filter="data")
 
 
-def find_latest(prefix: str):
-    files = sorted(
-        BACKUP_DIR.glob(f"{prefix}_*.tar.gz"),
-        key=lambda p: p.stat().st_mtime,
-        reverse=True,
-    )
-
-    if not files:
-        raise RuntimeError(f"Backup not found: {prefix}_*.tar.gz")
-
-    return files[0]
-
-
 def find_sha(archive: Path):
     sha_file = archive.parent / (archive.name.removesuffix(".tar.gz") + ".sha256")
 
@@ -209,9 +196,38 @@ def main():
     print(f"Target: {target}")
     print()
 
-    code_archive = find_latest("DataVisionX")
-    runtime_archive = find_latest("runtime")
     checkpoint = find_policy_checkpoint()
+
+    checkpoint_data = json.loads(
+        checkpoint.read_text(encoding="utf-8")
+    )
+    backup = checkpoint_data.get("backup") or {}
+
+    code_archive_name = backup.get("code_archive")
+    runtime_archive_name = backup.get("runtime_archive")
+
+    if not code_archive_name:
+        raise RuntimeError(
+            "Policy-selected checkpoint does not contain backup.code_archive"
+        )
+
+    if not runtime_archive_name:
+        raise RuntimeError(
+            "Policy-selected checkpoint does not contain backup.runtime_archive"
+        )
+
+    code_archive = BACKUP_DIR / code_archive_name
+    runtime_archive = BACKUP_DIR / runtime_archive_name
+
+    if not code_archive.is_file():
+        raise RuntimeError(
+            f"Policy-bound code archive not found: {code_archive}"
+        )
+
+    if not runtime_archive.is_file():
+        raise RuntimeError(
+            f"Policy-bound runtime archive not found: {runtime_archive}"
+        )
 
     print(f"CODE:    {code_archive.name}")
     print(f"RUNTIME: {runtime_archive.name}")

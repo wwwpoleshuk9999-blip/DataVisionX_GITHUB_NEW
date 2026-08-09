@@ -1,0 +1,52 @@
+{
+    "dta": "DTA-041",
+    "title": "Policy-bound restore archive selection contract",
+    "status": "READY",
+    "scope": "tools/recovery/restore_v2.py",
+    "contract": {
+        "checkpoint_source": "runtime/recovery/policy_report.json:selected.file",
+        "code_archive_source": "selected checkpoint: backup.code_archive",
+        "runtime_archive_source": "selected checkpoint: backup.runtime_archive",
+        "archive_selection": "policy-bound",
+        "independent_latest_archive_selection": false,
+        "mtime_selection": false,
+        "glob_archive_selection": false
+    },
+    "checks": [
+        {
+            "name": "policy_checkpoint_selection",
+            "valid": true,
+            "evidence": "checkpoint_20260807_133322.json"
+        },
+        {
+            "name": "code_archive_bound_to_checkpoint",
+            "valid": true,
+            "evidence": "DataVisionX_20260807_133321.tar.gz"
+        },
+        {
+            "name": "runtime_archive_bound_to_checkpoint",
+            "valid": true,
+            "evidence": "runtime_20260807_133321.tar.gz"
+        },
+        {
+            "name": "code_archive_sha256",
+            "valid": true,
+            "evidence": "SHA256 OK"
+        },
+        {
+            "name": "runtime_archive_sha256",
+            "valid": true,
+            "evidence": "SHA256 OK"
+        },
+        {
+            "name": "negative_checkpoint_without_backup",
+            "valid": true,
+            "evidence": "Policy-selected checkpoint does not contain backup.code_archive"
+        },
+        {
+            "name": "latest_archives_not_selected",
+            "valid": true,
+            "evidence": "Negative test confirmed no independent archive selection"
+        }
+    ]
+}
