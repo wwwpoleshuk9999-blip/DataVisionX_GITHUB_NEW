@@ -1,0 +1,30 @@
+{
+  "dta": "DTA-055",
+  "title": "Runtime boot contract",
+  "status": "READY",
+  "python_runtime": "PASS",
+  "fastapi": {
+    "version": "0.115.6",
+    "import": "PASS"
+  },
+  "uvicorn": {
+    "version": "0.51.0",
+    "import": "PASS"
+  },
+  "pydantic": {
+    "version": "2.13.4",
+    "import": "PASS"
+  },
+  "pydantic_core": {
+    "version": "2.46.4",
+    "import": "PASS"
+  },
+  "main_import": "PASS",
+  "fastapi_app_present": "PASS",
+  "fastapi_app_type": "PASS",
+  "android_environment": {
+    "api_level": 33,
+    "architecture": "arm64",
+    "psutil_excluded_from_android_test_lock": true
+  }
+}
