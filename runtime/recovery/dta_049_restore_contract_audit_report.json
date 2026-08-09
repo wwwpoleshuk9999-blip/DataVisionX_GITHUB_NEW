@@ -1,0 +1,26 @@
+{
+    "project": "DataVisionX_011_backup",
+    "timestamp": "2026-08-09T05:27:01.890244+00:00",
+    "engine": "DTA-049",
+    "mode": "RESTORE_CONTRACT_AUDIT",
+    "status": "READY",
+    "checkpoint": "checkpoint_20260807_133322.json",
+    "code_archive": "DataVisionX_20260807_133321.tar.gz",
+    "runtime_archive": "runtime_20260807_133321.tar.gz",
+    "commit": "7590283a5430dedfd39aea0d4d76e10bdfcfc4ab",
+    "checks": {
+        "policy_selected_file": true,
+        "policy_status_ready": true,
+        "policy_backup_verified": true,
+        "checkpoint_exists": true,
+        "checkpoint_status_ready": true,
+        "checkpoint_backup_verified": true,
+        "code_archive_declared": true,
+        "runtime_archive_declared": true,
+        "code_archive_exists": true,
+        "runtime_archive_exists": true,
+        "code_sha_matches": true,
+        "runtime_sha_matches": true,
+        "policy_checkpoint_commit_matches": true
+    }
+}
