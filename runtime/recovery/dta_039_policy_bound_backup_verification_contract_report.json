@@ -1,0 +1,65 @@
+{
+    "project": "",
+    "engine": "DTA-039",
+    "purpose": "policy_bound_backup_verification_contract_audit",
+    "selection_source": "runtime/recovery/policy_report.json",
+    "selection_field": "selected.file",
+    "selected_checkpoint": "checkpoint_20260807_133322.json",
+    "selected_archive": "DataVisionX_20260807_133321.tar.gz",
+    "checks": [
+        {
+            "check": "policy_report_exists",
+            "valid": true
+        },
+        {
+            "check": "policy_selected_checkpoint_present",
+            "valid": true
+        },
+        {
+            "check": "policy_selected_status_ready",
+            "valid": true
+        },
+        {
+            "check": "policy_selected_backup_verified",
+            "valid": true
+        },
+        {
+            "check": "canonical_checkpoint_exists",
+            "valid": true
+        },
+        {
+            "check": "checkpoint_backup_verified",
+            "valid": true
+        },
+        {
+            "check": "checkpoint_code_archive_present",
+            "valid": true
+        },
+        {
+            "check": "canonical_code_archive_exists",
+            "valid": true
+        },
+        {
+            "check": "independent_archive_selection_removed",
+            "valid": true
+        },
+        {
+            "check": "positive_archive_verification",
+            "valid": true
+        },
+        {
+            "check": "invalid_checkpoint_rejected",
+            "valid": true
+        },
+        {
+            "check": "policy_restored_after_functional_test",
+            "valid": true
+        }
+    ],
+    "functional_tests": {
+        "positive": "READY",
+        "negative": "READY"
+    },
+    "status": "READY",
+    "timestamp": "2026-08-09T04:34:03.028194+00:00"
+}
