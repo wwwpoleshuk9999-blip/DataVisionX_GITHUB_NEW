@@ -1,0 +1,20 @@
+{
+    "dta": "DTA-053",
+    "title": "Restore symlink traversal security contract",
+    "timestamp": "2026-08-09T05:40:58.795708+00:00",
+    "status": "READY",
+    "execution": {
+        "safe_extract_rejection": true,
+        "symlink_created": false,
+        "escape_file_created": false,
+        "temporary_test_cleanup": true
+    },
+    "assertions": {
+        "symlink_traversal_blocked": true,
+        "target_boundary_preserved": true,
+        "no_escape_file_created": true,
+        "cleanup_completed": true
+    },
+    "attack_path": "runtime/escape_link -> ../../ESCAPE.txt",
+    "expected_behavior": "reject link outside extraction destination"
+}
