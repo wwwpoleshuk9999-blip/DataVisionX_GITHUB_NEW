@@ -1,0 +1,52 @@
+{
+  "dta": "DTA-062",
+  "title": "Runtime HTTP lifecycle contract",
+  "status": "READY",
+  "health": {
+    "status_code": 200,
+    "json": "PASS"
+  },
+  "runtime": {
+    "initial_status_code": 200,
+    "initial_payload": "PASS"
+  },
+  "lifecycle": {
+    "start": {
+      "status_code": 200,
+      "runtime_status": "RUNNING"
+    },
+    "stop": {
+      "status_code": 200,
+      "runtime_status": "STOPPED"
+    },
+    "restart": {
+      "status_code": 200,
+      "runtime_status": "RUNNING"
+    },
+    "final_stop": {
+      "status_code": 200,
+      "runtime_status": "STOPPED"
+    }
+  },
+  "checks": {
+    "process_started": "PASS",
+    "http_boot": "PASS",
+    "health_2xx": "PASS",
+    "health_json": "PASS",
+    "runtime_initial_2xx": "PASS",
+    "runtime_initial_json": "PASS",
+    "runtime_initial_payload": "PASS",
+    "runtime_start_2xx": "PASS",
+    "runtime_start_json": "PASS",
+    "runtime_running_after_start": "PASS",
+    "runtime_stop_2xx": "PASS",
+    "runtime_stop_json": "PASS",
+    "runtime_stopped_after_stop": "PASS",
+    "runtime_restart_2xx": "PASS",
+    "runtime_restart_json": "PASS",
+    "runtime_running_after_restart": "PASS",
+    "runtime_final_stop_2xx": "PASS",
+    "runtime_final_stopped": "PASS"
+  },
+  "server_cleanup": "PASS"
+}
