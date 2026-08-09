@@ -1,0 +1,29 @@
+{
+  "dta": "DTA-056",
+  "title": "Runtime HTTP boot smoke contract",
+  "status": "READY",
+  "server": {
+    "entrypoint": "main:app",
+    "runner": "uvicorn",
+    "host": "127.0.0.1",
+    "port": 8765,
+    "process_started": "PASS",
+    "http_boot": "PASS"
+  },
+  "health": {
+    "endpoint": "/health",
+    "status_code": 200,
+    "content_type": "application/json",
+    "json_response": "PASS",
+    "status_2xx": "PASS"
+  },
+  "cleanup": {
+    "server_cleanup": "PASS"
+  },
+  "runtime_contract": {
+    "process_boot": "PASS",
+    "http_acceptance": "PASS",
+    "health_endpoint": "PASS",
+    "json_contract": "PASS"
+  }
+}
