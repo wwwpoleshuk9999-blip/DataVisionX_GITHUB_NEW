@@ -1,0 +1,43 @@
+{
+    "project": "",
+    "engine": "DTA-040",
+    "purpose": "policy_bound_checkpoint_selection_contract_audit",
+    "selection_source": "runtime/recovery/policy_report.json",
+    "selection_field": "selected.file",
+    "selected_checkpoint": "checkpoint_20260807_133322.json",
+    "checks": [
+        {
+            "check": "policy_report_exists",
+            "valid": true
+        },
+        {
+            "check": "selected_file_present",
+            "valid": true
+        },
+        {
+            "check": "selected_status_ready",
+            "valid": true
+        },
+        {
+            "check": "selected_backup_verified",
+            "valid": true
+        },
+        {
+            "check": "independent_mtime_selection_removed",
+            "valid": true
+        },
+        {
+            "check": "negative_test_rejects_invalid_backup",
+            "valid": true
+        },
+        {
+            "check": "negative_test_does_not_fallback_to_latest",
+            "valid": true
+        }
+    ],
+    "contract": {
+        "policy.py": "MUST NOT fallback to another checkpoint"
+    },
+    "status": "READY",
+    "timestamp": "2026-08-09T04:40:44.303164+00:00"
+}

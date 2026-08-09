@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 import json
 from pathlib import Path
 from datetime import datetime, timezone
@@ -9,65 +8,69 @@ BACKUP_DIR = BASE / "backups" / "phoenix"
 REPORT = BASE / "runtime" / "recovery" / "policy_report.json"
 
 
-def load_checkpoints():
-    files = sorted(
-        BACKUP_DIR.glob("checkpoint_*.json"),
-        key=lambda p: p.stat().st_mtime,
-        reverse=True,
-    )
+def load_policy_selected_checkpoint():
+    if not REPORT.is_file():
+        raise RuntimeError(f"Policy report not found: {REPORT}")
 
-    result = []
+    policy = json.loads(REPORT.read_text(encoding="utf-8"))
+    selected = policy.get("selected") or {}
 
-    for file in files:
-        data = json.loads(
-            file.read_text(encoding="utf-8")
+    checkpoint_name = selected.get("file")
+    if not checkpoint_name:
+        raise RuntimeError("Policy does not contain selected.file")
+
+    if selected.get("status") != "READY":
+        raise RuntimeError("Policy-selected checkpoint is not READY")
+
+    if selected.get("backup") != "VERIFIED":
+        raise RuntimeError("Policy-selected checkpoint is not VERIFIED")
+
+    checkpoint = BACKUP_DIR / checkpoint_name
+
+    if not checkpoint.is_file():
+        raise RuntimeError(
+            f"Policy-selected checkpoint not found: {checkpoint}"
         )
 
-        result.append({
-            "file": file.name,
-            "created": data.get("created"),
-            "commit": data.get("git", {}).get("commit"),
-            "status": data.get("status"),
-            "backup": data.get("backup", {}).get("status")
-        })
+    data = json.loads(checkpoint.read_text(encoding="utf-8"))
 
-    return result
+    if data.get("status") != "READY":
+        raise RuntimeError("Checkpoint is not READY")
 
+    backup = data.get("backup") or {}
 
-def choose_checkpoint(checkpoints):
-    valid = [
-        c for c in checkpoints
-        if c["status"] == "READY"
-        and c["backup"] == "VERIFIED"
-    ]
+    if backup.get("status") != "VERIFIED":
+        raise RuntimeError("Checkpoint backup is not VERIFIED")
 
-    if not valid:
-        return None
-
-    return valid[0]
+    return {
+        "file": checkpoint.name,
+        "created": data.get("created"),
+        "commit": data.get("git", {}).get("commit"),
+        "status": data.get("status"),
+        "backup": backup.get("status"),
+    }
 
 
 def main():
-    checkpoints = load_checkpoints()
-    selected = choose_checkpoint(checkpoints)
+    selected = load_policy_selected_checkpoint()
 
     report = {
         "project": BASE.name,
         "timestamp": datetime.now(timezone.utc).isoformat(),
-        "policy": "latest_verified_checkpoint",
-        "available": len(checkpoints),
+        "policy": "policy_bound_verified_checkpoint",
+        "available": 1,
         "selected": selected,
-        "status": "READY" if selected else "FAILED"
+        "status": "READY",
     }
 
     REPORT.parent.mkdir(
         parents=True,
-        exist_ok=True
+        exist_ok=True,
     )
 
     REPORT.write_text(
         json.dumps(report, indent=4),
-        encoding="utf-8"
+        encoding="utf-8",
     )
 
     print(json.dumps(report, indent=4))
