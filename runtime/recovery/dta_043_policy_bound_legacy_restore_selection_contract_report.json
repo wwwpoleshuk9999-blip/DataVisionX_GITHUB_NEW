@@ -1,0 +1,44 @@
+{
+    "project": "",
+    "engine": "DTA-043",
+    "purpose": "policy_bound_legacy_restore_selection",
+    "selection_source": "runtime/recovery/policy_report.json",
+    "selection_field": "selected.file",
+    "restore_consumer": "tools/recovery/restore.py",
+    "checks": [
+        {
+            "check": "legacy_history_latest_selector_removed",
+            "valid": true
+        },
+        {
+            "check": "mtime_based_checkpoint_selection_removed",
+            "valid": true
+        },
+        {
+            "check": "policy_report_selector_present",
+            "valid": true
+        },
+        {
+            "check": "positive_policy_selection_test",
+            "checkpoint": "checkpoint_20260807_133322.json",
+            "valid": true
+        },
+        {
+            "check": "negative_invalid_backup_rejected",
+            "checkpoint": "checkpoint_20260807_133141.json",
+            "valid": true
+        },
+        {
+            "check": "policy_restored_after_tests",
+            "selected_file": "checkpoint_20260807_133322.json",
+            "valid": true
+        }
+    ],
+    "contract": {
+        "restore_selection": "POLICY_SELECTED_CHECKPOINT",
+        "legacy_history_selection": false,
+        "mtime_based_selection": false,
+        "selection_source": "runtime/recovery/policy_report.json"
+    },
+    "status": "READY"
+}
