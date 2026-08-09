@@ -1,0 +1,26 @@
+{
+  "dta": "DTA-063",
+  "title": "HTTP → Plugin → EventBus lifecycle contract",
+  "status": "READY",
+  "entrypoint": "main:app",
+  "runner": "uvicorn",
+  "checks": {
+    "http_boot": "PASS",
+    "health_2xx": "PASS",
+    "health_json": "PASS",
+    "plugins_running_after_boot": "PASS",
+    "plugin_started_event": "PASS",
+    "eventbus_emit_started": "PASS",
+    "plugin_stopped_event": "PASS",
+    "eventbus_emit_stopped": "PASS",
+    "runtime_stop_2xx": "PASS",
+    "runtime_stop_json": "PASS",
+    "plugins_stopped_after_runtime_stop": "PASS",
+    "server_cleanup": "PASS"
+  },
+  "observed": {
+    "plugins_started": 3,
+    "plugin_started_events": 3,
+    "plugin_stopped_events": 3
+  }
+}

@@ -134,16 +134,21 @@ class RuntimeManager:
 
 
     def stop(self):
+        plugin_manager = self.get_service("plugin_manager")
+
+        if plugin_manager:
+            for plugin in plugin_manager.list_plugins():
+                try:
+                    if getattr(plugin, "status", "").upper() == "RUNNING":
+                        plugin_manager.stop(plugin.id)
+                except Exception as e:
+                    print(f"Plugin stop failed {plugin.id}: {e}")
 
         data = self._load()
-
         data["status"] = "STOPPED"
         data["last_action"] = "STOP"
-
         self._save(data)
-
         return data
-
 
     def reload(self):
 

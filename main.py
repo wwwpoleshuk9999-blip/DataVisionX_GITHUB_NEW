@@ -3,6 +3,8 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from core.kernel import Kernel
+from core.runtime import runtime
+from core.bootstrap import register_core_services
 from core.health import health
 from api.ai import router as ai_router
 from api.routes.metrics import router as metrics_router
@@ -57,7 +59,9 @@ kernel = Kernel()
 
 @app.on_event("startup")
 def startup():
+    register_core_services()
     kernel.start()
+    runtime.auto_start_plugins()
 
 
 @app.on_event("shutdown")
