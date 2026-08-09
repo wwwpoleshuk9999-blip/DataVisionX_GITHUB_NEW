@@ -1,0 +1,20 @@
+{
+    "dta": "DTA-050",
+    "title": "Restore execution contract",
+    "timestamp": "2026-08-09T05:30:05.814480+00:00",
+    "status": "READY",
+    "execution": {
+        "return_code": 0,
+        "restore_execution": "PASS",
+        "code_extracted": true,
+        "runtime_extracted": true,
+        "runtime_present": true,
+        "temporary_target_removed": true
+    },
+    "checkpoint": "checkpoint_20260807_133322.json",
+    "code_archive": "DataVisionX_20260807_133321.tar.gz",
+    "runtime_archive": "runtime_20260807_133321.tar.gz",
+    "sha256_verified": true,
+    "git_commit_available": true,
+    "policy_bound": true
+}
