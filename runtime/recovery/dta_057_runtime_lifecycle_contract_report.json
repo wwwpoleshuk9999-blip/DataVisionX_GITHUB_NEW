@@ -1,0 +1,51 @@
+{
+  "dta": "DTA-057",
+  "title": "Runtime lifecycle contract",
+  "status": "READY",
+  "entrypoint": "main:app",
+  "server": {
+    "framework": "FastAPI",
+    "runner": "uvicorn"
+  },
+  "startup": {
+    "contract": "kernel.start()",
+    "status": "PASS"
+  },
+  "shutdown": {
+    "contract": "kernel.stop()",
+    "status": "PASS"
+  },
+  "http_boot": {
+    "status_code": 200,
+    "json": "PASS",
+    "status": "PASS"
+  },
+  "health_endpoint": {
+    "path": "/health",
+    "status_code": 200,
+    "json": "PASS",
+    "status": "PASS"
+  },
+  "runtime_endpoint": {
+    "path": "/runtime",
+    "status_code": 200,
+    "json": "PASS",
+    "runtime_status": "RUNNING",
+    "status": "PASS"
+  },
+  "runtime_health_endpoint": {
+    "path": "/runtime/health",
+    "status_code": 200,
+    "json": "PASS",
+    "status": "PASS"
+  },
+  "cleanup": {
+    "sigterm_exit": "PASS",
+    "process_cleanup": "PASS"
+  },
+  "alternative_lifecycle_implementations": [
+    "api/app.py",
+    "api/main.py"
+  ],
+  "active_lifecycle_source": "main.py"
+}
