@@ -39,14 +39,36 @@ def list_checkpoints():
         print("Status:", data.get("status"))
 
 
-def restore_latest(target):
-    checkpoints = get_checkpoints()
+def restore_policy_selected(target):
+    policy_file = BASE / "runtime" / "recovery" / "policy_report.json"
 
-    if not checkpoints:
-        print("No checkpoint available")
+    if not policy_file.is_file():
+        print("Policy report not found:", policy_file)
         return 1
 
-    checkpoint = checkpoints[0]
+    policy = json.loads(policy_file.read_text(encoding="utf-8"))
+    selected = policy.get("selected") or {}
+
+    checkpoint_name = selected.get("file")
+
+    if not checkpoint_name:
+        print("Policy does not contain selected.file")
+        return 1
+
+    if selected.get("status") != "READY":
+        print("Policy-selected checkpoint is not READY")
+        return 1
+
+    if selected.get("backup") != "VERIFIED":
+        print("Policy-selected checkpoint is not VERIFIED")
+        return 1
+
+    checkpoint = BACKUP_DIR / checkpoint_name
+
+    if not checkpoint.is_file():
+        print("Policy-selected checkpoint not found:", checkpoint)
+        return 1
+
     data = json.loads(checkpoint.read_text(encoding="utf-8"))
 
     backup = data.get("backup", {})
@@ -55,8 +77,7 @@ def restore_latest(target):
         print("Checkpoint is not VERIFIED")
         return 1
 
-    code_archive = BACKUP_DIR / backup["code_archive"]
-    runtime_archive = BACKUP_DIR / backup["runtime_archive"]
+    print("Policy-selected checkpoint:", checkpoint.name)
 
     print("=== DataVisionX DTA-005 Restore ===")
     print("Checkpoint:", checkpoint.name)
@@ -105,7 +126,7 @@ def main():
 
     elif args.command == "restore":
         sys.exit(
-            restore_latest(Path(args.target))
+            restore_policy_selected(Path(args.target))
         )
 
     else:

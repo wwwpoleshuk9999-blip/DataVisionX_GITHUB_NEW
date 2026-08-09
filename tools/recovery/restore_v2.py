@@ -79,17 +79,33 @@ def find_sha(archive: Path):
     return sha_file
 
 
-def find_checkpoint():
-    files = sorted(
-        BACKUP_DIR.glob("checkpoint_*.json"),
-        key=lambda p: p.stat().st_mtime,
-        reverse=True,
-    )
+def find_policy_checkpoint():
+    policy_file = BASE / "runtime" / "recovery" / "policy_report.json"
 
-    if not files:
-        raise RuntimeError("Checkpoint not found")
+    if not policy_file.is_file():
+        raise RuntimeError(f"Policy report not found: {policy_file}")
 
-    return files[0]
+    policy = json.loads(policy_file.read_text(encoding="utf-8"))
+    selected = policy.get("selected") or {}
+
+    checkpoint_name = selected.get("file")
+    if not checkpoint_name:
+        raise RuntimeError("Policy does not contain selected.file")
+
+    if selected.get("status") != "READY":
+        raise RuntimeError("Policy-selected checkpoint is not READY")
+
+    if selected.get("backup") != "VERIFIED":
+        raise RuntimeError("Policy-selected checkpoint is not VERIFIED")
+
+    checkpoint = BACKUP_DIR / checkpoint_name
+
+    if not checkpoint.is_file():
+        raise RuntimeError(
+            f"Policy-selected checkpoint not found: {checkpoint}"
+        )
+
+    return checkpoint
 
 
 def verify_checkpoint(
@@ -195,7 +211,7 @@ def main():
 
     code_archive = find_latest("DataVisionX")
     runtime_archive = find_latest("runtime")
-    checkpoint = find_checkpoint()
+    checkpoint = find_policy_checkpoint()
 
     print(f"CODE:    {code_archive.name}")
     print(f"RUNTIME: {runtime_archive.name}")
