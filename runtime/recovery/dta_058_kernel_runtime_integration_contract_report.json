@@ -1,0 +1,39 @@
+{
+  "dta": "DTA-058",
+  "title": "Kernel to Runtime integration contract",
+  "status": "READY",
+  "kernel": {
+    "class": "Kernel",
+    "running_state": "PASS",
+    "start_contract": "runtime.start()",
+    "stop_contract": "runtime.stop()"
+  },
+  "runtime": {
+    "class": "RuntimeManager",
+    "start_status": "RUNNING",
+    "stop_status": "STOPPED",
+    "started_at_present": "PASS",
+    "start_action": "START",
+    "stop_action": "STOP"
+  },
+  "lifecycle_checks": {
+    "kernel_running_after_start": "PASS",
+    "runtime_running_after_start": "PASS",
+    "runtime_started_at_present": "PASS",
+    "runtime_last_action_start": "PASS",
+    "kernel_stopped_after_stop": "PASS",
+    "runtime_stopped_after_stop": "PASS",
+    "runtime_last_action_stop": "PASS",
+    "second_stop_is_safe": "PASS",
+    "kernel_running_after_second_start": "PASS",
+    "runtime_running_after_second_start": "PASS",
+    "runtime_last_action_second_start": "PASS",
+    "final_kernel_stopped": "PASS",
+    "final_runtime_stopped": "PASS"
+  },
+  "architecture_notes": {
+    "http_layer_required": false,
+    "direct_kernel_runtime_contract_verified": true,
+    "runtime_restart_count_preserved": true
+  }
+}
