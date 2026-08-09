@@ -1,0 +1,35 @@
+{
+  "dta": "DTA-059",
+  "title": "Runtime service registry contract",
+  "status": "READY",
+  "services": [
+    "permissions",
+    "event_bus",
+    "storage",
+    "plugin_manager",
+    "ai_service"
+  ],
+  "checks": {
+    "permissions_registered": "PASS",
+    "event_bus_registered": "PASS",
+    "storage_registered": "PASS",
+    "plugin_manager_registered": "PASS",
+    "ai_service_registered": "PASS",
+    "permissions_present": "PASS",
+    "event_bus_present": "PASS",
+    "storage_present": "PASS",
+    "plugin_manager_present": "PASS",
+    "ai_service_present": "PASS",
+    "plugin_manager_identity": "PASS",
+    "plugin_manager_event_bus_bound": "PASS",
+    "plugin_lifecycle_event_bus_bound": "PASS",
+    "bootstrap_idempotent": "PASS",
+    "registry_service_count_stable": "PASS"
+  },
+  "architecture": {
+    "runtime_registry": "PASS",
+    "core_bootstrap": "PASS",
+    "event_bus_binding": "PASS",
+    "plugin_manager_binding": "PASS"
+  }
+}
