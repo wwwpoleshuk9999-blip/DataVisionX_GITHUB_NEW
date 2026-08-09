@@ -1,0 +1,33 @@
+{
+  "dta": "DTA-061",
+  "title": "Plugin lifecycle contract",
+  "status": "READY",
+  "test_plugin": "example",
+  "discovery": {
+    "status": "PASS",
+    "plugins": [
+      "example",
+      "example2",
+      "test_plugin"
+    ]
+  },
+  "lifecycle": {
+    "initial_stopped": "PASS",
+    "start_returns_true": "PASS",
+    "status_after_start": "PASS",
+    "stop_returns_true": "PASS",
+    "status_after_stop": "PASS",
+    "restart_returns_true": "PASS",
+    "status_after_restart": "PASS",
+    "final_stop_returns_true": "PASS",
+    "final_status_stopped": "PASS"
+  },
+  "event_bus": {
+    "plugin_started": "PASS",
+    "plugin_stopped": "PASS"
+  },
+  "cleanup": "PASS",
+  "websocket_bridge": {
+    "loop_ready": "NOT_APPLICABLE_OUTSIDE_ASGI"
+  }
+}
