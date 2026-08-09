@@ -1,0 +1,63 @@
+{
+    "project": "",
+    "engine": "DTA-047",
+    "purpose": "remaining_recovery_selector_audit",
+    "scope": "tools/recovery",
+    "checks": [
+        {
+            "check": "checkpoint_mtime_selector",
+            "pattern": "st_mtime",
+            "matches": 0,
+            "valid": true
+        },
+        {
+            "check": "filesystem_order_checkpoint_selector",
+            "pattern": "ls -t|head -1",
+            "matches": 0,
+            "valid": true
+        },
+        {
+            "check": "glob_checkpoint_selector",
+            "pattern": "glob/glob.glob/checkpoint_*",
+            "matches": 0,
+            "valid": true
+        },
+        {
+            "check": "sorted_checkpoint_selector",
+            "pattern": "sorted(...checkpoint...)",
+            "matches": 0,
+            "valid": true
+        },
+        {
+            "check": "latest_checkpoint_helper",
+            "pattern": "find_latest|get_latest|latest.*checkpoint",
+            "matches": 0,
+            "valid": true
+        },
+        {
+            "check": "archive_position_selector",
+            "pattern": "archives[-1]",
+            "matches": 0,
+            "valid": true
+        },
+        {
+            "check": "remaining_history_latest_usage",
+            "valid": true,
+            "classification": "INTENTIONAL_LATEST_EVENT_STATE_SEMANTICS",
+            "locations": [
+                "tools/recovery/recovery_audit_storage.py:67",
+                "tools/recovery/recovery_decision_intelligence_outcome_history.py:63",
+                "tools/recovery/recovery_decision_intelligence_outcome_history.py:115"
+            ],
+            "checkpoint_selection": false
+        }
+    ],
+    "contract": {
+        "remaining_checkpoint_selectors": 0,
+        "history_latest_usages_are_checkpoint_selectors": false,
+        "checkpoint_selection_is_policy_bound": true,
+        "filesystem_order_selection": false,
+        "mtime_based_selection": false
+    },
+    "status": "READY"
+}
