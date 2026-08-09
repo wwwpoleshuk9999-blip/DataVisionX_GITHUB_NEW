@@ -1,0 +1,35 @@
+{
+  "dta": "DTA-060",
+  "title": "Runtime auto-start plugins contract",
+  "status": "READY",
+  "services": {
+    "plugin_manager_registered": "PASS",
+    "plugin_manager_identity": "PASS"
+  },
+  "plugin_discovery": {
+    "count": 3,
+    "plugins": [
+      "example",
+      "example2",
+      "test_plugin"
+    ],
+    "status": "PASS"
+  },
+  "auto_start": {
+    "returns_list": "PASS",
+    "example": "RUNNING",
+    "example2": "RUNNING",
+    "test_plugin": "RUNNING"
+  },
+  "event_bus": {
+    "plugin_started_events": "PASS",
+    "plugin_stopped_events": "PASS"
+  },
+  "cleanup": {
+    "plugins_stopped_after_test": "PASS"
+  },
+  "websocket_bridge": {
+    "loop_ready": "NOT_APPLICABLE_OUTSIDE_ASGI",
+    "note": "WEBSOCKET LOOP NOT READY is expected during standalone synchronous contract execution."
+  }
+}
