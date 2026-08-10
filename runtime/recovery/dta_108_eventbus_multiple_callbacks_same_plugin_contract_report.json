@@ -1,0 +1,53 @@
+{
+  "dta": "DTA-108",
+  "title": "EventBus multiple callbacks same plugin contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "first_registration_success": "PASS",
+    "second_registration_success": "PASS",
+    "distinct_callbacks_registered": "PASS",
+    "emit_success": "PASS",
+    "both_callbacks_invoked": "PASS",
+    "delivery_order_preserved": "PASS",
+    "registry_stable": "PASS",
+    "payload_preserved": "PASS"
+  },
+  "observed": {
+    "event": "dta108_test_event",
+    "plugin": "system",
+    "registration_results": [
+      true,
+      true
+    ],
+    "listener_count": 2,
+    "delivery": [
+      ["A", 1],
+      ["B", 1]
+    ],
+    "final_registry": [
+      {
+        "plugin": "system",
+        "callback": "listener_a"
+      },
+      {
+        "plugin": "system",
+        "callback": "listener_b"
+      }
+    ],
+    "payload": {
+      "dta": "DTA-108",
+      "sequence": 1,
+      "status": "ORIGINAL"
+    }
+  },
+  "contract": {
+    "multiple_callbacks": "The same plugin may register multiple distinct callbacks for one event",
+    "registration": "Distinct callbacks are retained as separate registry entries",
+    "delivery": "Each registered callback receives the emitted event",
+    "ordering": "Callbacks receive events in registration order",
+    "registry_stability": "Emission does not mutate the listener registry",
+    "source_integrity": "The source payload remains unchanged after delivery"
+  }
+}
