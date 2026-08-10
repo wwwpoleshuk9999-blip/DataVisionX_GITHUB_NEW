@@ -1,0 +1,66 @@
+{
+  "dta": "DTA-203",
+  "title": "EventBus callback mutation + failure recovery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registration_a": "PASS",
+    "registration_b": "PASS",
+    "registration_c": "PASS",
+    "initial_registry_three": "PASS",
+    "first_emit_success": "PASS",
+    "first_emit_no_exception": "PASS",
+    "first_a_received": "PASS",
+    "first_b_received": "PASS",
+    "first_c_received": "PASS",
+    "registry_valid_after_mutation": "PASS",
+    "second_emit_success": "PASS",
+    "second_emit_no_exception": "PASS",
+    "second_delivery_count_three": "PASS",
+    "second_delivery_once_each": "PASS",
+    "source_metadata_preserved": "PASS",
+    "final_registry_valid": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta203_event",
+    "mutation_owner": "plugin_a",
+    "mutated_owner": "plugin_b",
+    "initial_registry": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "first_emit_result": true,
+    "first_emit_exception": null,
+    "first_delivery_count": 3,
+    "registry_after_mutation": [
+      "plugin_a",
+      "plugin_c",
+      "plugin_b"
+    ],
+    "second_emit_result": true,
+    "second_emit_exception": null,
+    "second_delivery_count": 3,
+    "final_registry": [
+      "plugin_a",
+      "plugin_c",
+      "plugin_b"
+    ],
+    "duplicate_owner_entries": false,
+    "source_metadata_preserved": true,
+    "permission": "events"
+  },
+  "contract": {
+    "callback_failure_isolation": "A callback failure during registry mutation does not abort EventBus.emit()",
+    "mutation_isolation": "Listener registry mutation during delivery does not corrupt the listener registry",
+    "delivery_continuity": "All listeners receive the mutation-cycle event exactly once",
+    "post_mutation_continuity": "Subsequent broadcasts remain operational after callback-driven registry mutation",
+    "registry_integrity": "Registry remains structurally valid after unregister and re-register during callback delivery",
+    "duplicate_idempotency": "Re-registration does not create duplicate listener entries",
+    "source_metadata": "Delivered events preserve the plugin_id supplied to emit() as source metadata",
+    "permission_enforcement": "Registration, unregister, re-registration, and emit operations require the events permission"
+  }
+}
