@@ -1,0 +1,62 @@
+{
+  "dta": "DTA-173",
+  "title": "EventBus listener registry snapshot isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "initial_registrations_success": "PASS",
+    "initial_registry_correct": "PASS",
+    "first_emit_success": "PASS",
+    "first_snapshot_delivery_correct": "PASS",
+    "callback_a_registry_mutation_observed": "PASS",
+    "registry_changed_during_emit": "PASS",
+    "callback_c_delivered_from_snapshot": "PASS",
+    "callback_d_not_delivered_from_current_snapshot": "PASS",
+    "second_emit_success": "PASS",
+    "second_registry_delivery_correct": "PASS",
+    "callback_c_absent_after_unregister": "PASS",
+    "callback_d_active_after_register": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta173_event",
+    "initial_registry_order": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "first_delivery_order": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "registry_after_first_emit": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_d"
+    ],
+    "second_delivery_order": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_d"
+    ],
+    "final_registry": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_d"
+    ],
+    "permission": "events"
+  },
+  "contract": {
+    "snapshot_isolation": "EventBus.emit() delivers to a snapshot of the listener registry captured before callback execution",
+    "mid_emit_registration": "A listener registered during an emit is not delivered the event currently in progress",
+    "mid_emit_unregistration": "A listener unregistered during an emit remains eligible for delivery from the current snapshot",
+    "next_emit_registry": "Registry mutations during one emit take effect for subsequent emits",
+    "delivery_order": "Current snapshot delivery preserves listener registration order",
+    "registry_integrity": "Listener registry remains structurally consistent after mid-emit mutations",
+    "permission_enforcement": "Listener registration and removal continue to require the events permission"
+  }
+}
