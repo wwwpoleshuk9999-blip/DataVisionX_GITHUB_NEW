@@ -1,0 +1,65 @@
+{
+  "dta": "DTA-111",
+  "title": "EventBus registry mutation during emit contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "initial_listeners_registered": "PASS",
+    "first_emit_success": "PASS",
+    "late_listener_registered_during_emit": "PASS",
+    "late_listener_not_called_on_current_emit": "PASS",
+    "current_delivery_order_preserved": "PASS",
+    "registry_contains_late_listener": "PASS",
+    "second_emit_success": "PASS",
+    "late_listener_called_on_next_emit": "PASS",
+    "second_delivery_order_preserved": "PASS",
+    "duplicate_registration_prevented": "PASS",
+    "registry_stable": "PASS",
+    "payload_preserved": "PASS"
+  },
+  "observed": {
+    "event": "dta111_test_event",
+    "initial_listener_count": 2,
+    "first_emit_delivery": [
+      ["FIRST", 1],
+      ["SECOND", 1]
+    ],
+    "registration_during_first_emit": [
+      true
+    ],
+    "registry_after_first_emit": [
+      "first_listener",
+      "second_listener",
+      "late_listener"
+    ],
+    "second_emit_delivery": [
+      ["FIRST", 2],
+      ["SECOND", 2],
+      ["LATE", 2]
+    ],
+    "final_registry": [
+      {
+        "plugin": "system",
+        "callback": "first_listener"
+      },
+      {
+        "plugin": "system",
+        "callback": "second_listener"
+      },
+      {
+        "plugin": "system",
+        "callback": "late_listener"
+      }
+    ]
+  },
+  "contract": {
+    "emit_snapshot": "Each emit operates on a snapshot of the listener registry taken before delivery",
+    "current_emit_isolation": "A listener registered during an active emit is not invoked by that same emit",
+    "subsequent_delivery": "A listener registered during one emit participates in subsequent emits",
+    "ordering": "Existing listeners retain registration order and newly registered listeners are appended",
+    "registry_stability": "Registry mutation during delivery does not corrupt or duplicate existing listeners",
+    "source_integrity": "Source payloads remain unchanged after emits",
+    "mutation_safety": "Listener registry changes during delivery do not alter the current delivery iteration"
+  }
+}
