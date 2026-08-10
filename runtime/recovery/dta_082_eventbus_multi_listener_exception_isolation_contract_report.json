@@ -1,0 +1,41 @@
+{
+  "dta": "DTA-082",
+  "title": "EventBus multi-listener exception isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus + services.websocket_bridge",
+  "checks": {
+    "eventbus_created": "PASS",
+    "all_listeners_registered": "PASS",
+    "listener_a_received": "PASS",
+    "failing_listener_invoked": "PASS",
+    "listener_c_received_after_failure": "PASS",
+    "websocket_received_after_failure": "PASS",
+    "payload_preserved": "PASS",
+    "event_emit_survived_failure": "PASS"
+  },
+  "observed": {
+    "listener_count": 4,
+    "listeners": [
+      "listener_a",
+      "listener_b",
+      "listener_c",
+      "websocket_event_listener"
+    ],
+    "failing_listener": "listener_b",
+    "failure": "DTA-082 intentional listener failure",
+    "listener_a_delivery": "PASS",
+    "listener_c_delivery_after_failure": "PASS",
+    "websocket_delivery_after_failure": "PASS",
+    "websocket_delivery_count": 1,
+    "event": "dta082_test_event",
+    "source": "system",
+    "dta": "DTA-082",
+    "sequence": 1,
+    "status": "TEST"
+  },
+  "contract": {
+    "listener_failure_isolated": "An exception in one listener does not stop subsequent listeners",
+    "websocket_bridge_survives": "WebSocket delivery continues after an independent listener failure",
+    "event_emit_survives": "EventBus.emit() completes successfully despite listener exception"
+  }
+}
