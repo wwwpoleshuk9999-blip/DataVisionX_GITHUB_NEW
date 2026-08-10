@@ -1,0 +1,35 @@
+{
+  "dta": "DTA-128",
+  "title": "EventBus bound-method unregister contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "registration_success": "PASS",
+    "listener_registered_before_unregister": "PASS",
+    "unregister_bound_method_success": "PASS",
+    "listener_removed": "PASS",
+    "post_unregister_emit_success": "PASS",
+    "callback_not_called_after_unregister": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta128_test_event",
+    "plugin": "plugin_method",
+    "callback": "Handler.handle",
+    "registration": true,
+    "unregister": true,
+    "registry_after_unregister": {},
+    "post_unregister_emit": true,
+    "callback_invocations_after_unregister": 0,
+    "permission": "events"
+  },
+  "contract": {
+    "bound_method_registration": "EventBus accepts bound instance methods as callbacks",
+    "bound_method_identity": "Callback identity is based on bound-method instance and underlying function",
+    "bound_method_unregister": "A registered bound method can be removed using a freshly accessed bound-method object representing the same instance and function",
+    "last_listener_removal": "Removing the last listener removes the event entry from the registry",
+    "post_unregister_delivery": "Events emitted after unregister succeed without invoking the removed callback",
+    "permission_enforcement": "Register and unregister operations require the plugin events permission",
+    "registry_stability": "Unregister does not leave a stale listener entry"
+  }
+}
