@@ -1,0 +1,46 @@
+{
+  "dta": "DTA-107",
+  "title": "EventBus duplicate listener registration contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "first_registration_success": "PASS",
+    "second_registration_success": "PASS",
+    "duplicate_not_added": "PASS",
+    "single_delivery": "PASS",
+    "delivery_order_preserved": "PASS",
+    "registry_stable": "PASS",
+    "payload_preserved": "PASS"
+  },
+  "observed": {
+    "event": "dta107_test_event",
+    "registration_results": [
+      true,
+      true
+    ],
+    "listener_count": 1,
+    "delivery": [
+      1
+    ],
+    "final_registry": [
+      {
+        "plugin": "system",
+        "callback": "listener"
+      }
+    ],
+    "payload": {
+      "dta": "DTA-107",
+      "sequence": 1,
+      "status": "ORIGINAL"
+    }
+  },
+  "contract": {
+    "duplicate_registration": "Registering the same plugin/callback pair multiple times does not create duplicate registry entries",
+    "registration_result": "Duplicate registration remains idempotently successful",
+    "single_delivery": "A duplicated registration results in exactly one listener delivery",
+    "ordering": "Listener delivery order remains deterministic",
+    "registry_stability": "Duplicate registration does not mutate the registry beyond the original listener",
+    "source_integrity": "The source payload remains unchanged after delivery"
+  }
+}
