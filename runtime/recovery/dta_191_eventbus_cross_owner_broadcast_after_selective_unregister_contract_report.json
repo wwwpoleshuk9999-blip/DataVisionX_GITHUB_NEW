@@ -1,0 +1,49 @@
+{
+  "dta": "DTA-191",
+  "title": "EventBus cross-owner broadcast after selective unregister contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registration_a_success": "PASS",
+    "registration_b_success": "PASS",
+    "initial_registry_correct": "PASS",
+    "unregister_a_success": "PASS",
+    "registry_contains_only_b": "PASS",
+    "emit_a_success": "PASS",
+    "remaining_b_receives_event": "PASS",
+    "removed_a_receives_nothing": "PASS",
+    "source_metadata_correct": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta191_event",
+    "initial_owners": [
+      "plugin_a",
+      "plugin_b"
+    ],
+    "unregister_owner": "plugin_a",
+    "unregister_result": true,
+    "registry_after_unregister": [
+      "plugin_b"
+    ],
+    "emitter": "plugin_a",
+    "emit_result": true,
+    "remaining_delivery_target": "handler_b",
+    "remaining_delivery_count": 1,
+    "removed_delivery_count": 0,
+    "source_metadata": "plugin_a",
+    "permission": "events"
+  },
+  "contract": {
+    "selective_unregister": "Unregister removes only the listener registration owned by the specified plugin",
+    "remaining_owner_preservation": "Other owners registered for the same event remain active",
+    "cross_owner_broadcast": "An event emitted by a plugin is delivered to remaining listeners regardless of their owner",
+    "removed_owner_isolation": "A selectively unregistered listener receives no subsequent events",
+    "source_metadata": "The emitted event preserves the emitting plugin_id as event source metadata",
+    "registry_preservation": "Broadcast delivery after selective unregister does not modify the remaining listener registry",
+    "permission_enforcement": "Registration, unregister, and emit operations require the events permission"
+  }
+}
