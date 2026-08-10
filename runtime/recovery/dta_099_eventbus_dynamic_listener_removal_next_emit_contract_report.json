@@ -1,0 +1,37 @@
+{
+  "dta": "DTA-099",
+  "title": "EventBus dynamic listener removal next emit contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "listeners_registered": "PASS",
+    "first_emit_success": "PASS",
+    "second_emit_success": "PASS",
+    "first_emit_snapshot_preserved": "PASS",
+    "second_emit_excludes_removed": "PASS",
+    "delivery_order_preserved": "PASS",
+    "registry_persisted": "PASS"
+  },
+  "observed": {
+    "event": "dta099_test_event",
+    "initial_listener_count": 3,
+    "listener_count_after_removal": 2,
+    "first_emit_delivery": [
+      ["A", 1],
+      ["B", 1],
+      ["EXTRA", 1]
+    ],
+    "second_emit_delivery": [
+      ["A", 2],
+      ["B", 2]
+    ],
+    "removed_listener": "EXTRA"
+  },
+  "contract": {
+    "current_emit_snapshot": "A listener removed during an active emit still receives the current event because it belongs to the emit snapshot",
+    "next_emit_delivery": "A listener removed during an emit does not receive subsequent emits",
+    "registry_persistence": "The listener registry reflects the removal after the active emit",
+    "ordering": "Remaining listeners retain their original registration order"
+  }
+}
