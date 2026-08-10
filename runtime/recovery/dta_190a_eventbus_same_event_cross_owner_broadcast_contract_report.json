@@ -1,0 +1,58 @@
+{
+  "dta": "DTA-190A",
+  "title": "EventBus same-event cross-owner broadcast contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "plugin_a_registration_success": "PASS",
+    "plugin_b_registration_success": "PASS",
+    "registry_contains_both_owners": "PASS",
+    "plugin_a_emit_success": "PASS",
+    "plugin_a_broadcast_received_by_a": "PASS",
+    "plugin_a_broadcast_received_by_b": "PASS",
+    "plugin_a_source_metadata_correct": "PASS",
+    "plugin_b_emit_success": "PASS",
+    "plugin_b_broadcast_received_by_a": "PASS",
+    "plugin_b_broadcast_received_by_b": "PASS",
+    "plugin_b_source_metadata_correct": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta190a_event",
+    "owners": [
+      "plugin_a",
+      "plugin_b"
+    ],
+    "registry_order": [
+      "plugin_a",
+      "plugin_b"
+    ],
+    "plugin_a_emit_result": true,
+    "plugin_a_delivery_count": 2,
+    "plugin_a_delivery_targets": [
+      "handler_a",
+      "handler_b"
+    ],
+    "plugin_a_source": "plugin_a",
+    "plugin_b_emit_result": true,
+    "plugin_b_delivery_count": 2,
+    "plugin_b_delivery_targets": [
+      "handler_a",
+      "handler_b"
+    ],
+    "plugin_b_source": "plugin_b",
+    "permission": "events"
+  },
+  "contract": {
+    "broadcast_model": "EventBus.emit() broadcasts an event to all listeners registered under the same event name regardless of listener owner",
+    "owner_independence": "Listener ownership identifies the registration entry but does not restrict event delivery by emitting plugin",
+    "cross_owner_delivery": "A listener owned by another plugin receives the emitted event when registered for the same event name",
+    "source_metadata": "The emitted event preserves the plugin_id supplied to emit() as event source metadata",
+    "registry_preservation": "Broadcast delivery does not modify the listener registry",
+    "permission_enforcement": "Each registration and event emission requires the events permission",
+    "architectural_boundary": "Plugin ownership is enforced for registration and unregister operations, while event delivery is broadcast by event name"
+  }
+}
