@@ -1,0 +1,47 @@
+{
+  "dta": "DTA-162",
+  "title": "EventBus idempotent duplicate callback registration contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "first_registration_success": "PASS",
+    "second_registration_success": "PASS",
+    "duplicate_registry_prevented": "PASS",
+    "single_callback_delivery": "PASS",
+    "first_emit_success": "PASS",
+    "unregister_success": "PASS",
+    "registry_empty_after_unregister": "PASS",
+    "second_unregister_returns_false": "PASS",
+    "second_emit_success": "PASS",
+    "no_delivery_after_unregister": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta162_event",
+    "first_register": true,
+    "second_register": true,
+    "registry_after_duplicate_count": 1,
+    "first_emit_result": true,
+    "first_delivery": [
+      ["A", {"dta": "DTA-162-FIRST"}]
+    ],
+    "first_unregister": true,
+    "registry_after_unregister_count": 0,
+    "second_unregister": false,
+    "second_emit_result": true,
+    "second_delivery": [],
+    "permission": "events"
+  },
+  "contract": {
+    "idempotent_registration": "Registering the same plugin, event and callback repeatedly does not create duplicate listener entries",
+    "registration_result": "Repeated registration of an already registered callback returns true",
+    "single_delivery": "An idempotently registered callback receives each emitted event only once",
+    "unregister": "An existing callback can be removed successfully",
+    "repeated_unregister": "Unregistering an already removed callback returns false",
+    "registry_cleanup": "The listener registry is empty after successful removal",
+    "future_delivery_absence": "Removed callbacks do not receive subsequent events",
+    "emit_success": "EventBus.emit() remains successful after registration and removal",
+    "permission_enforcement": "EventBus callback operations require the events permission"
+  }
+}
