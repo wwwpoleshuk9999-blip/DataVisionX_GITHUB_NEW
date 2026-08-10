@@ -1,0 +1,62 @@
+{
+  "dta": "DTA-184",
+  "title": "EventBus unregister re-register order contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "initial_registration_success": "PASS",
+    "initial_registry_order_correct": "PASS",
+    "unregister_b_success": "PASS",
+    "registry_after_unregister_correct": "PASS",
+    "reregister_b_success": "PASS",
+    "registry_after_reregister_correct": "PASS",
+    "emit_success": "PASS",
+    "all_callbacks_delivered_once": "PASS",
+    "delivery_order_correct": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta184_event",
+    "plugin": "plugin_a",
+    "initial_registry_order": [
+      "handler_a",
+      "handler_b",
+      "handler_c"
+    ],
+    "unregistered_callback": "handler_b.callback",
+    "unregister_result": true,
+    "registry_after_unregister": [
+      "handler_a.callback",
+      "handler_c.callback"
+    ],
+    "reregistered_callback": "handler_b.callback",
+    "reregister_result": true,
+    "registry_after_reregister": [
+      "handler_a.callback",
+      "handler_c.callback",
+      "handler_b.callback"
+    ],
+    "delivery_order": [
+      "handler_a",
+      "handler_c",
+      "handler_b"
+    ],
+    "handler_a_delivery_count": 1,
+    "handler_b_delivery_count": 1,
+    "handler_c_delivery_count": 1,
+    "emit_result": true,
+    "permission": "events"
+  },
+  "contract": {
+    "unregister_effect": "Unregister removes the selected listener from the registry",
+    "reregister_behavior": "Re-registering a previously removed callback creates a new listener entry",
+    "reregister_order": "A callback re-registered after removal is appended to the end of the listener order",
+    "delivery_order": "Emit delivers callbacks according to the current registry order",
+    "single_delivery": "Each registered callback receives the emitted event exactly once",
+    "registry_stability": "Unregister followed by re-registration leaves the registry structurally consistent",
+    "permission_enforcement": "Registration, unregister, and emit continue to require the events permission"
+  }
+}
