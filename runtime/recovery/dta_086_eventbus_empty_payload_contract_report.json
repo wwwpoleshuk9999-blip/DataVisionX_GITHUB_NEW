@@ -1,0 +1,29 @@
+{
+  "dta": "DTA-086",
+  "title": "EventBus empty payload contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "listener_registered": "PASS",
+    "emit_success": "PASS",
+    "listener_invoked": "PASS",
+    "event_preserved": "PASS",
+    "source_preserved": "PASS",
+    "empty_data_object": "PASS",
+    "single_delivery": "PASS"
+  },
+  "observed": {
+    "event": "dta086_test_event",
+    "source": "system",
+    "listener_count": 1,
+    "delivery_count": 1,
+    "payload": {}
+  },
+  "contract": {
+    "none_payload": "EventBus.emit() accepts data=None",
+    "normalized_payload": "Listeners receive data as an empty object when payload is None",
+    "delivery": "The event is delivered exactly once",
+    "metadata": "Event name and source are preserved"
+  }
+}
