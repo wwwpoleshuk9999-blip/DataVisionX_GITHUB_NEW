@@ -1,0 +1,52 @@
+{
+  "dta": "DTA-182",
+  "title": "EventBus different instance selective unregister contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "same_function_observed": "PASS",
+    "different_targets_observed": "PASS",
+    "registrations_success": "PASS",
+    "initial_registry_correct": "PASS",
+    "unregister_a_success": "PASS",
+    "handler_a_removed": "PASS",
+    "handler_b_preserved": "PASS",
+    "emit_success": "PASS",
+    "handler_a_not_delivered": "PASS",
+    "handler_b_delivered": "PASS",
+    "delivery_order_preserved": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta182_event",
+    "plugin": "plugin_a",
+    "registered_callbacks": [
+      "handler_a.callback",
+      "handler_b.callback"
+    ],
+    "same_function": true,
+    "different_bound_method_targets": true,
+    "initial_registry_size": 2,
+    "unregistered_callback": "handler_a.callback",
+    "unregister_result": true,
+    "registry_after_unregister": [
+      "handler_b.callback"
+    ],
+    "handler_a_delivery_count": 0,
+    "handler_b_delivery_count": 1,
+    "emit_result": true,
+    "permission": "events"
+  },
+  "contract": {
+    "instance_selective_unregister": "unregister() removes only the bound method belonging to the specified target instance",
+    "same_function_different_target": "Callbacks sharing the same __func__ remain distinguishable by their __self__ target",
+    "callback_isolation": "Removing handler_a.callback does not remove handler_b.callback",
+    "post_unregister_delivery": "The removed handler receives no subsequent events",
+    "remaining_callback_delivery": "The remaining handler continues receiving events",
+    "registry_stability": "Selective instance removal leaves the remaining listener structurally consistent",
+    "permission_enforcement": "Unregister and emit continue to require the events permission"
+  }
+}
