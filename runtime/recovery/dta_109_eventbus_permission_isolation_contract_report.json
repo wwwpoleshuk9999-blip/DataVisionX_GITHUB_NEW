@@ -1,0 +1,63 @@
+{
+  "dta": "DTA-109",
+  "title": "EventBus permission isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "denied_register_rejected": "PASS",
+    "denied_register_not_added": "PASS",
+    "allowed_register_success": "PASS",
+    "system_register_success": "PASS",
+    "denied_emit_rejected": "PASS",
+    "denied_emit_no_delivery": "PASS",
+    "allowed_emit_success": "PASS",
+    "system_emit_rejected": "PASS",
+    "system_emit_no_delivery": "PASS",
+    "delivery_order_preserved": "PASS",
+    "registry_stable": "PASS",
+    "payload_preserved": "PASS",
+    "permission_checks_observed": "PASS"
+  },
+  "observed": {
+    "event": "dta109_test_event",
+    "allowed_listener": "allowed_listener",
+    "system_listener": "system_listener",
+    "denied_register": false,
+    "allowed_register": true,
+    "system_register": true,
+    "denied_emit": false,
+    "allowed_emit": true,
+    "system_emit": false,
+    "allowed_delivery": [
+      ["ALLOWED", "allowed_plugin", 2],
+      ["SYSTEM", "allowed_plugin", 2]
+    ],
+    "system_emit_delivery": [],
+    "final_registry": [
+      {
+        "plugin": "allowed_plugin",
+        "callback": "allowed_listener"
+      },
+      {
+        "plugin": "system",
+        "callback": "system_listener"
+      }
+    ],
+    "permission_checks": [
+      ["denied_plugin", "events"],
+      ["allowed_plugin", "events"],
+      ["system", "events"]
+    ]
+  },
+  "contract": {
+    "register_permission": "A plugin without events permission cannot register a listener",
+    "emit_permission": "A plugin without events permission cannot emit an event",
+    "delivery_isolation": "Rejected emits do not deliver events to registered listeners",
+    "allowed_delivery": "An authorized emitter delivers to the registered listener registry",
+    "system_policy": "The current EventBus implementation requires events permission for system emit as well",
+    "registry_stability": "Rejected emits do not mutate the listener registry",
+    "source_integrity": "Source payloads remain unchanged after authorized or rejected emit attempts",
+    "permission_enforcement": "EventBus checks the events permission before emit delivery"
+  }
+}
