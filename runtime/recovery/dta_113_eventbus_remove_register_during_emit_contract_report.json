@@ -1,0 +1,79 @@
+{
+  "dta": "DTA-113",
+  "title": "EventBus listener removal and registration during emit contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "initial_listeners_registered": "PASS",
+    "first_emit_success": "PASS",
+    "remove_during_emit_success": "PASS",
+    "register_during_emit_success": "PASS",
+    "current_snapshot_preserved": "PASS",
+    "current_delivery_order_preserved": "PASS",
+    "registry_after_mutation_correct": "PASS",
+    "second_emit_success": "PASS",
+    "removed_listener_absent_next_emit": "PASS",
+    "new_listener_present_next_emit": "PASS",
+    "second_delivery_order_preserved": "PASS",
+    "registry_stable": "PASS",
+    "duplicate_registration_prevented": "PASS",
+    "payload_preserved": "PASS"
+  },
+  "observed": {
+    "event": "dta113_test_event",
+    "initial_registry": [
+      "listener_a",
+      "listener_b"
+    ],
+    "first_emit_delivery": [
+      ["A", 1],
+      ["B", 1]
+    ],
+    "mutation_during_first_emit": {
+      "remove_listener_b": true,
+      "register_listener_c": true
+    },
+    "registry_after_first_emit": [
+      "listener_a",
+      "listener_c"
+    ],
+    "second_emit_delivery": [
+      ["A", 2],
+      ["C", 2]
+    ],
+    "second_removal_attempt": false,
+    "second_registration_attempt": true,
+    "final_registry": [
+      {
+        "plugin": "system",
+        "callback": "listener_a"
+      },
+      {
+        "plugin": "system",
+        "callback": "listener_c"
+      }
+    ],
+    "payload_1": {
+      "dta": "DTA-113",
+      "sequence": 1,
+      "status": "FIRST"
+    },
+    "payload_2": {
+      "dta": "DTA-113",
+      "sequence": 2,
+      "status": "SECOND"
+    }
+  },
+  "contract": {
+    "emit_snapshot": "Each emit operates on a snapshot of the listener registry taken before delivery",
+    "current_emit_isolation": "Removing or registering listeners during an active emit does not alter the current delivery snapshot",
+    "removal_effect": "A listener removed during one emit remains active for that current emit but is absent from subsequent emits",
+    "registration_effect": "A listener registered during one emit does not receive that current event but participates in subsequent emits",
+    "mutation_combination": "Remove and register operations may occur during the same callback without corrupting the registry",
+    "ordering": "Existing listeners retain deterministic order and newly registered listeners are appended",
+    "idempotent_registration": "Repeated registration of the same plugin and callback does not create duplicate registry entries",
+    "idempotent_removal": "Removing an already removed listener returns False without mutating the registry",
+    "source_integrity": "Source payloads remain unchanged after emit and registry mutation"
+  }
+}
