@@ -1,0 +1,17 @@
+{
+  "dta": "DTA-072",
+  "title": "WebSocket bridge exception isolation contract",
+  "status": "READY",
+  "component": "services.websocket_bridge",
+  "checks": {
+    "loop_bound": "PASS",
+    "listener_does_not_raise": "PASS",
+    "exception_isolated": "PASS"
+  },
+  "observed": {
+    "event": "dta072_test_event",
+    "source": "system",
+    "broadcast_failure": "DTA-072 intentional broadcast failure",
+    "listener_exception": false
+  }
+}
