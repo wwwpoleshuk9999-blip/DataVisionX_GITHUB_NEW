@@ -1,0 +1,43 @@
+{
+  "dta": "DTA-188",
+  "title": "EventBus idempotent duplicate registration contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "first_registration_success": "PASS",
+    "second_registration_success": "PASS",
+    "duplicate_registration_idempotent": "PASS",
+    "stored_callback_equivalent": "PASS",
+    "unregister_success": "PASS",
+    "registry_empty_after_unregister": "PASS",
+    "emit_success": "PASS",
+    "callback_not_delivered_after_unregister": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta188_event",
+    "plugin": "plugin_a",
+    "first_registration_result": true,
+    "second_registration_result": true,
+    "registry_size_after_first": 1,
+    "registry_size_after_second": 1,
+    "duplicate_registration_behavior": "idempotent",
+    "stored_callback_equals_first": true,
+    "stored_callback_equals_second": true,
+    "unregister_result": true,
+    "registry_after_unregister": [],
+    "emit_result": true,
+    "callback_delivery_after_unregister": 0,
+    "permission": "events"
+  },
+  "contract": {
+    "duplicate_registration": "Registering an already registered callback returns True without creating a duplicate listener entry",
+    "registry_stability": "Repeated registration of an equivalent callback leaves exactly one listener entry",
+    "bound_method_equivalence": "Equivalent bound methods sharing the same __func__ and __self__ are treated as the same callback",
+    "unregister": "Unregister removes the single stored listener entry",
+    "post_unregister_emit": "Emit succeeds after unregister with no callback delivery",
+    "permission_enforcement": "Registration, unregister, and emit continue to require the events permission"
+  }
+}
