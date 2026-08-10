@@ -1,0 +1,43 @@
+{
+  "dta": "DTA-180",
+  "title": "EventBus bound method unregister identity contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "bound_method_callable": "PASS",
+    "registration_success": "PASS",
+    "registry_contains_listener": "PASS",
+    "unregister_with_new_bound_method_success": "PASS",
+    "listener_removed": "PASS",
+    "emit_success": "PASS",
+    "removed_bound_method_not_delivered": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta180_event",
+    "plugin": "plugin_a",
+    "registered_callback": "Handler.callback",
+    "unregister_callback": "Handler.callback",
+    "same_bound_method_target": true,
+    "same_bound_method_function": true,
+    "register_result": true,
+    "registry_before_unregister_size": 1,
+    "unregister_result": true,
+    "registry_after_unregister_size": 0,
+    "emit_result": true,
+    "delivery_after_unregister": [],
+    "permission": "events"
+  },
+  "contract": {
+    "bound_method_identity": "EventBus identifies bound methods by their __self__ target and __func__ function rather than bound-method object identity alone",
+    "cross_instance_bound_method_lookup": "A bound method retrieved again from the same object is recognized as the registered callback",
+    "successful_unregister": "unregister() returns True when the equivalent bound method listener exists",
+    "removal_effect": "The matching bound method listener is removed from the registry",
+    "post_unregister_delivery": "The removed bound method receives no subsequent events",
+    "registry_stability": "Bound method unregister leaves the listener registry structurally consistent",
+    "permission_enforcement": "Bound method unregister continues to require the events permission"
+  }
+}
