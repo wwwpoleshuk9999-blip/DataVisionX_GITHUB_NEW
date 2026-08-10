@@ -1,0 +1,35 @@
+{
+  "dta": "DTA-085",
+  "title": "EventBus instance event emission isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "bus_a_created": "PASS",
+    "bus_b_created": "PASS",
+    "registries_are_distinct": "PASS",
+    "bus_a_listener_registered": "PASS",
+    "bus_b_listener_registered": "PASS",
+    "bus_a_emit_success": "PASS",
+    "bus_b_listener_not_called": "PASS",
+    "bus_b_emit_success": "PASS",
+    "bus_a_listener_not_called_by_bus_b": "PASS",
+    "payload_a_preserved": "PASS",
+    "payload_b_preserved": "PASS",
+    "cross_instance_event_isolation": "PASS"
+  },
+  "observed": {
+    "event": "dta085_test_event",
+    "bus_a_listener": "listener_a",
+    "bus_b_listener": "listener_b",
+    "bus_a_delivery_count": 1,
+    "bus_b_delivery_count": 1,
+    "bus_a_instance": "A",
+    "bus_b_instance": "B"
+  },
+  "contract": {
+    "instance_registry": "Each EventBus instance owns an independent listener registry",
+    "event_emission": "Events emitted by one EventBus instance are delivered only to listeners registered in that instance",
+    "cross_instance_isolation": "Listeners from another EventBus instance are never invoked",
+    "payload_preservation": "Each instance receives its own emitted event payload unchanged"
+  }
+}
