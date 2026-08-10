@@ -1,0 +1,52 @@
+{
+  "dta": "DTA-096",
+  "title": "EventBus event envelope isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "listeners_registered": "PASS",
+    "emit_success": "PASS",
+    "mutator_invoked": "PASS",
+    "observer_invoked": "PASS",
+    "listener_order_preserved": "PASS",
+    "event_isolated": "PASS",
+    "source_isolated": "PASS",
+    "data_isolated": "PASS",
+    "source_payload_preserved": "PASS"
+  },
+  "observed": {
+    "event": "dta096_test_event",
+    "listener_count": 2,
+    "delivery_order": [
+      "MUTATOR",
+      "OBSERVER"
+    ],
+    "mutator": {
+      "event_after_mutation": "MUTATED_EVENT",
+      "source_after_mutation": "mutated_source",
+      "data_status_after_mutation": "MUTATED"
+    },
+    "observer": {
+      "event": "dta096_test_event",
+      "source": "system",
+      "data": {
+        "dta": "DTA-096",
+        "sequence": 1,
+        "status": "ORIGINAL"
+      }
+    },
+    "source_payload": {
+      "dta": "DTA-096",
+      "sequence": 1,
+      "status": "ORIGINAL"
+    }
+  },
+  "contract": {
+    "event_isolation": "Listener mutation of the event name does not affect subsequent listeners",
+    "source_isolation": "Listener mutation of the event source does not affect subsequent listeners",
+    "data_isolation": "Listener mutation of event data does not affect subsequent listeners",
+    "source_integrity": "The original emit() payload remains unchanged",
+    "delivery_order": "Listener registration order remains preserved"
+  }
+}
