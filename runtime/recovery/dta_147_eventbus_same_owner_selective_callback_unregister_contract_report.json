@@ -1,0 +1,48 @@
+{
+  "dta": "DTA-147",
+  "title": "EventBus same-owner selective callback unregister contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "first_registration_success": "PASS",
+    "second_registration_success": "PASS",
+    "multi_callback_registry_observed": "PASS",
+    "selective_unregister_success": "PASS",
+    "remaining_callback_preserved": "PASS",
+    "removed_callback_absent": "PASS",
+    "emit_success": "PASS",
+    "remaining_callback_delivery_preserved": "PASS",
+    "registry_stable": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta147_event",
+    "owner": "plugin_a",
+    "initial_callbacks": [
+      "listener_a",
+      "listener_b"
+    ],
+    "unregister": {
+      "callback": "listener_a",
+      "result": true
+    },
+    "remaining_callbacks": [
+      "listener_b"
+    ],
+    "removed_callback_invocations": 0,
+    "remaining_callback_invocations": 1,
+    "emit_result": true,
+    "permission": "events"
+  },
+  "contract": {
+    "selective_unregister": "Unregister removes only the specified callback owned by the plugin",
+    "same_owner_isolation": "Removing one callback does not remove other callbacks owned by the same plugin",
+    "removed_callback_absence": "The removed callback is absent from the listener registry",
+    "remaining_callback_preservation": "Other callbacks owned by the same plugin remain registered",
+    "delivery_preservation": "Remaining callbacks continue receiving events",
+    "emit_success": "EventBus.emit() remains successful after selective callback unregister",
+    "registry_stability": "Selective callback removal does not corrupt the listener registry",
+    "permission_enforcement": "Register, unregister, and emit operations require the events permission"
+  }
+}
