@@ -1,0 +1,86 @@
+{
+  "dta": "DTA-156",
+  "title": "EventBus cross-callback unregister during delivery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registrations_success": "PASS",
+    "registry_observed": "PASS",
+    "cross_callback_unregister_success": "PASS",
+    "current_delivery_continued": "PASS",
+    "first_emit_success": "PASS",
+    "registry_after_mutation": "PASS",
+    "target_callback_removed": "PASS",
+    "remaining_callback_preserved": "PASS",
+    "second_emit_success": "PASS",
+    "future_delivery_correct": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta156_event",
+    "initial_registry": [
+      {
+        "plugin": "plugin_a",
+        "callback": "listener_a"
+      },
+      {
+        "plugin": "plugin_b",
+        "callback": "listener_b"
+      },
+      {
+        "plugin": "plugin_c",
+        "callback": "listener_c"
+      }
+    ],
+    "first_emit": {
+      "plugin": "plugin_a",
+      "result": true,
+      "delivery_order": [
+        ["A", {"dta": "DTA-156-FIRST"}],
+        ["U-B", true],
+        ["B", {"dta": "DTA-156-FIRST"}],
+        ["C", {"dta": "DTA-156-FIRST"}]
+      ]
+    },
+    "cross_callback_unregister": {
+      "target_plugin": "plugin_b",
+      "target_callback": "listener_b",
+      "result": true
+    },
+    "registry_after_first_emit": [
+      {
+        "plugin": "plugin_a",
+        "callback": "listener_a"
+      },
+      {
+        "plugin": "plugin_c",
+        "callback": "listener_c"
+      }
+    ],
+    "target_callback_received_first_event": true,
+    "second_emit": {
+      "plugin": "plugin_a",
+      "result": true,
+      "delivery_order": [
+        ["A", {"dta": "DTA-156-SECOND"}],
+        ["U-B", false],
+        ["C", {"dta": "DTA-156-SECOND"}]
+      ]
+    },
+    "target_callback_received_second_event": false,
+    "permission": "events"
+  },
+  "contract": {
+    "cross_callback_unregister": "A callback can unregister another callback during active event delivery",
+    "current_delivery_isolation": "Unregistering another callback does not interrupt the already-active delivery chain",
+    "current_delivery_snapshot": "The target callback still receives the event already being delivered",
+    "registry_update": "The target callback is removed from the listener registry after the mutation",
+    "future_delivery_absence": "The removed callback does not receive subsequent events",
+    "remaining_callback_preservation": "Other callbacks remain registered and continue receiving events",
+    "repeated_unregister": "Unregistering an already removed callback returns false",
+    "emit_success": "EventBus.emit() remains successful after cross-callback mutation",
+    "registry_stability": "Cross-callback unregister does not corrupt the listener registry",
+    "permission_enforcement": "EventBus operations require the events permission"
+  }
+}
