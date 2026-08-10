@@ -1,0 +1,28 @@
+{
+  "dta": "DTA-079",
+  "title": "Real core bootstrap listener order contract",
+  "status": "READY",
+  "component": "core.bootstrap + plugin_manager.event_bus + services.websocket_bridge",
+  "checks": {
+    "eventbus_available": "PASS",
+    "websocket_listener_registered": "PASS",
+    "registry_listener_registered": "PASS",
+    "websocket_registered_first": "PASS",
+    "registry_registered_second": "PASS",
+    "event_delivery": "PASS",
+    "payload_preserved": "PASS",
+    "listener_count_stable": "PASS"
+  },
+  "observed": {
+    "event": "plugin_stopped",
+    "listeners": [
+      "websocket_event_listener",
+      "plugin_registry_listener"
+    ],
+    "websocket_listener_position": 1,
+    "registry_listener_position": 2,
+    "payload_status": "STOPPED",
+    "plugin": "dta079_plugin",
+    "source": "system"
+  }
+}
