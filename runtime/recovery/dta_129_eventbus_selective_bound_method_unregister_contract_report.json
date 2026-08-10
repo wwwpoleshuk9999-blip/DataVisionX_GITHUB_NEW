@@ -1,0 +1,52 @@
+{
+  "dta": "DTA-129",
+  "title": "EventBus selective bound-method unregister contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "both_registered": "PASS",
+    "selective_unregister_success": "PASS",
+    "handler_a_preserved": "PASS",
+    "handler_b_removed": "PASS",
+    "registry_contains_one_listener": "PASS",
+    "emit_success": "PASS",
+    "only_handler_a_called": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta129_test_event",
+    "listeners_before": [
+      {
+        "plugin": "plugin_a",
+        "callback": "Handler.handle"
+      },
+      {
+        "plugin": "plugin_b",
+        "callback": "Handler.handle"
+      }
+    ],
+    "removed": {
+      "plugin": "plugin_b",
+      "callback": "Handler.handle"
+    },
+    "listeners_after": [
+      {
+        "plugin": "plugin_a",
+        "callback": "Handler.handle"
+      }
+    ],
+    "emit_result": true,
+    "handler_a_invocations": 1,
+    "handler_b_invocations": 0,
+    "permission": "events"
+  },
+  "contract": {
+    "selective_unregister": "Unregister removes only the listener matching both plugin ownership and bound-method identity",
+    "bound_method_identity": "Bound-method identity is based on instance identity and underlying function identity",
+    "listener_preservation": "Removing one bound-method listener preserves other listeners registered for the same event",
+    "delivery_isolation": "After selective unregister only remaining listeners receive the event",
+    "permission_enforcement": "Register and unregister operations require the plugin events permission",
+    "registry_stability": "Selective unregister leaves the remaining listener registry intact"
+  }
+}
