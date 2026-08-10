@@ -1,0 +1,40 @@
+{
+  "dta": "DTA-106",
+  "title": "EventBus empty/None payload contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "listeners_registered": "PASS",
+    "emit_none_success": "PASS",
+    "emit_empty_success": "PASS",
+    "none_payload_normalized": "PASS",
+    "empty_payload_preserved": "PASS",
+    "listener_isolation": "PASS",
+    "delivery_order_preserved": "PASS",
+    "registry_stable": "PASS"
+  },
+  "observed": {
+    "event": "dta106_test_event",
+    "listener_count": 2,
+    "none_payload_delivery": [
+      ["A", {}],
+      ["B", {}]
+    ],
+    "empty_payload_delivery": [
+      ["A", {}],
+      ["B", {}]
+    ],
+    "final_registry": [
+      "listener_a",
+      "listener_b"
+    ]
+  },
+  "contract": {
+    "none_payload": "None payload is normalized to an empty dictionary",
+    "empty_payload": "An explicitly empty dictionary remains an empty dictionary",
+    "listener_isolation": "Each listener receives an isolated payload dictionary",
+    "ordering": "Listeners retain registration order across emits",
+    "registry_stability": "Empty and None payload delivery does not mutate the listener registry"
+  }
+}
