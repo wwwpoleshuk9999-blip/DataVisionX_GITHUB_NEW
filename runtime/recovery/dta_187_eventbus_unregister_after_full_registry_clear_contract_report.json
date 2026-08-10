@@ -1,0 +1,47 @@
+{
+  "dta": "DTA-187",
+  "title": "EventBus unregister after full registry clear contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registrations_success": "PASS",
+    "initial_registry_correct": "PASS",
+    "unregister_a_success": "PASS",
+    "unregister_b_success": "PASS",
+    "registry_empty_after_full_clear": "PASS",
+    "repeated_unregister_false": "PASS",
+    "registry_still_empty": "PASS",
+    "emit_success": "PASS",
+    "no_callback_delivered": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta187_event",
+    "plugin": "plugin_a",
+    "initial_registry_order": [
+      "handler_a",
+      "handler_b"
+    ],
+    "unregister_a_result": true,
+    "unregister_b_result": true,
+    "registry_after_full_clear": [],
+    "repeated_unregister_result": false,
+    "registry_after_repeat": [],
+    "emit_result": true,
+    "handler_a_delivery_count": 0,
+    "handler_b_delivery_count": 0,
+    "permission": "events"
+  },
+  "contract": {
+    "full_clear": "Sequential unregister operations can remove all listeners for an event",
+    "empty_registry": "After the final listener is removed the event registry remains empty",
+    "repeated_unregister": "Unregistering an already removed callback returns False",
+    "registry_stability": "Repeated unregister against an empty registry does not recreate or modify listener entries",
+    "post_clear_emit": "Emit succeeds with an empty listener registry",
+    "no_delivery": "No callback is delivered after the listener registry has been fully cleared",
+    "permission_enforcement": "Unregister and emit operations continue to require the events permission"
+  }
+}
