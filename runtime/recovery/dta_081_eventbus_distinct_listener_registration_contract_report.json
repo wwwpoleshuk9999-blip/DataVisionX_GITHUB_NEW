@@ -1,0 +1,38 @@
+{
+  "dta": "DTA-081",
+  "title": "EventBus distinct listener registration contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus + services.websocket_bridge",
+  "checks": {
+    "eventbus_created": "PASS",
+    "listener_a_registered": "PASS",
+    "listener_b_registered": "PASS",
+    "websocket_listener_registered": "PASS",
+    "distinct_listener_count": "PASS",
+    "all_listeners_receive_event": "PASS",
+    "websocket_delivery": "PASS",
+    "payload_preserved": "PASS",
+    "duplicate_a_rejected": "PASS"
+  },
+  "observed": {
+    "listener_count": 3,
+    "listeners": [
+      "listener_a",
+      "listener_b",
+      "websocket_event_listener"
+    ],
+    "duplicate_listener_count_after_retry": 3,
+    "custom_listener_deliveries": 2,
+    "websocket_delivery_count": 1,
+    "event": "dta081_test_event",
+    "source": "system",
+    "dta": "DTA-081",
+    "sequence": 1,
+    "status": "TEST"
+  },
+  "contract": {
+    "distinct_callbacks": "Each distinct callback may register independently for the same event",
+    "duplicate_callback": "Repeated registration of the same plugin/event/callback is ignored",
+    "delivery": "All distinct listeners receive the emitted event"
+  }
+}
