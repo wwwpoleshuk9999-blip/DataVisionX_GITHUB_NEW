@@ -1,0 +1,52 @@
+{
+  "dta": "DTA-163",
+  "title": "EventBus duplicate registration boundary matrix",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "matrix_status": "PASS",
+  "checks": {
+    "eventbus_created": "PASS",
+    "same_owner_same_event_same_callback_idempotent": "PASS",
+    "same_owner_same_event_registry_count_correct": "PASS",
+    "different_owner_same_event_same_callback_separate": "PASS",
+    "different_owner_registry_count_correct": "PASS",
+    "same_owner_different_event_same_callback_separate": "PASS",
+    "different_event_registry_count_correct": "PASS",
+    "same_owner_same_event_different_callback_separate": "PASS",
+    "different_callback_registry_count_correct": "PASS",
+    "event_a_emit_success": "PASS",
+    "event_a_delivery_correct": "PASS",
+    "event_b_emit_success": "PASS",
+    "event_b_delivery_correct": "PASS",
+    "unregister_isolated": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event_a": "dta163_event_a",
+    "event_b": "dta163_event_b",
+    "duplicate_registration_count": 1,
+    "event_a_registry_before_unregister": 3,
+    "event_a_delivery": [
+      ["A", {"dta": "DTA-163-A"}],
+      ["A", {"dta": "DTA-163-A"}],
+      ["B", {"dta": "DTA-163-A"}]
+    ],
+    "event_b_delivery": [
+      ["A", {"dta": "DTA-163-B"}]
+    ],
+    "unregister_plugin_a_callback_a": true,
+    "event_a_registry_after_unregister": 2,
+    "permission": "events"
+  },
+  "contract": {
+    "idempotent_exact_duplicate": "Registering the same plugin, event and callback repeatedly does not create duplicate listener entries",
+    "owner_isolation": "The same callback may be registered independently by different plugins",
+    "event_isolation": "The same callback may be registered independently for different events",
+    "callback_isolation": "Different callbacks remain independently registered for the same plugin and event",
+    "delivery_order": "Callbacks are delivered in registry order",
+    "unregister_isolation": "Unregister removes only the matching plugin, event and callback registration",
+    "registry_integrity": "Duplicate registration boundaries do not corrupt listener registry structure",
+    "emit_success": "EventBus.emit() remains successful across duplicate-registration boundary cases",
+    "permission_enforcement": "EventBus callback operations require the events permission"
+  }
+}
