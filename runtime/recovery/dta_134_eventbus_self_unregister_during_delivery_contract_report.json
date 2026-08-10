@@ -1,0 +1,58 @@
+{
+  "dta": "DTA-134",
+  "title": "EventBus self-unregister during delivery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "listeners_registered": "PASS",
+    "first_emit_success": "PASS",
+    "self_unregister_success": "PASS",
+    "first_delivery_order_preserved": "PASS",
+    "listener_a_removed": "PASS",
+    "remaining_registry_preserved": "PASS",
+    "second_emit_success": "PASS",
+    "second_delivery_excludes_a": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta134_event",
+    "initial_registry": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "self_unregister": {
+      "plugin": "plugin_a",
+      "callback": "listener_a",
+      "operation": "unregister itself during delivery"
+    },
+    "first_delivery_order": [
+      "A",
+      "B",
+      "C"
+    ],
+    "current_event_continuity": true,
+    "registry_after_first_emit": [
+      "plugin_b",
+      "plugin_c"
+    ],
+    "second_delivery_order": [
+      "B",
+      "C"
+    ],
+    "listener_a_received_second_event": false,
+    "emit_result": true,
+    "permission": "events"
+  },
+  "contract": {
+    "self_unregister": "A listener can unregister itself while handling an active event",
+    "current_event_continuity": "Self-unregister does not prevent the remaining listeners from receiving the current event",
+    "current_listener_delivery": "The listener performing self-unregister receives the current event before removal",
+    "post_unregister_registry": "The self-unregistered listener is removed from the registry after the mutation",
+    "subsequent_delivery": "The removed listener does not receive subsequent events",
+    "remaining_listener_preservation": "Other listeners remain registered and continue receiving events",
+    "emit_success": "EventBus.emit() remains successful after listener self-unregister",
+    "permission_enforcement": "Emit and unregister operations require the events permission"
+  }
+}
