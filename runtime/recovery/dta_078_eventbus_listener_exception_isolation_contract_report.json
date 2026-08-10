@@ -1,0 +1,22 @@
+{
+  "dta": "DTA-078",
+  "title": "EventBus listener exception isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus + services.websocket_bridge",
+  "checks": {
+    "eventbus_created": "PASS",
+    "failing_listener_registered": "PASS",
+    "websocket_listener_registered": "PASS",
+    "event_emit_survives_failure": "PASS",
+    "websocket_delivery": "PASS",
+    "payload_preserved": "PASS"
+  },
+  "observed": {
+    "event": "dta078_test_event",
+    "source": "system",
+    "failing_listener": "intentional failure",
+    "websocket_delivery_count": 1,
+    "payload_status": "TEST",
+    "sequence": 1
+  }
+}
