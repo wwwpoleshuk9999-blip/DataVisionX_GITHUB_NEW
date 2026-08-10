@@ -1,0 +1,32 @@
+{
+  "dta": "DTA-076.1",
+  "title": "WebSocket mass client lifecycle corrected contract",
+  "status": "READY",
+  "component": "WebSocket lifecycle",
+  "checks": {
+    "http_boot": "PASS",
+    "all_clients_connected": "PASS",
+    "all_initial_messages": "PASS",
+    "partial_disconnect": "PASS",
+    "remaining_clients_survived": "PASS",
+    "remaining_clients_received_event": "PASS",
+    "event_payload_valid": "PASS",
+    "reconnect_client_connected": "PASS",
+    "reconnect_initial_received": "PASS",
+    "reconnect_no_false_event": "PASS",
+    "final_cleanup": "PASS"
+  },
+  "observed": {
+    "initial_clients": 5,
+    "disconnected_clients": 3,
+    "surviving_clients": 2,
+    "plugin_stopped_events_received_by_survivors": 6,
+    "reconnect_plugin_stopped_events": 0,
+    "reconnect_initial": "Connected to DataVisionX Phoenix",
+    "server_cleanup": "PASS"
+  },
+  "contract_correction": {
+    "previous_expectation": "reconnect client receives 3 plugin_stopped events after second runtime stop",
+    "correct_expectation": "reconnect client receives no duplicate plugin_stopped events because runtime is already STOPPED"
+  }
+}
