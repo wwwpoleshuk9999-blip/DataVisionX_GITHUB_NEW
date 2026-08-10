@@ -1,0 +1,71 @@
+{
+  "dta": "DTA-112",
+  "title": "EventBus listener removal during emit contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "initial_listeners_registered": "PASS",
+    "first_emit_success": "PASS",
+    "listener_removed_during_emit": "PASS",
+    "removed_listener_called_on_current_emit": "PASS",
+    "current_delivery_order_preserved": "PASS",
+    "registry_after_removal_correct": "PASS",
+    "second_emit_success": "PASS",
+    "removed_listener_not_called_on_next_emit": "PASS",
+    "second_delivery_order_preserved": "PASS",
+    "registry_stable": "PASS",
+    "payload_preserved": "PASS"
+  },
+  "observed": {
+    "event": "dta112_test_event",
+    "initial_listener_count": 3,
+    "first_emit_delivery": [
+      ["FIRST", 1],
+      ["SECOND", 1],
+      ["THIRD", 1]
+    ],
+    "removal_during_first_emit": {
+      "callback": "second_listener",
+      "result": true
+    },
+    "registry_after_first_emit": [
+      "first_listener",
+      "third_listener"
+    ],
+    "second_emit_delivery": [
+      ["FIRST", 2],
+      ["THIRD", 2]
+    ],
+    "second_removal_attempt": false,
+    "final_registry": [
+      {
+        "plugin": "system",
+        "callback": "first_listener"
+      },
+      {
+        "plugin": "system",
+        "callback": "third_listener"
+      }
+    ],
+    "payload_1": {
+      "dta": "DTA-112",
+      "sequence": 1,
+      "status": "FIRST"
+    },
+    "payload_2": {
+      "dta": "DTA-112",
+      "sequence": 2,
+      "status": "SECOND"
+    }
+  },
+  "contract": {
+    "emit_snapshot": "Each emit operates on a snapshot of the listener registry taken before delivery",
+    "current_emit_isolation": "A listener removed during an active emit still receives the current event because it belongs to the emit snapshot",
+    "subsequent_delivery": "A listener removed during one emit does not participate in subsequent emits",
+    "ordering": "Existing listeners retain deterministic registration order",
+    "registry_stability": "Listener removal during delivery does not corrupt the registry",
+    "idempotent_removal": "Removing an already removed listener returns False without mutating the registry",
+    "source_integrity": "Source payloads remain unchanged after emits and listener removal"
+  }
+}

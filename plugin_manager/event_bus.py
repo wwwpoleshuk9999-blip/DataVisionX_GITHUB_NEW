@@ -53,6 +53,37 @@ class EventBus:
 
 
 
+    def unregister(self, plugin_id, event, callback):
+        if not callable(callback):
+            return False
+
+        if plugin_id != "system" and not self.permissions.require(
+            plugin_id,
+            "events"
+        ):
+            return False
+
+        listeners = self.listeners.get(event, [])
+
+        for index, listener in enumerate(listeners):
+            if (
+                listener["plugin"] == plugin_id
+                and listener["callback"] is callback
+            ):
+                del listeners[index]
+
+                if not listeners:
+                    self.listeners.pop(event, None)
+
+                self.log(
+                    f"{plugin_id} unregistered {event}"
+                )
+
+                return True
+
+        return False
+
+
     def emit(self, plugin_id, event, data=None):
 
         if not self.permissions.require(
