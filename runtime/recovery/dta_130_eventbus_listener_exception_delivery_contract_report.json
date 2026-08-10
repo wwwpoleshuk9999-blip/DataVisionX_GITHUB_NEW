@@ -1,0 +1,45 @@
+{
+  "dta": "DTA-130",
+  "title": "EventBus listener exception delivery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "failing_listener_registered": "PASS",
+    "healthy_listener_registered": "PASS",
+    "emit_behavior_observed": "PASS",
+    "healthy_listener_delivery_observed": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta130_event",
+    "failing_listener": {
+      "plugin": "plugin_a",
+      "callback": "failing_listener",
+      "invoked": true,
+      "raised": "RuntimeError",
+      "message": "DTA-130 listener failure"
+    },
+    "healthy_listener": {
+      "plugin": "plugin_b",
+      "callback": "healthy_listener",
+      "invoked": true,
+      "received": {
+        "dta": "DTA-130",
+        "status": "LISTENER_EXCEPTION"
+      }
+    },
+    "emit_result": true,
+    "registry_listener_count": 2,
+    "permission": "events"
+  },
+  "contract": {
+    "listener_failure_isolation": "An exception raised by one listener does not prevent delivery to subsequent listeners",
+    "emit_continuity": "EventBus.emit() completes successfully when an individual listener raises an exception",
+    "delivery_continuity": "Healthy listeners registered for the same event continue receiving the event after another listener fails",
+    "registry_stability": "A listener exception does not mutate or remove the listener registry",
+    "payload_delivery": "The original event payload remains available to subsequent healthy listeners",
+    "permission_enforcement": "Event emission continues to require the emitting plugin events permission"
+  }
+}
