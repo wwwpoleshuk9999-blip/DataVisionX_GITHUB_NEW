@@ -1,0 +1,84 @@
+{
+  "dta": "DTA-198",
+  "title": "EventBus post-exception repeated emit recovery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registration_a_success": "PASS",
+    "registration_b_success": "PASS",
+    "registration_c_success": "PASS",
+    "initial_registry_three": "PASS",
+    "first_emit_success": "PASS",
+    "first_emit_no_exception": "PASS",
+    "second_emit_success": "PASS",
+    "third_emit_success": "PASS",
+    "handler_a_received_all": "PASS",
+    "handler_b_received_all": "PASS",
+    "handler_c_received_all": "PASS",
+    "source_metadata_preserved": "PASS",
+    "registry_stable_after_repeated_emits": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta198_event",
+    "owners": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "failing_listener": "plugin_b",
+    "emit_cycles": 3,
+    "emit_results": [
+      true,
+      true,
+      true
+    ],
+    "exceptions": [
+      null,
+      null,
+      null
+    ],
+    "delivery_counts_per_cycle": [
+      3,
+      3,
+      3
+    ],
+    "delivery_targets_per_cycle": [
+      [
+        "handler_a",
+        "handler_b",
+        "handler_c"
+      ],
+      [
+        "handler_a",
+        "handler_b",
+        "handler_c"
+      ],
+      [
+        "handler_a",
+        "handler_b",
+        "handler_c"
+      ]
+    ],
+    "final_registry": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "registry_entry_count": 3,
+    "source_metadata_preserved": true,
+    "permission": "events"
+  },
+  "contract": {
+    "post_exception_recovery": "EventBus remains operational after a listener callback raises during broadcast",
+    "repeated_emit_continuity": "Subsequent EventBus.emit() calls remain successful after the callback failure",
+    "callback_exception_isolation": "A callback exception does not poison later event delivery cycles",
+    "delivery_continuity": "All currently registered listeners continue receiving subsequent emitted events",
+    "delivery_once": "Each registered listener receives each emitted event exactly once",
+    "source_metadata": "Each delivered event preserves the source plugin_id supplied to emit()",
+    "registry_integrity": "Repeated emits after callback failure do not modify or corrupt the listener registry",
+    "permission_enforcement": "Event emission and listener registration require the events permission"
+  }
+}
