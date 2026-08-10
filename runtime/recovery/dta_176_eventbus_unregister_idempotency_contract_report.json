@@ -1,0 +1,54 @@
+{
+  "dta": "DTA-176",
+  "title": "EventBus unregister idempotency contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "initial_registrations_success": "PASS",
+    "initial_registry_correct": "PASS",
+    "first_unregister_success": "PASS",
+    "second_unregister_returns_false_when_absent": "PASS",
+    "removed_listener_absent": "PASS",
+    "remaining_registry_correct": "PASS",
+    "emit_success": "PASS",
+    "removed_listener_not_delivered": "PASS",
+    "remaining_listeners_delivered": "PASS",
+    "delivery_order_preserved": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta176_event",
+    "initial_registry_order": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "first_unregister_result": true,
+    "second_unregister_result": false,
+    "registry_after_unregister": [
+      "plugin_a",
+      "plugin_c"
+    ],
+    "delivery_after_unregister": [
+      "plugin_a",
+      "plugin_c"
+    ],
+    "final_registry": [
+      "plugin_a",
+      "plugin_c"
+    ],
+    "emit_result": true,
+    "permission": "events"
+  },
+  "contract": {
+    "successful_unregister": "unregister() returns True when the matching listener exists and is removed",
+    "absent_listener_unregister": "unregister() returns False when the matching listener is already absent",
+    "removal_effect": "A successfully unregistered listener is removed from the registry and is not delivered subsequent events",
+    "remaining_listener_delivery": "Remaining listeners continue receiving events in registration order",
+    "registry_stability": "Repeated unregister attempts do not corrupt the listener registry",
+    "permission_enforcement": "Unregister continues to require the events permission"
+  }
+}
