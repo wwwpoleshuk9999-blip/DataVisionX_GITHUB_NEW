@@ -1,0 +1,47 @@
+{
+  "dta": "DTA-132",
+  "title": "EventBus mutation during delivery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "listeners_registered": "PASS",
+    "emit_success": "PASS",
+    "mutation_observed": "PASS",
+    "registry_state_observed": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta132_event",
+    "registry_before": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "delivery_order": [
+      "A",
+      "B",
+      "C"
+    ],
+    "mutation": {
+      "performed_by": "plugin_a",
+      "operation": "unregister",
+      "removed_plugin": "plugin_b"
+    },
+    "registry_after": [
+      "plugin_a",
+      "plugin_c"
+    ],
+    "emit_result": true,
+    "permission": "events"
+  },
+  "contract": {
+    "delivery_snapshot": "Mutation of the listener registry during delivery does not interrupt the current event delivery sequence",
+    "current_event_continuity": "A listener removed during delivery still receives the current event when it was already part of the active delivery sequence",
+    "post_mutation_registry": "The unregister operation takes effect in the listener registry after the mutation",
+    "subsequent_delivery": "The removed listener is absent from the registry for subsequent event delivery",
+    "registry_stability": "Listener mutation during emit does not corrupt the registry",
+    "emit_success": "EventBus.emit() remains successful when a listener unregisters another listener during delivery",
+    "permission_enforcement": "The emitting plugin and unregistering plugin require the events permission"
+  }
+}
