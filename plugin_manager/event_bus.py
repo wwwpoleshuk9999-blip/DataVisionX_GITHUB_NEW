@@ -113,7 +113,7 @@ class EventBus:
                     {
                         "event": event,
                         "source": plugin_id,
-                        "data": copy.deepcopy(data or {})
+                        "data": copy.deepcopy(data)
                     }
                 )
 

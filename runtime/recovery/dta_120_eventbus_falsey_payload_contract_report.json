@@ -1,0 +1,41 @@
+{
+  "dta": "DTA-120",
+  "title": "EventBus falsey payload preservation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "listener_registered": "PASS",
+    "all_emits_success": "PASS",
+    "payload_none_preserved": "PASS",
+    "payload_false_preserved": "PASS",
+    "payload_zero_preserved": "PASS",
+    "payload_empty_string_preserved": "PASS",
+    "payload_empty_list_preserved": "PASS",
+    "payload_order_preserved": "PASS"
+  },
+  "observed": {
+    "event": "dta120_test_event",
+    "payloads_sent": [
+      null,
+      false,
+      0,
+      "",
+      []
+    ],
+    "payloads_received": [
+      null,
+      false,
+      0,
+      "",
+      []
+    ],
+    "implementation": "emit() uses copy.deepcopy(data), preserving falsey payload values including None"
+  },
+  "contract": {
+    "payload_preservation": "EventBus preserves the original payload value, including None, False, zero, empty strings, and empty collections",
+    "deep_copy": "Each listener receives a deep copy of the supplied payload",
+    "listener_delivery": "Falsey payloads remain unchanged when delivered to listeners",
+    "ordering": "Payload delivery order matches emit order"
+  }
+}
