@@ -1,0 +1,46 @@
+{
+  "dta": "DTA-131",
+  "title": "EventBus listener order after exception contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "listeners_registered": "PASS",
+    "emit_success": "PASS",
+    "delivery_order_preserved": "PASS",
+    "listener_count_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta131_event",
+    "registered_order": [
+      "plugin_a",
+      "plugin_fail",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "delivery_order": [
+      "A",
+      "FAIL",
+      "B",
+      "C"
+    ],
+    "failing_listener": {
+      "plugin": "plugin_fail",
+      "raised": "RuntimeError",
+      "message": "DTA-131 intentional listener failure"
+    },
+    "emit_result": true,
+    "registry_listener_count": 4,
+    "permission": "events"
+  },
+  "contract": {
+    "registration_order": "Listeners are retained in registration order",
+    "delivery_order": "EventBus delivers events to listeners in registration order",
+    "exception_continuity": "A listener exception does not interrupt delivery to subsequent listeners",
+    "delivery_after_failure": "Listeners registered after a failing listener still receive the event",
+    "emit_success": "EventBus.emit() remains successful after an individual listener raises an exception",
+    "registry_stability": "Listener exceptions do not modify the listener registry",
+    "permission_enforcement": "Event emission requires the emitting plugin events permission"
+  }
+}
