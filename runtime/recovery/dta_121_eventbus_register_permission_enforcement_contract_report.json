@@ -1,0 +1,44 @@
+{
+  "dta": "DTA-121",
+  "title": "EventBus register permission enforcement contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "denied_bus_created": "PASS",
+    "allowed_bus_created": "PASS",
+    "denied_register_rejected": "PASS",
+    "denied_registry_unchanged": "PASS",
+    "denied_permission_checked": "PASS",
+    "allowed_register_success": "PASS",
+    "allowed_registry_created": "PASS",
+    "allowed_permission_checked": "PASS",
+    "duplicate_registration_prevented": "PASS"
+  },
+  "observed": {
+    "event": "dta121_test_event",
+    "denied_plugin": "plugin_denied",
+    "denied_permission_check": [
+      "plugin_denied",
+      "events"
+    ],
+    "denied_register_result": false,
+    "denied_registry": [],
+    "allowed_plugin": "plugin_allowed",
+    "allowed_register_result": true,
+    "allowed_registry": [
+      {
+        "plugin": "plugin_allowed",
+        "callback": "listener"
+      }
+    ],
+    "duplicate_register_result": true,
+    "duplicate_registry_count": 1
+  },
+  "contract": {
+    "permission_enforcement": "A plugin without events permission cannot register an EventBus listener",
+    "permission_check": "register() checks the events permission before modifying the listener registry",
+    "registry_integrity": "A denied registration leaves the registry unchanged",
+    "authorized_registration": "A plugin with events permission can register a listener",
+    "idempotent_registration": "Repeated registration of the same plugin and callback does not create duplicate entries"
+  }
+}
