@@ -1,0 +1,50 @@
+{
+  "dta": "DTA-124",
+  "title": "EventBus event-type delivery isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "listeners_registered": "PASS",
+    "event_a_emit_success": "PASS",
+    "event_b_emit_success": "PASS",
+    "listener_a_received_only_event_a": "PASS",
+    "listener_b_received_only_event_b": "PASS",
+    "no_cross_event_delivery": "PASS",
+    "delivery_order_preserved": "PASS",
+    "payload_a_preserved": "PASS",
+    "payload_b_preserved": "PASS",
+    "registry_stable": "PASS"
+  },
+  "observed": {
+    "event_a": {
+      "listener": "listener_a",
+      "payload": {
+        "dta": "DTA-124",
+        "event_type": "A",
+        "sequence": 1
+      },
+      "delivery": [
+        "dta124_event_a"
+      ]
+    },
+    "event_b": {
+      "listener": "listener_b",
+      "payload": {
+        "dta": "DTA-124",
+        "event_type": "B",
+        "sequence": 2
+      },
+      "delivery": [
+        "dta124_event_b"
+      ]
+    }
+  },
+  "contract": {
+    "event_type_isolation": "Listeners registered for one event type do not receive events emitted under another event type",
+    "payload_integrity": "Each event payload remains unchanged during delivery",
+    "delivery_order": "Delivery remains deterministic within each event type",
+    "registry_stability": "Independent event types maintain independent listener registries",
+    "cross_event_safety": "No cross-event listener invocation occurs"
+  }
+}
