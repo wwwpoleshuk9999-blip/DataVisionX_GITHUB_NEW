@@ -1,0 +1,89 @@
+{
+  "dta": "DTA-172",
+  "title": "EventBus callback event object structure isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registrations_success": "PASS",
+    "registry_correct": "PASS",
+    "emit_success": "PASS",
+    "callback_a_received_original_event": "PASS",
+    "callback_a_structure_mutation_local": "PASS",
+    "callback_b_received_original_event": "PASS",
+    "callback_b_original_source": "PASS",
+    "callback_b_original_data": "PASS",
+    "callback_b_not_affected_by_added_field": "PASS",
+    "event_structure_isolated": "PASS",
+    "source_payload_unchanged": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta172_event",
+    "source_plugin": "plugin_a",
+    "registry_before_count": 2,
+    "registry_order": [
+      "plugin_a",
+      "plugin_b"
+    ],
+    "callback_a_before_mutation": {
+      "event": "dta172_event",
+      "source": "plugin_a",
+      "data": {
+        "dta": "DTA-172",
+        "nested": {
+          "value": "ORIGINAL"
+        },
+        "items": [
+          "ORIGINAL-ITEM"
+        ]
+      }
+    },
+    "callback_a_after_mutation": {
+      "event": "MUTATED-EVENT",
+      "data": {
+        "dta": "REPLACED-BY-A",
+        "new_field": "CALLBACK-A"
+      },
+      "injected": "A-INJECTED"
+    },
+    "callback_b_received": {
+      "event": "dta172_event",
+      "source": "plugin_a",
+      "data": {
+        "dta": "DTA-172",
+        "nested": {
+          "value": "ORIGINAL"
+        },
+        "items": [
+          "ORIGINAL-ITEM"
+        ]
+      }
+    },
+    "source_data_after_emit": {
+      "dta": "DTA-172",
+      "nested": {
+        "value": "ORIGINAL"
+      },
+      "items": [
+        "ORIGINAL-ITEM"
+      ]
+    },
+    "emit_result": true,
+    "final_registry_count": 2,
+    "permission": "events"
+  },
+  "contract": {
+    "event_object_isolation": "Each callback receives an independent event object",
+    "structure_mutation_isolation": "Replacing, removing, or adding event fields in one callback does not affect subsequent callbacks",
+    "data_replacement_isolation": "Replacing the complete data object in one callback does not affect subsequent callbacks",
+    "metadata_isolation": "Removing or changing event metadata does not affect subsequent callbacks",
+    "callback_independence": "Callback-local event structure mutations remain local to that callback",
+    "source_payload_integrity": "Event object mutations do not modify the original emitter payload",
+    "emit_success": "EventBus.emit() remains successful after callback event structure mutations",
+    "registry_stability": "Event structure mutations do not modify the listener registry",
+    "permission_enforcement": "EventBus event delivery continues to require the events permission"
+  }
+}
