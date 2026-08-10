@@ -1,0 +1,19 @@
+{
+  "dta": "DTA-070",
+  "title": "WebSocket bridge loop dispatch contract",
+  "status": "READY",
+  "component": "services.websocket_bridge",
+  "checks": {
+    "initial_loop_unbound": "PASS",
+    "loop_binding": "PASS",
+    "event_dispatch": "PASS",
+    "json_payload": "PASS",
+    "event_data_preserved": "PASS"
+  },
+  "observed": {
+    "main_loop_bound": true,
+    "messages_dispatched": 1,
+    "event": "dta070_test_event",
+    "source": "system"
+  }
+}
