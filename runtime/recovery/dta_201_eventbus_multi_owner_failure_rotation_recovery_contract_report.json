@@ -1,0 +1,83 @@
+{
+  "dta": "DTA-201",
+  "title": "EventBus multi-owner failure rotation recovery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registration_a": "PASS",
+    "registration_b": "PASS",
+    "registration_c": "PASS",
+    "initial_registry_three": "PASS",
+    "all_emits_success": "PASS",
+    "no_emit_exceptions": "PASS",
+    "three_deliveries_each_cycle": "PASS",
+    "final_registry_valid": "PASS",
+    "source_metadata_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta201_event",
+    "owners": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "failing_listeners": [
+      "plugin_a",
+      "plugin_b"
+    ],
+    "emit_cycles": 3,
+    "emit_results": [
+      true,
+      true,
+      true
+    ],
+    "exceptions": [
+      null,
+      null,
+      null
+    ],
+    "delivery_counts_per_cycle": [
+      3,
+      3,
+      3
+    ],
+    "failure_rotation": [
+      {
+        "cycle": 1,
+        "failing_owner": "plugin_a",
+        "unregister": true,
+        "reregister": true,
+        "duplicate_register": true
+      },
+      {
+        "cycle": 2,
+        "failing_owner": "plugin_b",
+        "unregister": true,
+        "reregister": true,
+        "duplicate_register": true
+      }
+    ],
+    "final_registry": [
+      "plugin_c",
+      "plugin_a",
+      "plugin_b"
+    ],
+    "final_registry_entry_count": 3,
+    "duplicate_owner_entries": false,
+    "source_metadata_preserved": true,
+    "permission": "events"
+  },
+  "contract": {
+    "multi_owner_failure_isolation": "Multiple failing listener callbacks do not abort or poison EventBus broadcast cycles",
+    "failure_rotation_recovery": "Different failing owners can be selectively removed and re-registered across successive broadcast cycles",
+    "broadcast_continuity": "All registered listeners continue receiving each emitted event exactly once",
+    "duplicate_idempotency": "Repeated registration during recovery does not create duplicate listener entries",
+    "registry_integrity": "Listener registry remains structurally valid after rotating failure and recovery ownership",
+    "source_metadata": "Delivered events preserve the plugin_id supplied to emit() as source metadata",
+    "emit_continuity": "EventBus.emit() remains successful across all observed failure rotation cycles",
+    "permission_enforcement": "Registration, unregister, re-registration, and emit operations require the events permission"
+  }
+}
