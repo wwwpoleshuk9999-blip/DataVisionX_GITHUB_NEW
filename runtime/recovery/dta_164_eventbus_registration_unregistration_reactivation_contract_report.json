@@ -1,0 +1,53 @@
+{
+  "dta": "DTA-164",
+  "title": "EventBus registration/unregistration reactivation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "initial_register": "PASS",
+    "initial_emit": "PASS",
+    "initial_delivery": "PASS",
+    "unregister": "PASS",
+    "registry_empty": "PASS",
+    "reactivation_register": "PASS",
+    "reactivation_emit": "PASS",
+    "reactivation_delivery": "PASS",
+    "no_duplicate_after_reactivation": "PASS",
+    "second_unregister": "PASS",
+    "final_registry_empty": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta164_event",
+    "initial_registration": true,
+    "initial_emit_result": true,
+    "initial_delivery": [
+      ["A", {"dta": "DTA-164-FIRST"}]
+    ],
+    "first_unregister": true,
+    "registry_after_first_unregister_count": 0,
+    "reactivation_register": true,
+    "registry_after_reactivation_count": 1,
+    "reactivation_emit_result": true,
+    "reactivation_delivery": [
+      ["A", {"dta": "DTA-164-SECOND"}]
+    ],
+    "second_unregister": true,
+    "final_registry_count": 0,
+    "permission": "events"
+  },
+  "contract": {
+    "registration_activation": "A successfully registered callback becomes active for event delivery",
+    "unregistration_cleanup": "Successful unregistration removes the callback from the listener registry",
+    "registry_empty_state": "The listener registry becomes empty after removing its final callback",
+    "reactivation": "A previously removed callback can be registered again and becomes active for subsequent emits",
+    "reactivation_idempotency": "Reactivation creates exactly one listener entry",
+    "reactivation_delivery": "A reactivated callback receives subsequent events normally",
+    "final_cleanup": "The reactivated callback can subsequently be removed successfully",
+    "registry_stability": "Registration, removal and reactivation preserve listener registry integrity",
+    "emit_success": "EventBus.emit() remains successful throughout the registration lifecycle",
+    "permission_enforcement": "EventBus callback operations require the events permission"
+  }
+}
