@@ -1,0 +1,35 @@
+{
+  "dta": "DTA-083",
+  "title": "EventBus cross-event callback registration contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus + services.websocket_bridge",
+  "checks": {
+    "eventbus_created": "PASS",
+    "event_a_registration": "PASS",
+    "event_b_registration": "PASS",
+    "same_callback_cross_event_allowed": "PASS",
+    "duplicate_event_a_rejected": "PASS",
+    "duplicate_event_b_rejected": "PASS",
+    "event_a_delivery": "PASS",
+    "event_b_delivery": "PASS",
+    "websocket_delivery_both_events": "PASS",
+    "payloads_preserved": "PASS"
+  },
+  "observed": {
+    "event_a": "dta083_event_a",
+    "event_b": "dta083_event_b",
+    "callback": "listener_a",
+    "websocket_callback": "websocket_event_listener",
+    "event_a_listener_count": 2,
+    "event_b_listener_count": 2,
+    "websocket_delivery_count": 2,
+    "payload_a_status": "TEST_A",
+    "payload_b_status": "TEST_B"
+  },
+  "contract": {
+    "cross_event_registration": "The same callback may be registered independently for different events",
+    "same_event_duplicate": "Repeated registration of the same plugin/event/callback is ignored",
+    "delivery": "Each event is delivered independently to its registered listeners",
+    "websocket_bridge": "WebSocket receives each independently emitted event"
+  }
+}
