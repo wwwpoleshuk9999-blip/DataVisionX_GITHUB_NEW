@@ -1,0 +1,62 @@
+{
+  "dta": "DTA-123",
+  "title": "EventBus cross-plugin ownership isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "both_listeners_registered": "PASS",
+    "plugin_a_cannot_remove_b": "PASS",
+    "registry_preserved_after_cross_remove": "PASS",
+    "plugin_b_can_remove_b": "PASS",
+    "plugin_a_listener_preserved": "PASS",
+    "final_registry_correct": "PASS",
+    "permission_checks_present": "PASS"
+  },
+  "observed": {
+    "event": "dta123_test_event",
+    "initial_registry": [
+      {
+        "plugin": "plugin_a",
+        "callback": "listener_a"
+      },
+      {
+        "plugin": "plugin_b",
+        "callback": "listener_b"
+      }
+    ],
+    "cross_plugin_remove": {
+      "actor": "plugin_a",
+      "target": "plugin_b",
+      "result": false
+    },
+    "registry_after_cross_remove": [
+      {
+        "plugin": "plugin_a",
+        "callback": "listener_a"
+      },
+      {
+        "plugin": "plugin_b",
+        "callback": "listener_b"
+      }
+    ],
+    "owner_remove": {
+      "actor": "plugin_b",
+      "target": "plugin_b",
+      "result": true
+    },
+    "final_registry": [
+      {
+        "plugin": "plugin_a",
+        "callback": "listener_a"
+      }
+    ]
+  },
+  "contract": {
+    "ownership_isolation": "A plugin cannot unregister a listener owned by another plugin",
+    "permission_independence": "Having events permission does not grant ownership of another plugin listener",
+    "owner_control": "A plugin can unregister its own registered listener",
+    "registry_integrity": "A cross-plugin unregister attempt leaves the target listener unchanged",
+    "ownership_identity": "Listener ownership is determined by plugin identity together with callback identity"
+  }
+}
