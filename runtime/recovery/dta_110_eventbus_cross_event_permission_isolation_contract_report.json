@@ -1,0 +1,73 @@
+{
+  "dta": "DTA-110",
+  "title": "EventBus cross-event permission isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "event_a_registered": "PASS",
+    "event_b_registered": "PASS",
+    "denied_emit_a_rejected": "PASS",
+    "denied_emit_a_no_delivery": "PASS",
+    "allowed_emit_b_success": "PASS",
+    "event_b_delivery_unaffected": "PASS",
+    "allowed_emit_a_success": "PASS",
+    "cross_event_isolation": "PASS",
+    "delivery_order_preserved": "PASS",
+    "registry_stable": "PASS",
+    "payload_preserved": "PASS",
+    "permission_checks_observed": "PASS"
+  },
+  "observed": {
+    "event_a": "dta110_event_a",
+    "event_b": "dta110_event_b",
+    "event_a_listener": "listener_a",
+    "event_b_listener": "listener_b",
+    "denied_emit": {
+      "plugin": "denied_a",
+      "event": "dta110_event_a",
+      "result": false,
+      "delivery": []
+    },
+    "event_b_delivery": [
+      ["B", "allowed_b", 2]
+    ],
+    "event_a_delivery": [
+      ["A", "allowed_a", 3]
+    ],
+    "final_delivery_order": [
+      ["B", "allowed_b", 2],
+      ["A", "allowed_a", 3]
+    ],
+    "final_registry": [
+      {
+        "event": "dta110_event_a",
+        "plugin": "allowed_a",
+        "callback": "listener_a"
+      },
+      {
+        "event": "dta110_event_b",
+        "plugin": "allowed_b",
+        "callback": "listener_b"
+      }
+    ],
+    "permission_checks": [
+      ["allowed_a", "events"],
+      ["allowed_b", "events"],
+      ["denied_a", "events"],
+      ["allowed_b", "events"],
+      ["allowed_a", "events"]
+    ]
+  },
+  "contract": {
+    "permission_isolation": "Permission denial for one event does not affect another event",
+    "denied_emit": "An emitter without events permission is rejected before delivery",
+    "delivery_isolation": "A rejected emit produces no listener delivery",
+    "cross_event_independence": "A denied emit for event A does not block successful delivery of event B",
+    "subsequent_delivery": "A later authorized emit for event A remains successful after a denied emit",
+    "ordering": "Successful deliveries retain deterministic event-local order",
+    "registry_stability": "Permission rejection does not mutate listener registries",
+    "source_integrity": "Source payloads remain unchanged after rejected or successful emits",
+    "permission_enforcement": "Each emit checks the events permission independently"
+  }
+}
