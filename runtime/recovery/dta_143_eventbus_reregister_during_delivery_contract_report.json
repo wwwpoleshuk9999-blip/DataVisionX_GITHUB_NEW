@@ -1,0 +1,63 @@
+{
+  "dta": "DTA-143",
+  "title": "EventBus re-register during delivery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "listeners_registered": "PASS",
+    "first_emit_success": "PASS",
+    "first_delivery_order_observed": "PASS",
+    "reregister_success": "PASS",
+    "registry_after_first_emit_valid": "PASS",
+    "second_emit_success": "PASS",
+    "second_delivery_observed": "PASS",
+    "duplicate_registration_absent": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta143_event",
+    "initial_registry": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "mutation": {
+      "performed_by": "plugin_a",
+      "operations": [
+        "unregister plugin_c",
+        "register plugin_c"
+      ]
+    },
+    "first_delivery_order": [
+      "A",
+      "B",
+      "C"
+    ],
+    "registry_after_first_emit": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "second_delivery_order": [
+      "A",
+      "B",
+      "C"
+    ],
+    "plugin_c_registry_entries": 1,
+    "duplicate_registration_prevented": true,
+    "emit_result": true,
+    "permission": "events"
+  },
+  "contract": {
+    "reregister_during_delivery": "A listener can unregister and re-register another listener while an event is being delivered",
+    "current_event_continuity": "The active delivery sequence remains successful after the unregister and re-register mutation",
+    "delivery_order": "Listeners continue receiving the active event in the observed registration order",
+    "registry_update": "The listener registry reflects the re-registration without creating a duplicate entry",
+    "duplicate_prevention": "Re-registering the same plugin and callback does not create duplicate listener entries",
+    "subsequent_delivery": "The re-registered listener remains available for subsequent events",
+    "registry_stability": "Re-registration during emit does not corrupt the listener registry",
+    "emit_success": "EventBus.emit() remains successful after re-registration during delivery",
+    "permission_enforcement": "Unregister, register, and emit operations require the events permission"
+  }
+}
