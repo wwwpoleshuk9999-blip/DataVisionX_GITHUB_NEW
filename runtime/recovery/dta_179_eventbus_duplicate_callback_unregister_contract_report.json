@@ -1,0 +1,43 @@
+{
+  "dta": "DTA-179",
+  "title": "EventBus duplicate callback unregister contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "first_registration_success": "PASS",
+    "second_duplicate_registration_idempotent": "PASS",
+    "duplicate_registry_not_added": "PASS",
+    "unregister_success": "PASS",
+    "registry_empty_after_unregister": "PASS",
+    "emit_success": "PASS",
+    "removed_callback_not_delivered": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta179_event",
+    "plugin": "plugin_a",
+    "first_register_result": true,
+    "second_register_result": true,
+    "registry_before_unregister": [
+      "callback_a"
+    ],
+    "registry_size_before_unregister": 1,
+    "unregister_result": true,
+    "registry_after_unregister": [],
+    "registry_size_after_unregister": 0,
+    "emit_result": true,
+    "delivery_after_unregister": [],
+    "permission": "events"
+  },
+  "contract": {
+    "duplicate_registration_idempotency": "Registering the same callback multiple times for the same plugin/event does not create duplicate listeners",
+    "single_registry_entry": "Repeated registration of the same callback leaves exactly one listener entry",
+    "unregister_effect": "unregister() removes the existing listener completely",
+    "post_unregister_delivery": "A callback removed by unregister() receives no subsequent events",
+    "registry_stability": "Duplicate registration followed by unregister leaves the listener registry structurally consistent",
+    "permission_enforcement": "Each registration and unregister operation continues to require the events permission"
+  }
+}
