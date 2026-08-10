@@ -1,0 +1,24 @@
+{
+  "dta": "DTA-077",
+  "title": "WebSocket EventBus registration delivery contract",
+  "status": "READY",
+  "component": "core.bootstrap + plugin_manager.event_bus + services.websocket_bridge",
+  "checks": {
+    "eventbus_created": "PASS",
+    "plugin_started_registered": "PASS",
+    "plugin_stopped_registered": "PASS",
+    "ai_chat_completed_registered": "PASS",
+    "plugin_started_delivery": "PASS",
+    "plugin_stopped_delivery": "PASS",
+    "ai_chat_completed_delivery": "PASS",
+    "payloads_valid": "PASS"
+  },
+  "observed": {
+    "events_registered": 3,
+    "events_delivered": 3,
+    "plugin_started": "STARTED",
+    "plugin_stopped": "STOPPED",
+    "ai_chat_completed": "COMPLETED",
+    "source": "system"
+  }
+}
