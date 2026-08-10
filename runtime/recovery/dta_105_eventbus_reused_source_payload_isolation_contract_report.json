@@ -1,0 +1,46 @@
+{
+  "dta": "DTA-105",
+  "title": "EventBus reused source payload isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "listeners_registered": "PASS",
+    "first_emit_success": "PASS",
+    "second_emit_success": "PASS",
+    "first_delivery_isolated": "PASS",
+    "second_delivery_isolated": "PASS",
+    "reused_payload_preserved": "PASS",
+    "cross_emit_isolation": "PASS",
+    "delivery_order_preserved": "PASS",
+    "registry_stable": "PASS"
+  },
+  "observed": {
+    "event": "dta105_test_event",
+    "listener_count": 2,
+    "first_emit_delivery": [
+      ["MUTATOR", 1, 10],
+      ["OBSERVER", 1, 10]
+    ],
+    "second_emit_delivery": [
+      ["MUTATOR", 1, 10],
+      ["OBSERVER", 1, 10]
+    ],
+    "source_payload": {
+      "dta": "DTA-105",
+      "sequence": 1,
+      "status": "ORIGINAL",
+      "nested": {
+        "value": 10
+      }
+    }
+  },
+  "contract": {
+    "reused_payload": "The same source payload object can be safely reused across multiple emits",
+    "listener_isolation": "Mutation by one listener does not affect subsequent listeners",
+    "cross_emit_isolation": "Mutation during one emit does not affect subsequent emits",
+    "source_integrity": "The original source payload remains unchanged after delivery",
+    "ordering": "Listeners retain registration order across repeated emits",
+    "registry_stability": "Repeated emits do not mutate the listener registry"
+  }
+}
