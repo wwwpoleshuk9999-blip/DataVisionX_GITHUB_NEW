@@ -1,0 +1,54 @@
+{
+  "dta": "DTA-178",
+  "title": "EventBus selective callback unregister contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registrations_success": "PASS",
+    "initial_registry_correct": "PASS",
+    "unregister_a_success": "PASS",
+    "callback_a_removed": "PASS",
+    "callback_b_preserved": "PASS",
+    "callback_c_preserved": "PASS",
+    "emit_success": "PASS",
+    "callback_a_not_delivered": "PASS",
+    "remaining_callbacks_delivered": "PASS",
+    "delivery_order_preserved": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta178_event",
+    "plugin": "plugin_a",
+    "initial_registry": [
+      "callback_a",
+      "callback_b",
+      "callback_c"
+    ],
+    "unregistered_callback": "callback_a",
+    "unregister_result": true,
+    "registry_after_unregister": [
+      "callback_b",
+      "callback_c"
+    ],
+    "delivery_after_unregister": [
+      "callback_b",
+      "callback_c"
+    ],
+    "callback_a_delivery_count": 0,
+    "remaining_delivery_count": 2,
+    "emit_result": true,
+    "permission": "events"
+  },
+  "contract": {
+    "selective_unregister": "unregister() removes only the matching callback for the specified plugin/event pair",
+    "callback_isolation": "Removing one callback does not remove other callbacks registered by the same plugin for the same event",
+    "post_unregister_delivery": "The removed callback receives no subsequent events",
+    "remaining_callbacks": "Other callbacks remain active and continue receiving events",
+    "delivery_order": "Remaining callbacks retain their original registration order",
+    "registry_stability": "Selective callback removal leaves the listener registry structurally consistent",
+    "permission_enforcement": "Selective unregister continues to require the events permission"
+  }
+}
