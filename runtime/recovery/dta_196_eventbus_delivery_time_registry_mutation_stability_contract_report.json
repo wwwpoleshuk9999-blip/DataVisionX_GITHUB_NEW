@@ -1,0 +1,54 @@
+{
+  "dta": "DTA-196",
+  "title": "EventBus delivery-time registry mutation stability contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registration_a_success": "PASS",
+    "registration_b_success": "PASS",
+    "registration_c_success": "PASS",
+    "initial_registry_three": "PASS",
+    "emit_success": "PASS",
+    "all_initial_listeners_receive": "PASS",
+    "mutation_does_not_break_delivery": "PASS",
+    "registry_remains_valid": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta196_event",
+    "initial_registry": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "emitter": "plugin_a",
+    "emit_result": true,
+    "delivery_count": 3,
+    "delivery_targets": [
+      "handler_a",
+      "handler_b",
+      "handler_c"
+    ],
+    "registry_after_delivery": [
+      "plugin_c",
+      "plugin_a",
+      "plugin_b"
+    ],
+    "registry_entry_count": 3,
+    "duplicate_entries": false,
+    "source_metadata_preserved": true,
+    "permission": "events"
+  },
+  "contract": {
+    "delivery_continuity": "EventBus.emit() remains successful when a listener mutates the listener registry during delivery",
+    "listener_delivery": "Listeners present for the delivery receive the emitted event despite registry mutation during callback execution",
+    "mutation_tolerance": "Selective unregister and re-registration performed during callback execution do not abort the current event delivery",
+    "registry_integrity": "The listener registry remains structurally valid after delivery-time mutation",
+    "registry_uniqueness": "Delivery-time mutation does not create duplicate owner registrations",
+    "order_boundary": "Registry ordering may change when listeners are removed and re-registered during delivery; this observation does not establish order preservation under mutation",
+    "source_metadata": "Delivered events preserve the emitting plugin_id as source metadata",
+    "permission_enforcement": "Registration, unregister, re-registration, and emit operations require the events permission"
+  }
+}
