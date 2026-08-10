@@ -1,0 +1,18 @@
+{
+  "dta": "DTA-069",
+  "title": "WebSocket broadcast dead connection contract",
+  "status": "READY",
+  "component": "services.websocket_manager.WebSocketManager",
+  "checks": {
+    "live_received": "PASS",
+    "dead_removed": "PASS",
+    "live_preserved": "PASS",
+    "connection_count": "PASS"
+  },
+  "observed": {
+    "connections_before": 2,
+    "connections_after": 1,
+    "live_messages_received": 1,
+    "dead_connection_removed": true
+  }
+}
