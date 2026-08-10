@@ -1,0 +1,98 @@
+{
+  "dta": "DTA-155",
+  "title": "EventBus callback self-unregister + self-register during delivery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registrations_success": "PASS",
+    "registry_observed": "PASS",
+    "self_unregister_success": "PASS",
+    "self_register_success": "PASS",
+    "current_delivery_continued": "PASS",
+    "first_emit_success": "PASS",
+    "registry_after_mutation": "PASS",
+    "old_callback_removed": "PASS",
+    "new_callback_present": "PASS",
+    "second_emit_success": "PASS",
+    "future_delivery_correct": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta155_event",
+    "initial_registry": [
+      {
+        "plugin": "plugin_a",
+        "callback": "listener_a"
+      },
+      {
+        "plugin": "plugin_b",
+        "callback": "listener_b"
+      },
+      {
+        "plugin": "plugin_c",
+        "callback": "listener_c"
+      }
+    ],
+    "first_emit": {
+      "plugin": "plugin_a",
+      "result": true,
+      "delivery_order": [
+        ["A", {"dta": "DTA-155-FIRST"}],
+        ["U", true],
+        ["R", true],
+        ["B", {"dta": "DTA-155-FIRST"}],
+        ["C", {"dta": "DTA-155-FIRST"}]
+      ]
+    },
+    "mutation": {
+      "unregistered_callback": {
+        "plugin": "plugin_a",
+        "callback": "listener_a",
+        "result": true
+      },
+      "registered_callback": {
+        "plugin": "plugin_a",
+        "callback": "listener_d",
+        "result": true
+      }
+    },
+    "registry_after_first_emit": [
+      {
+        "plugin": "plugin_b",
+        "callback": "listener_b"
+      },
+      {
+        "plugin": "plugin_c",
+        "callback": "listener_c"
+      },
+      {
+        "plugin": "plugin_a",
+        "callback": "listener_d"
+      }
+    ],
+    "new_callback_received_first_event": false,
+    "second_emit": {
+      "plugin": "plugin_b",
+      "result": true,
+      "delivery_order": [
+        ["B", {"dta": "DTA-155-SECOND"}],
+        ["C", {"dta": "DTA-155-SECOND"}],
+        ["D", {"dta": "DTA-155-SECOND"}]
+      ]
+    },
+    "new_callback_received_second_event": true,
+    "permission": "events"
+  },
+  "contract": {
+    "combined_mutation": "A callback can unregister itself and register another callback during active event delivery",
+    "current_delivery_isolation": "The newly registered callback does not receive the already-active event",
+    "current_delivery_continuity": "Combined unregister/register mutation does not interrupt existing callback delivery",
+    "old_callback_removal": "The self-unregistered callback is removed from the listener registry",
+    "new_callback_activation": "The newly registered callback becomes active for subsequent emits",
+    "delivery_order_preservation": "Existing callbacks preserve their active delivery order",
+    "registry_stability": "Combined callback mutation does not corrupt the listener registry",
+    "emit_success": "EventBus.emit() remains successful after combined callback mutation",
+    "permission_enforcement": "EventBus operations require the events permission"
+  }
+}
