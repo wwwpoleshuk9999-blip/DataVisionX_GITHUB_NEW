@@ -1,0 +1,61 @@
+{
+  "dta": "DTA-141",
+  "title": "EventBus sequential multi-owner unregister contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "owners_registered": "PASS",
+    "first_owner_unregister_success": "PASS",
+    "second_owner_preserved": "PASS",
+    "first_emit_success": "PASS",
+    "second_owner_delivery_preserved": "PASS",
+    "second_owner_unregister_success": "PASS",
+    "registry_fully_cleared": "PASS",
+    "post_clear_emit_success": "PASS",
+    "callback_not_called_after_full_unregister": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta141_event",
+    "initial_registry": [
+      {
+        "plugin": "plugin_a",
+        "callback": "shared_listener"
+      },
+      {
+        "plugin": "plugin_b",
+        "callback": "shared_listener"
+      }
+    ],
+    "first_unregister": {
+      "plugin": "plugin_a",
+      "result": true
+    },
+    "registry_after_first_unregister": [
+      {
+        "plugin": "plugin_b",
+        "callback": "shared_listener"
+      }
+    ],
+    "remaining_owner_received_event": true,
+    "second_unregister": {
+      "plugin": "plugin_b",
+      "result": true
+    },
+    "registry_after_full_unregister": {},
+    "post_clear_emit_result": true,
+    "callback_invocations_after_full_unregister": 0,
+    "permission": "events"
+  },
+  "contract": {
+    "sequential_selective_unregister": "Multiple owners using the same callback can be unregistered sequentially without affecting unrelated owner entries",
+    "first_owner_removal": "Removing the first owner preserves the second owner's listener entry",
+    "remaining_owner_delivery": "The remaining owner continues receiving events after the first owner is removed",
+    "final_owner_removal": "Removing the final owner clears the event registry entry",
+    "registry_cleanup": "The event registry does not retain an empty event key after the final listener is removed",
+    "post_clear_emit": "Emitting after all listeners are removed succeeds without invoking the callback",
+    "delivery_isolation": "A fully unregistered callback receives no subsequent events",
+    "permission_enforcement": "Registration, unregister, and emit operations require the events permission"
+  }
+}
