@@ -1,0 +1,38 @@
+{
+  "dta": "DTA-092",
+  "title": "EventBus repeated emit independent delivery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "listeners_registered": "PASS",
+    "first_emit_success": "PASS",
+    "second_emit_success": "PASS",
+    "listener_a_two_deliveries": "PASS",
+    "listener_b_two_deliveries": "PASS",
+    "delivery_order_preserved": "PASS",
+    "first_payload_preserved": "PASS",
+    "second_payload_preserved": "PASS",
+    "payloads_independent": "PASS"
+  },
+  "observed": {
+    "event": "dta092_test_event",
+    "listener_count": 2,
+    "delivery_count_per_listener": 2,
+    "sequences": [
+      1,
+      2
+    ],
+    "statuses": [
+      "FIRST",
+      "SECOND"
+    ]
+  },
+  "contract": {
+    "repeated_emit": "The same event may be emitted multiple times successfully",
+    "delivery": "Each registered listener receives every emitted event exactly once",
+    "ordering": "Repeated events are delivered in emission order",
+    "payload_preservation": "Each emitted payload is delivered unchanged",
+    "payload_independence": "Payload objects from separate emissions remain independent"
+  }
+}
