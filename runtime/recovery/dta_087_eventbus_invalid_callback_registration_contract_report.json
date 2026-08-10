@@ -1,0 +1,30 @@
+{
+  "dta": "DTA-087",
+  "title": "EventBus invalid callback registration contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "none_rejected": "PASS",
+    "non_callable_rejected": "PASS",
+    "callable_accepted": "PASS",
+    "invalid_not_registered": "PASS"
+  },
+  "observed": {
+    "none_callback": "REJECTED",
+    "non_callable_callback": "REJECTED",
+    "valid_callback": "ACCEPTED",
+    "registered_listeners": [
+      "valid_listener"
+    ]
+  },
+  "correction": {
+    "previous_behavior": "EventBus.register() accepted None and non-callable callback values",
+    "corrected_behavior": "Non-callable callbacks are rejected before listener registration"
+  },
+  "contract": {
+    "validation": "Only callable callbacks may be registered",
+    "invalid_callback": "register() returns False and does not create a listener entry",
+    "valid_callback": "Callable callbacks continue to register normally"
+  }
+}
