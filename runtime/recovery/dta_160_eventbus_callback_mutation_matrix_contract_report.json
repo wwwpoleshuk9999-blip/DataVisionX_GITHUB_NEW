@@ -1,0 +1,33 @@
+{
+  "dta": "DTA-160",
+  "title": "EventBus callback mutation matrix contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "matrix_status": "PASS",
+  "cases": {
+    "self_unregister": "PASS",
+    "self_register": "PASS",
+    "cross_unregister": "PASS",
+    "cross_register": "PASS",
+    "combined_unregister_register": "PASS",
+    "same_owner_mutation": "PASS"
+  },
+  "contract": {
+    "current_delivery_continuity": "Callback registry mutation does not interrupt the active delivery chain",
+    "current_delivery_snapshot": "Callbacks added during delivery do not receive the already-active event",
+    "removed_callback_current_delivery": "Callbacks removed during delivery continue receiving the already-active event",
+    "future_delivery_activation": "Newly registered callbacks become active on subsequent emits",
+    "future_delivery_removal": "Unregistered callbacks are absent from subsequent emits",
+    "delivery_order_preservation": "Existing callbacks preserve their active delivery order",
+    "registry_stability": "Callback mutation does not corrupt the listener registry",
+    "emit_success": "EventBus.emit() remains successful across delivery-time callback mutations",
+    "permission_enforcement": "EventBus callback mutation operations require the events permission"
+  },
+  "observed": {
+    "matrix_status": "PASS",
+    "all_cases_passed": true,
+    "emit_success_all_cases": true,
+    "registry_checks_all_cases": true,
+    "permission_checks_all_cases": true
+  }
+}
