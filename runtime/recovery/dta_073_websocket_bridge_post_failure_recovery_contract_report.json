@@ -1,0 +1,21 @@
+{
+  "dta": "DTA-073",
+  "title": "WebSocket bridge post-failure recovery contract",
+  "status": "READY",
+  "component": "services.websocket_bridge",
+  "checks": {
+    "loop_bound": "PASS",
+    "first_listener_survives_failure": "PASS",
+    "second_listener_survives": "PASS",
+    "second_event_dispatched": "PASS",
+    "second_payload_preserved": "PASS",
+    "two_broadcast_attempts": "PASS"
+  },
+  "observed": {
+    "broadcast_calls": 2,
+    "first_broadcast": "intentional failure",
+    "second_broadcast": "successful",
+    "event": "dta073_second_event",
+    "source": "system"
+  }
+}
