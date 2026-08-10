@@ -1,0 +1,63 @@
+{
+  "dta": "DTA-114",
+  "title": "EventBus callback exception isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "listeners_registered": "PASS",
+    "emit_success": "PASS",
+    "failing_listener_called": "PASS",
+    "subsequent_listener_called": "PASS",
+    "all_listeners_attempted": "PASS",
+    "delivery_order_preserved": "PASS",
+    "registry_stable": "PASS",
+    "payload_preserved": "PASS",
+    "exception_isolated": "PASS"
+  },
+  "observed": {
+    "event": "dta114_test_event",
+    "listener_registry": [
+      "listener_a",
+      "listener_b",
+      "listener_c"
+    ],
+    "failing_listener": {
+      "callback": "listener_a",
+      "exception": "RuntimeError: DTA-114 intentional listener failure"
+    },
+    "delivery": [
+      ["A", 1],
+      ["B", 1],
+      ["C", 1]
+    ],
+    "emit_result": true,
+    "final_registry": [
+      {
+        "plugin": "system",
+        "callback": "listener_a"
+      },
+      {
+        "plugin": "system",
+        "callback": "listener_b"
+      },
+      {
+        "plugin": "system",
+        "callback": "listener_c"
+      }
+    ],
+    "payload": {
+      "dta": "DTA-114",
+      "sequence": 1,
+      "status": "EXCEPTION_ISOLATION"
+    }
+  },
+  "contract": {
+    "callback_failure_isolation": "An exception raised by one listener does not abort delivery to subsequent listeners",
+    "emit_success": "EventBus emit remains successful when an individual listener raises an exception",
+    "delivery_order": "Listeners continue to receive the event in deterministic registration order",
+    "registry_stability": "A listener exception does not mutate or corrupt the listener registry",
+    "payload_integrity": "The source payload remains unchanged after callback execution and exception handling",
+    "error_containment": "Listener callback failures are contained by EventBus and do not escape the emit delivery loop"
+  }
+}
