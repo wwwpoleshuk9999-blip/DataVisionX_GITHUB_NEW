@@ -1,0 +1,81 @@
+{
+  "dta": "DTA-171",
+  "title": "EventBus event/source metadata isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registrations_success": "PASS",
+    "registry_correct": "PASS",
+    "emit_success": "PASS",
+    "callback_a_received_original_metadata": "PASS",
+    "callback_a_metadata_mutation_local": "PASS",
+    "callback_a_data_mutation_local": "PASS",
+    "callback_b_received_original_event": "PASS",
+    "callback_b_received_original_source": "PASS",
+    "callback_b_received_original_data": "PASS",
+    "metadata_isolated": "PASS",
+    "source_payload_unchanged": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta171_event",
+    "source_plugin": "plugin_a",
+    "registry_before_count": 2,
+    "registry_order": [
+      "plugin_a",
+      "plugin_b"
+    ],
+    "callback_a_before_mutation": {
+      "event": "dta171_event",
+      "source": "plugin_a",
+      "data": {
+        "dta": "DTA-171",
+        "nested": {
+          "value": "ORIGINAL"
+        }
+      }
+    },
+    "callback_a_after_mutation": {
+      "event": "MUTATED-EVENT-BY-A",
+      "source": "MUTATED-SOURCE-BY-A",
+      "data": {
+        "dta": "DTA-171",
+        "nested": {
+          "value": "MUTATED-DATA-BY-A"
+        }
+      }
+    },
+    "callback_b_received": {
+      "event": "dta171_event",
+      "source": "plugin_a",
+      "data": {
+        "dta": "DTA-171",
+        "nested": {
+          "value": "ORIGINAL"
+        }
+      }
+    },
+    "source_data_after_emit": {
+      "dta": "DTA-171",
+      "nested": {
+        "value": "ORIGINAL"
+      }
+    },
+    "emit_result": true,
+    "final_registry_count": 2,
+    "permission": "events"
+  },
+  "contract": {
+    "event_metadata_isolation": "A callback changing event metadata does not affect subsequent callbacks",
+    "source_metadata_isolation": "A callback changing source metadata does not affect subsequent callbacks",
+    "payload_isolation": "A callback changing nested payload data does not affect subsequent callbacks",
+    "callback_independence": "Each callback receives an independent event object",
+    "source_payload_integrity": "Callback mutations do not modify the original emitter payload",
+    "emit_success": "EventBus.emit() remains successful after callback-local metadata mutations",
+    "registry_stability": "Callback metadata mutations do not modify the listener registry",
+    "permission_enforcement": "EventBus event delivery continues to require the events permission"
+  }
+}
