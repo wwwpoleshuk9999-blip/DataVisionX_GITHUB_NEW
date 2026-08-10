@@ -27,6 +27,13 @@ class EventBus:
             self.listeners[event] = []
 
 
+        for listener in self.listeners[event]:
+            if (
+                listener["plugin"] == plugin_id
+                and listener["callback"] is callback
+            ):
+                return True
+
         self.listeners[event].append(
             {
                 "plugin": plugin_id,

@@ -1,0 +1,31 @@
+{
+  "dta": "DTA-080",
+  "title": "Core bootstrap idempotent EventBus registration contract",
+  "status": "READY",
+  "component": "core.bootstrap + plugin_manager.event_bus",
+  "checks": {
+    "first_bootstrap": "PASS",
+    "second_bootstrap": "PASS",
+    "listener_count_unchanged": "PASS",
+    "websocket_listener_single": "PASS",
+    "registry_listener_single": "PASS",
+    "single_event_single_delivery": "PASS",
+    "payload_preserved": "PASS"
+  },
+  "observed": {
+    "first_listener_count": 2,
+    "second_listener_count": 2,
+    "first_websocket_listeners": 1,
+    "second_websocket_listeners": 1,
+    "first_registry_listeners": 1,
+    "second_registry_listeners": 1,
+    "websocket_delivery_count": 1,
+    "event": "plugin_stopped",
+    "plugin": "dta080_plugin",
+    "status": "STOPPED"
+  },
+  "correction": {
+    "previous_behavior": "Repeated register_core_services() duplicated EventBus listeners",
+    "corrected_behavior": "Duplicate plugin/event/callback registrations are ignored"
+  }
+}
