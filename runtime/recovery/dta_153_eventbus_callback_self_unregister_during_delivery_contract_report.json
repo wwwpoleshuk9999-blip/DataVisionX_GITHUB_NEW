@@ -1,0 +1,82 @@
+{
+  "dta": "DTA-153",
+  "title": "EventBus callback self-unregister during delivery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registrations_success": "PASS",
+    "registry_observed": "PASS",
+    "self_unregister_success": "PASS",
+    "current_delivery_continued": "PASS",
+    "first_emit_success": "PASS",
+    "registry_after_self_unregister": "PASS",
+    "second_emit_success": "PASS",
+    "self_unregistered_callback_absent": "PASS",
+    "remaining_callbacks_delivery_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta153_event",
+    "initial_registry": [
+      {
+        "plugin": "plugin_a",
+        "callback": "listener_a"
+      },
+      {
+        "plugin": "plugin_b",
+        "callback": "listener_b"
+      },
+      {
+        "plugin": "plugin_c",
+        "callback": "listener_c"
+      }
+    ],
+    "first_emit": {
+      "plugin": "plugin_a",
+      "result": true,
+      "delivery_order": [
+        ["A", {"dta": "DTA-153-FIRST"}],
+        ["R", true],
+        ["B", {"dta": "DTA-153-FIRST"}],
+        ["C", {"dta": "DTA-153-FIRST"}]
+      ]
+    },
+    "self_unregister": {
+      "plugin": "plugin_a",
+      "callback": "listener_a",
+      "result": true
+    },
+    "registry_after_self_unregister": [
+      {
+        "plugin": "plugin_b",
+        "callback": "listener_b"
+      },
+      {
+        "plugin": "plugin_c",
+        "callback": "listener_c"
+      }
+    ],
+    "second_emit": {
+      "plugin": "plugin_b",
+      "result": true,
+      "delivery_order": [
+        ["B", {"dta": "DTA-153-SECOND"}],
+        ["C", {"dta": "DTA-153-SECOND"}]
+      ]
+    },
+    "self_unregistered_callback_invocations_after_removal": 0,
+    "permission": "events"
+  },
+  "contract": {
+    "self_unregister": "A callback can unregister itself during active event delivery",
+    "current_delivery_continuity": "Self-unregister does not interrupt the current event delivery chain",
+    "delivery_preservation": "Callbacks following the self-unregistering callback continue receiving the active event",
+    "registry_update": "The self-unregistered callback is removed from the listener registry",
+    "future_delivery_absence": "A self-unregistered callback does not receive subsequent events",
+    "remaining_callback_preservation": "Other callbacks remain registered and continue receiving events",
+    "emit_success": "EventBus.emit() remains successful after callback self-unregister",
+    "registry_stability": "Self-unregister during delivery does not corrupt the listener registry",
+    "permission_enforcement": "EventBus operations require the events permission"
+  }
+}
