@@ -1,0 +1,76 @@
+{
+  "dta": "DTA-104",
+  "title": "EventBus cross-event payload isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "event_a_registered": "PASS",
+    "event_b_registered": "PASS",
+    "event_a_emit_success": "PASS",
+    "event_b_emit_success": "PASS",
+    "event_a_listener_isolated": "PASS",
+    "event_b_payload_isolated": "PASS",
+    "cross_event_isolation": "PASS",
+    "delivery_order_preserved": "PASS",
+    "registry_stable": "PASS",
+    "payload_a_preserved": "PASS",
+    "payload_b_preserved": "PASS"
+  },
+  "observed": {
+    "event_a": "dta104_event_a",
+    "event_b": "dta104_event_b",
+    "event_a_listener_count": 2,
+    "event_b_listener_count": 1,
+    "event_a_delivery": [
+      [
+        "A_MUTATOR",
+        {
+          "event": "dta104_event_a",
+          "source": "system",
+          "data": {
+            "status": "A_ORIGINAL",
+            "nested": {
+              "value": 10
+            }
+          }
+        }
+      ],
+      [
+        "A_OBSERVER",
+        {
+          "event": "dta104_event_a",
+          "source": "system",
+          "data": {
+            "status": "A_ORIGINAL",
+            "nested": {
+              "value": 10
+            }
+          }
+        }
+      ]
+    ],
+    "event_b_delivery": [
+      [
+        "B_OBSERVER",
+        {
+          "event": "dta104_event_b",
+          "source": "system",
+          "data": {
+            "status": "B_ORIGINAL",
+            "nested": {
+              "value": 20
+            }
+          }
+        }
+      ]
+    ]
+  },
+  "contract": {
+    "listener_isolation": "Mutation of event A delivery state does not affect another listener receiving event A",
+    "cross_event_isolation": "Mutation during event A delivery does not affect event B",
+    "payload_integrity": "Source payloads for both events remain unchanged",
+    "registry_stability": "Cross-event delivery does not mutate listener registries",
+    "ordering": "Listeners retain registration order within each event"
+  }
+}
