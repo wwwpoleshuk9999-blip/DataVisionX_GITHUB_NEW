@@ -1,0 +1,64 @@
+{
+  "dta": "DTA-195",
+  "title": "EventBus multi-owner repeated broadcast stability contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registration_a_success": "PASS",
+    "registration_b_success": "PASS",
+    "registry_initial_two": "PASS",
+    "repeated_emits_success": "PASS",
+    "handler_a_delivery_once_each": "PASS",
+    "handler_b_delivery_once_each": "PASS",
+    "source_metadata_preserved": "PASS",
+    "registry_stable": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta195_event",
+    "owners": [
+      "plugin_a",
+      "plugin_b"
+    ],
+    "cycles": 5,
+    "emit_results": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "delivery_counts_a": [
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "delivery_counts_b": [
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "source_metadata_preserved": true,
+    "final_registry": [
+      "plugin_a",
+      "plugin_b"
+    ],
+    "permission": "events"
+  },
+  "contract": {
+    "multi_owner_registration": "Multiple plugin owners can independently register listeners for the same event",
+    "repeated_broadcast": "Repeated EventBus.emit() calls deliver the event to every currently registered listener",
+    "delivery_once": "Each registered listener receives each emitted event exactly once",
+    "cross_owner_delivery": "Broadcast delivery is independent of listener ownership",
+    "source_metadata": "Each delivered event preserves the plugin_id supplied to emit() as source metadata",
+    "registry_stability": "Repeated broadcast delivery does not modify the listener registry",
+    "emit_continuity": "EventBus.emit() remains successful throughout repeated multi-owner delivery cycles",
+    "permission_enforcement": "Registration and emit operations require the events permission"
+  }
+}
