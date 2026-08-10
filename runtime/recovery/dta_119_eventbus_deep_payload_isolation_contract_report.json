@@ -1,0 +1,68 @@
+{
+  "dta": "DTA-119",
+  "title": "EventBus deep payload isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "listeners_registered": "PASS",
+    "emit_success": "PASS",
+    "listener_a_called": "PASS",
+    "listener_b_called": "PASS",
+    "nested_dict_isolated": "PASS",
+    "nested_list_isolated": "PASS",
+    "nested_item_isolated": "PASS",
+    "original_payload_preserved": "PASS",
+    "registry_stable": "PASS",
+    "delivery_order_preserved": "PASS"
+  },
+  "observed": {
+    "event": "dta119_test_event",
+    "delivery": [
+      [
+        "A",
+        "MUTATED_BY_A",
+        [1, 2, 3, 999],
+        "MUTATED"
+      ],
+      [
+        "B",
+        "ORIGINAL",
+        [1, 2, 3],
+        "ORIGINAL"
+      ]
+    ],
+    "original_payload": {
+      "dta": "DTA-119",
+      "meta": {
+        "source": "ORIGINAL",
+        "values": [1, 2, 3]
+      },
+      "items": [
+        {
+          "id": 1,
+          "value": "ORIGINAL"
+        }
+      ]
+    },
+    "final_registry": [
+      {
+        "plugin": "system",
+        "callback": "listener_a"
+      },
+      {
+        "plugin": "system",
+        "callback": "listener_b"
+      }
+    ]
+  },
+  "contract": {
+    "deep_copy_isolation": "Each listener receives an independent deep copy of event data",
+    "nested_dict_isolation": "Nested dictionary mutations by one listener are invisible to subsequent listeners",
+    "nested_list_isolation": "Nested list mutations by one listener are invisible to subsequent listeners",
+    "nested_object_isolation": "Mutations of objects inside nested collections do not leak between listeners",
+    "source_integrity": "The original source payload remains unchanged after listener mutation",
+    "registry_stability": "Payload mutation does not alter the listener registry",
+    "delivery_order": "Listener delivery remains deterministic"
+  }
+}
