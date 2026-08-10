@@ -1,0 +1,41 @@
+{
+  "dta": "DTA-138",
+  "title": "EventBus unregister wrong owner contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "listener_registered": "PASS",
+    "wrong_owner_unregister_observed": "PASS",
+    "registry_stable": "PASS",
+    "listener_preserved": "PASS",
+    "emit_success": "PASS",
+    "callback_delivery_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta138_event",
+    "registered_plugin": "plugin_a",
+    "registered_callback": "listener",
+    "unregister_owner": "plugin_b",
+    "unregister_result": false,
+    "registry_before": [
+      "plugin_a"
+    ],
+    "registry_after": [
+      "plugin_a"
+    ],
+    "emit_result": true,
+    "callback_invocations": 1,
+    "permission": "events"
+  },
+  "contract": {
+    "ownership_enforcement": "A plugin cannot unregister a listener owned by another plugin",
+    "wrong_owner_result": "Unregister with an incorrect plugin owner returns false",
+    "registry_stability": "A failed wrong-owner unregister does not modify the listener registry",
+    "listener_preservation": "The original listener remains registered after a wrong-owner unregister attempt",
+    "delivery_preservation": "The preserved listener continues receiving events",
+    "emit_success": "EventBus.emit() remains successful after a wrong-owner unregister attempt",
+    "permission_enforcement": "Both unregistering and emitting plugins require the events permission"
+  }
+}
