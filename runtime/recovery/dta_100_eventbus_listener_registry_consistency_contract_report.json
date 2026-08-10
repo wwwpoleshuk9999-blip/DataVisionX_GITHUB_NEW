@@ -1,0 +1,49 @@
+{
+  "dta": "DTA-100",
+  "title": "EventBus listener registry consistency contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "initial_registry_correct": "PASS",
+    "emit_1_success": "PASS",
+    "emit_2_success": "PASS",
+    "emit_3_success": "PASS",
+    "dynamic_add_preserved": "PASS",
+    "dynamic_remove_preserved": "PASS",
+    "delivery_order_preserved": "PASS",
+    "final_registry_consistent": "PASS",
+    "source_payloads_preserved": "PASS"
+  },
+  "observed": {
+    "event": "dta100_test_event",
+    "initial_listeners": [
+      "listener_a",
+      "listener_b"
+    ],
+    "delivery_order": [
+      ["A", 1],
+      ["B", 1],
+      ["A", 2],
+      ["B", 2],
+      ["C", 2],
+      ["A", 3],
+      ["C", 3],
+      ["D", 3]
+    ],
+    "final_listeners": [
+      "listener_a",
+      "listener_c",
+      "listener_d"
+    ],
+    "final_listener_count": 3
+  },
+  "contract": {
+    "dynamic_add": "Listeners added between emits receive subsequent events",
+    "dynamic_remove": "Listeners removed between emits do not receive subsequent events",
+    "snapshot_delivery": "Each emit operates on a stable listener snapshot",
+    "registry_consistency": "The listener registry remains consistent after dynamic add/remove operations",
+    "ordering": "Active listeners retain registration order",
+    "source_integrity": "Source payloads remain unchanged after all deliveries"
+  }
+}
