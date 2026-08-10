@@ -1,0 +1,30 @@
+{
+  "dta": "DTA-088",
+  "title": "EventBus failing listener persistence contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "failing_listener_registered": "PASS",
+    "first_emit_survived": "PASS",
+    "listener_invoked_first": "PASS",
+    "listener_remains_registered": "PASS",
+    "second_emit_survived": "PASS",
+    "listener_invoked_second": "PASS",
+    "listener_count_stable": "PASS"
+  },
+  "observed": {
+    "event": "dta088_test_event",
+    "initial_listener_count": 1,
+    "final_listener_count": 1,
+    "invocations": 2,
+    "listener": "failing_listener",
+    "failure": "DTA-088 intentional failure"
+  },
+  "contract": {
+    "exception_isolation": "A listener exception does not propagate through EventBus.emit()",
+    "listener_persistence": "A failing listener remains registered after its callback raises",
+    "repeat_delivery": "The same failing listener may receive subsequent events",
+    "registry_stability": "Listener count remains unchanged after callback failure"
+  }
+}
