@@ -1,0 +1,43 @@
+{
+  "dta": "DTA-125",
+  "title": "EventBus emit permission enforcement contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "denied_bus_created": "PASS",
+    "allowed_bus_created": "PASS",
+    "denied_listener_registered": "PASS",
+    "denied_emit_rejected": "PASS",
+    "denied_listener_not_called": "PASS",
+    "denied_registry_unchanged": "PASS",
+    "denied_permission_checked": "PASS",
+    "denied_payload_preserved": "PASS",
+    "allowed_listener_registered": "PASS",
+    "allowed_emit_success": "PASS",
+    "allowed_listener_called": "PASS",
+    "allowed_permission_checked": "PASS",
+    "allowed_payload_preserved": "PASS"
+  },
+  "observed": {
+    "event": "dta125_test_event",
+    "denied_emit": {
+      "plugin": "plugin_denied",
+      "result": false,
+      "listener_called": false,
+      "registry_preserved": true
+    },
+    "allowed_emit": {
+      "plugin": "plugin_allowed",
+      "result": true,
+      "listener_called": true
+    },
+    "permission": "events"
+  },
+  "contract": {
+    "permission_enforcement": "EventBus.emit() requires the emitting plugin to have the events permission",
+    "denied_delivery": "An unauthorized emit is rejected and no listener receives the event",
+    "authorized_delivery": "An authorized emit is delivered normally to registered listeners",
+    "registry_stability": "Rejected emits do not mutate the listener registry",
+    "source_integrity": "Rejected and authorized emits do not mutate the original payload"
+  }
+}
