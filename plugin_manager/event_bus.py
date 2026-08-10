@@ -67,10 +67,14 @@ class EventBus:
         )
 
 
-        for listener in self.listeners.get(
-            event,
-            []
-        ):
+        listeners_snapshot = list(
+            self.listeners.get(
+                event,
+                []
+            )
+        )
+
+        for listener in listeners_snapshot:
 
             try:
 
