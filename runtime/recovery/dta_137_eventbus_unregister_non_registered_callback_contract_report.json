@@ -1,0 +1,42 @@
+{
+  "dta": "DTA-137",
+  "title": "EventBus unregister non-registered callback contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "listener_registered": "PASS",
+    "unregistered_callback_observed": "PASS",
+    "registry_stable": "PASS",
+    "registered_listener_preserved": "PASS",
+    "emit_success": "PASS",
+    "callback_delivery_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta137_event",
+    "registered_plugin": "plugin_a",
+    "registered_callback": "listener_a",
+    "unregister_target": "listener_b",
+    "unregister_result": false,
+    "registry_before": [
+      "plugin_a"
+    ],
+    "registry_after": [
+      "plugin_a"
+    ],
+    "emit_result": true,
+    "callback_invocations": [
+      "A"
+    ],
+    "permission": "events"
+  },
+  "contract": {
+    "unknown_callback": "Unregistering a callback that is not registered returns false",
+    "registry_stability": "A failed unregister does not modify the listener registry",
+    "listener_preservation": "Existing listeners remain registered after an unsuccessful unregister",
+    "delivery_preservation": "Existing listeners continue receiving events after an unsuccessful unregister",
+    "emit_success": "EventBus.emit() remains successful after an unsuccessful unregister",
+    "permission_enforcement": "Unregister and emit operations require the events permission"
+  }
+}
