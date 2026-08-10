@@ -1,0 +1,98 @@
+{
+  "dta": "DTA-161",
+  "title": "EventBus callback mutation repeated-cycle stability contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "initial_registration_success": "PASS",
+    "cycle_1_emit_success": "PASS",
+    "cycle_1_delivery_correct": "PASS",
+    "cycle_1_unregister_success": "PASS",
+    "cycle_1_registry_correct": "PASS",
+    "cycle_2_register_success": "PASS",
+    "cycle_2_emit_success": "PASS",
+    "cycle_2_delivery_correct": "PASS",
+    "no_duplicate_callbacks": "PASS",
+    "cycle_2_unregister_success": "PASS",
+    "cycle_2_registry_correct": "PASS",
+    "cycle_3_register_success": "PASS",
+    "cycle_3_emit_success": "PASS",
+    "cycle_3_delivery_correct": "PASS",
+    "final_registry_stable": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta161_event",
+    "cycle_1": {
+      "registry": [
+        {
+          "plugin": "plugin_a",
+          "callback": "listener_a"
+        },
+        {
+          "plugin": "plugin_b",
+          "callback": "listener_b"
+        }
+      ],
+      "delivery": [
+        ["A", {"dta": "DTA-161-CYCLE-1"}],
+        ["B", {"dta": "DTA-161-CYCLE-1"}]
+      ],
+      "unregister": {
+        "plugin": "plugin_b",
+        "callback": "listener_b",
+        "result": true
+      }
+    },
+    "cycle_2": {
+      "registry": [
+        {
+          "plugin": "plugin_a",
+          "callback": "listener_a"
+        },
+        {
+          "plugin": "plugin_c",
+          "callback": "listener_c"
+        }
+      ],
+      "delivery": [
+        ["A", {"dta": "DTA-161-CYCLE-2"}],
+        ["C", {"dta": "DTA-161-CYCLE-2"}]
+      ],
+      "unregister": {
+        "plugin": "plugin_c",
+        "callback": "listener_c",
+        "result": true
+      }
+    },
+    "cycle_3": {
+      "registry": [
+        {
+          "plugin": "plugin_a",
+          "callback": "listener_a"
+        },
+        {
+          "plugin": "plugin_d",
+          "callback": "listener_d"
+        }
+      ],
+      "delivery": [
+        ["A", {"dta": "DTA-161-CYCLE-3"}],
+        ["D", {"dta": "DTA-161-CYCLE-3"}]
+      ]
+    },
+    "permission": "events"
+  },
+  "contract": {
+    "repeated_mutation": "Callback registration and unregistration can be repeated across sequential delivery cycles",
+    "delivery_stability": "Each emit delivers only to callbacks active in that cycle",
+    "registry_cleanup": "Unregistered callbacks are removed from the listener registry",
+    "registry_reactivation": "Newly registered callbacks become active for subsequent emits",
+    "duplicate_prevention": "Repeated mutation cycles do not create duplicate callback entries",
+    "ordering": "Existing callback order remains stable across mutation cycles",
+    "registry_stability": "The listener registry remains structurally consistent after repeated mutations",
+    "emit_success": "EventBus.emit() remains successful across repeated mutation cycles",
+    "permission_enforcement": "EventBus callback mutation operations require the events permission"
+  }
+}
