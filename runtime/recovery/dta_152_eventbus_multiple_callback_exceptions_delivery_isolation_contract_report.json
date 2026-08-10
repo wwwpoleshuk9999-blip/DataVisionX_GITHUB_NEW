@@ -1,0 +1,90 @@
+{
+  "dta": "DTA-152",
+  "title": "EventBus multiple callback exceptions delivery isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registrations_success": "PASS",
+    "registry_observed": "PASS",
+    "multiple_callback_exceptions_observed": "PASS",
+    "full_delivery_order_observed": "PASS",
+    "emit_success_preserved": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta152_event",
+    "initial_registry": [
+      {
+        "plugin": "plugin_a",
+        "callback": "listener_a"
+      },
+      {
+        "plugin": "plugin_b",
+        "callback": "listener_b"
+      },
+      {
+        "plugin": "plugin_c",
+        "callback": "listener_c"
+      },
+      {
+        "plugin": "plugin_d",
+        "callback": "listener_d"
+      },
+      {
+        "plugin": "plugin_e",
+        "callback": "listener_e"
+      }
+    ],
+    "failing_callbacks": [
+      {
+        "plugin": "plugin_a",
+        "callback": "listener_a",
+        "exception": "RuntimeError"
+      },
+      {
+        "plugin": "plugin_b",
+        "callback": "listener_b",
+        "exception": "ValueError"
+      },
+      {
+        "plugin": "plugin_d",
+        "callback": "listener_d",
+        "exception": "RuntimeError"
+      }
+    ],
+    "successful_callbacks": [
+      "listener_c",
+      "listener_e"
+    ],
+    "delivery_order": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ],
+    "callback_exceptions_propagated": false,
+    "callback_exceptions_isolated": true,
+    "emit_result": true,
+    "registry_after_emit": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c",
+      "plugin_d",
+      "plugin_e"
+    ],
+    "permission": "events"
+  },
+  "contract": {
+    "multiple_exception_isolation": "Multiple callback exceptions during one event delivery do not abort EventBus delivery",
+    "exception_containment": "Each callback exception is contained independently by EventBus.emit()",
+    "delivery_continuity": "Callbacks after one or more failing callbacks continue receiving the active event",
+    "delivery_order": "All listeners continue receiving the event in registration order",
+    "emit_success": "EventBus.emit() returns true after multiple callback exceptions are contained",
+    "registry_preservation": "Multiple callback failures do not modify the listener registry",
+    "listener_preservation": "Failing callbacks remain registered after their exceptions",
+    "permission_enforcement": "EventBus.emit() requires the events permission before delivery"
+  }
+}
