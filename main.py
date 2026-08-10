@@ -1,3 +1,4 @@
+import asyncio
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -5,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from core.kernel import Kernel
 from core.runtime import runtime
 from core.bootstrap import register_core_services
+from services.websocket_bridge import set_loop
 from core.health import health
 from api.ai import router as ai_router
 from api.routes.metrics import router as metrics_router
@@ -58,8 +60,9 @@ kernel = Kernel()
 
 
 @app.on_event("startup")
-def startup():
+async def startup():
     register_core_services()
+    set_loop(asyncio.get_running_loop())
     kernel.start()
     runtime.auto_start_plugins()
 

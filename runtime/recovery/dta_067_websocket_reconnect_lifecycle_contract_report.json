@@ -1,0 +1,21 @@
+{
+  "dta": "DTA-067",
+  "title": "WebSocket reconnect lifecycle contract",
+  "status": "READY",
+  "entrypoint": "main:app",
+  "runner": "uvicorn",
+  "checks": {
+    "http_boot": "PASS",
+    "client_first_connect": "PASS",
+    "client_first_initial": "PASS",
+    "client_disconnect": "PASS",
+    "client_reconnect": "PASS",
+    "client_reconnect_initial": "PASS",
+    "event_after_reconnect": "PASS",
+    "event_payload_after_reconnect": "PASS",
+    "server_cleanup": "PASS"
+  },
+  "observed": {
+    "plugin_stopped_events_after_reconnect": 3
+  }
+}
