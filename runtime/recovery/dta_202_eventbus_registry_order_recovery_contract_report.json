@@ -1,0 +1,81 @@
+{
+  "dta": "DTA-202",
+  "title": "EventBus registry order recovery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registration_plugin_a": "PASS",
+    "registration_plugin_b": "PASS",
+    "registration_plugin_c": "PASS",
+    "initial_registry_three": "PASS",
+    "three_registry_entries_after_rotation": "PASS",
+    "unique_owner_entries": "PASS",
+    "final_emit_success": "PASS",
+    "all_listeners_received": "PASS",
+    "delivery_count_three": "PASS",
+    "delivery_order_matches_registry": "PASS",
+    "source_metadata_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta202_event",
+    "initial_registry": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "rotation_orders": [
+      {
+        "cycle": 1,
+        "owner": "plugin_b",
+        "order": [
+          "plugin_a",
+          "plugin_c",
+          "plugin_b"
+        ]
+      },
+      {
+        "cycle": 2,
+        "owner": "plugin_a",
+        "order": [
+          "plugin_c",
+          "plugin_b",
+          "plugin_a"
+        ]
+      },
+      {
+        "cycle": 3,
+        "owner": "plugin_c",
+        "order": [
+          "plugin_b",
+          "plugin_a",
+          "plugin_c"
+        ]
+      }
+    ],
+    "final_registry": [
+      "plugin_b",
+      "plugin_a",
+      "plugin_c"
+    ],
+    "final_registry_entry_count": 3,
+    "duplicate_owner_entries": false,
+    "final_emit_result": true,
+    "final_delivery_count": 3,
+    "delivery_order_matches_registry": true,
+    "source_metadata_preserved": true,
+    "permission": "events"
+  },
+  "contract": {
+    "registry_order_recovery": "Selective unregister and re-registration may change listener registry order without corrupting the registry",
+    "unique_owner_integrity": "Recovery rotations preserve exactly one listener entry per owner",
+    "broadcast_order_consistency": "Event delivery follows the current listener registry order",
+    "delivery_continuity": "All registered listeners receive the broadcast exactly once",
+    "source_metadata": "Delivered events preserve the plugin_id supplied to emit() as source metadata",
+    "duplicate_idempotency": "Duplicate registration does not create duplicate listener entries",
+    "emit_continuity": "EventBus.emit() remains successful after registry order changes",
+    "permission_enforcement": "Registration, unregister, re-registration, and emit operations require the events permission"
+  }
+}
