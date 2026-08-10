@@ -1,0 +1,45 @@
+{
+  "dta": "DTA-149",
+  "title": "EventBus final callback removal registry cleanup contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registration_success": "PASS",
+    "listener_registry_observed": "PASS",
+    "unregister_success": "PASS",
+    "event_registry_entry_removed": "PASS",
+    "registry_fully_clean": "PASS",
+    "post_clear_emit_success": "PASS",
+    "callback_not_called_after_clear": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta149_event",
+    "initial_registry": [
+      {
+        "plugin": "plugin_a",
+        "callback": "listener"
+      }
+    ],
+    "unregister": {
+      "plugin": "plugin_a",
+      "callback": "listener",
+      "result": true
+    },
+    "registry_after_unregister": {},
+    "event_registry_entry_removed": true,
+    "post_clear_emit_result": true,
+    "callback_invocations_after_clear": 0,
+    "permission": "events"
+  },
+  "contract": {
+    "final_callback_removal": "Removing the final callback for an event succeeds",
+    "event_registry_cleanup": "The event key is removed from the listener registry when its final callback is unregistered",
+    "registry_cleanup": "The listener registry becomes fully empty after the final callback is removed",
+    "post_clear_emit": "Emitting an event after all listeners are removed succeeds",
+    "delivery_absence": "No callback is invoked after the listener registry has been cleared",
+    "registry_stability": "Final callback removal leaves the EventBus registry in a clean state",
+    "permission_enforcement": "Register, unregister, and emit operations require the events permission"
+  }
+}
