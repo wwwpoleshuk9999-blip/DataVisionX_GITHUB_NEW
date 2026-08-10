@@ -1,0 +1,48 @@
+{
+  "dta": "DTA-101",
+  "title": "EventBus failure isolation and registry stability contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "listeners_registered": "PASS",
+    "emit_success": "PASS",
+    "listener_a_invoked": "PASS",
+    "failing_listener_invoked": "PASS",
+    "listener_b_invoked": "PASS",
+    "listener_c_invoked": "PASS",
+    "failure_isolated": "PASS",
+    "delivery_order_preserved": "PASS",
+    "registry_stable": "PASS",
+    "source_payload_preserved": "PASS"
+  },
+  "observed": {
+    "event": "dta101_test_event",
+    "listener_count": 4,
+    "delivery_order": [
+      "listener_a",
+      "failing_listener",
+      "listener_b",
+      "listener_c"
+    ],
+    "received": [
+      ["A", 1],
+      ["FAIL", 1],
+      ["B", 1],
+      ["C", 1]
+    ],
+    "registry_after_emit": [
+      "listener_a",
+      "failing_listener",
+      "listener_b",
+      "listener_c"
+    ]
+  },
+  "contract": {
+    "failure_isolation": "Failure in one listener does not stop subsequent listeners",
+    "delivery_order": "Listeners continue to receive events in registration order",
+    "registry_stability": "Listener failures do not mutate the listener registry",
+    "emit_result": "emit() remains successful when an individual listener raises",
+    "source_integrity": "The original emit() payload remains unchanged"
+  }
+}
