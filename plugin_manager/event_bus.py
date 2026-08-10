@@ -1,4 +1,5 @@
 import os
+import copy
 from datetime import datetime
 
 
@@ -77,7 +78,7 @@ class EventBus:
                     {
                         "event": event,
                         "source": plugin_id,
-                        "data": data or {}
+                        "data": copy.deepcopy(data or {})
                     }
                 )
 

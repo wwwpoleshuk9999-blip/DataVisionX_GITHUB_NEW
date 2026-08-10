@@ -1,0 +1,49 @@
+{
+  "dta": "DTA-093",
+  "title": "EventBus payload mutation isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "listeners_registered": "PASS",
+    "emit_success": "PASS",
+    "mutating_listener_invoked": "PASS",
+    "observing_listener_invoked": "PASS",
+    "listener_order_preserved": "PASS",
+    "observer_payload_isolated": "PASS",
+    "source_payload_preserved": "PASS",
+    "mutation_not_visible_to_observer": "PASS"
+  },
+  "observed": {
+    "event": "dta093_test_event",
+    "listener_count": 2,
+    "delivery_order": [
+      "mutating_listener",
+      "observing_listener"
+    ],
+    "source_payload": {
+      "dta": "DTA-093",
+      "sequence": 1,
+      "status": "ORIGINAL"
+    },
+    "mutator_result": {
+      "status": "MUTATED",
+      "mutated_by": "listener_a"
+    },
+    "observer_result": {
+      "dta": "DTA-093",
+      "sequence": 1,
+      "status": "ORIGINAL"
+    }
+  },
+  "correction": {
+    "previous_behavior": "All listeners received the same mutable event data object",
+    "corrected_behavior": "Each listener receives an independent deep-copied event payload"
+  },
+  "contract": {
+    "payload_isolation": "Each listener receives an independent event payload",
+    "mutation_isolation": "Mutation by one listener is not visible to subsequent listeners",
+    "source_integrity": "The original emit() payload remains unchanged",
+    "delivery_order": "Listener registration order remains preserved"
+  }
+}
