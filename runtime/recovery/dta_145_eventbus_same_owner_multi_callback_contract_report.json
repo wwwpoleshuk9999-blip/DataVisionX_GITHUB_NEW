@@ -1,0 +1,45 @@
+{
+  "dta": "DTA-145",
+  "title": "EventBus same-owner multi-callback registration contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "first_registration_success": "PASS",
+    "second_registration_success": "PASS",
+    "same_owner_multi_callback_observed": "PASS",
+    "emit_success": "PASS",
+    "both_callbacks_called": "PASS",
+    "registry_stable": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta145_event",
+    "registrations": [
+      {
+        "plugin": "plugin_a",
+        "callback": "listener_a"
+      },
+      {
+        "plugin": "plugin_a",
+        "callback": "listener_b"
+      }
+    ],
+    "registry_listener_count": 2,
+    "delivery_order": [
+      "A",
+      "B"
+    ],
+    "emit_result": true,
+    "permission": "events"
+  },
+  "contract": {
+    "same_owner_multiple_callbacks": "A single plugin owner can register multiple distinct callbacks for the same event",
+    "registration_independence": "Each callback is retained as an independent listener entry",
+    "delivery": "All callbacks registered by the same owner receive the emitted event",
+    "delivery_order": "Callbacks are invoked in registration order",
+    "registry_preservation": "Multiple callbacks for the same owner remain independently represented in the registry",
+    "emit_success": "EventBus.emit() remains successful with multiple callbacks owned by the same plugin",
+    "permission_enforcement": "Each registration and event emission requires the events permission"
+  }
+}
