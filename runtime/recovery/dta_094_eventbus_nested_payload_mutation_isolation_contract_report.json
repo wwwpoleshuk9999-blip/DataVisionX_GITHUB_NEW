@@ -1,0 +1,52 @@
+{
+  "dta": "DTA-094",
+  "title": "EventBus nested payload mutation isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "listeners_registered": "PASS",
+    "emit_success": "PASS",
+    "mutator_invoked": "PASS",
+    "observer_invoked": "PASS",
+    "nested_meta_isolated": "PASS",
+    "nested_list_isolated": "PASS",
+    "nested_object_isolated": "PASS",
+    "source_payload_preserved": "PASS"
+  },
+  "observed": {
+    "event": "dta094_test_event",
+    "listener_count": 2,
+    "mutator": {
+      "meta_status": "MUTATED",
+      "item_value": 999,
+      "nested_flag": false
+    },
+    "observer": {
+      "meta_status": "ORIGINAL",
+      "item_value": 1,
+      "nested_flag": true
+    },
+    "source_payload": {
+      "dta": "DTA-094",
+      "meta": {
+        "status": "ORIGINAL"
+      },
+      "items": [
+        {
+          "value": 1
+        }
+      ],
+      "nested": {
+        "flag": true
+      }
+    }
+  },
+  "contract": {
+    "deep_copy": "Each listener receives a deep-copied event payload",
+    "nested_dict_isolation": "Mutations to nested dictionaries do not affect subsequent listeners",
+    "nested_list_isolation": "Mutations to nested list elements do not affect subsequent listeners",
+    "nested_object_isolation": "Mutations to nested objects do not affect subsequent listeners",
+    "source_integrity": "The original emit() payload remains unchanged"
+  }
+}
