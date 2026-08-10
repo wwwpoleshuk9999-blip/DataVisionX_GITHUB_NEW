@@ -1,0 +1,62 @@
+{
+  "dta": "DTA-177",
+  "title": "EventBus same plugin/event different callback contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "first_registration_success": "PASS",
+    "second_registration_result_observed": "PASS",
+    "registry_structure_observed": "PASS",
+    "emit_success": "PASS",
+    "delivery_observed": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta177_event",
+    "plugin": "plugin_a",
+    "first_registration": {
+      "callback": "callback_a",
+      "result": true
+    },
+    "second_registration": {
+      "callback": "callback_b",
+      "result": true
+    },
+    "registry_after_first": [
+      {
+        "plugin": "plugin_a",
+        "callback": "callback_a"
+      }
+    ],
+    "registry_after_second": [
+      {
+        "plugin": "plugin_a",
+        "callback": "callback_a"
+      },
+      {
+        "plugin": "plugin_a",
+        "callback": "callback_b"
+      }
+    ],
+    "delivery_order": [
+      "callback_a",
+      "callback_b"
+    ],
+    "delivery_count": 2,
+    "emit_result": true,
+    "permission": "events"
+  },
+  "contract": {
+    "same_plugin_event_multiple_callbacks": "The same plugin may register multiple distinct callbacks for the same event",
+    "different_callback_registration": "Registering a different callback for an existing plugin/event pair returns True and adds the callback",
+    "callback_independence": "Each distinct callback is retained as a separate listener",
+    "delivery": "All registered distinct callbacks for the same plugin/event receive the emitted event",
+    "delivery_order": "Callbacks are delivered in listener registration order",
+    "duplicate_scope": "Registration idempotency applies to the same callback; a different callback is treated as a distinct listener",
+    "registry_stability": "Multiple callbacks for the same plugin/event remain structurally stable after emit",
+    "permission_enforcement": "Each registration continues to require the events permission"
+  }
+}
