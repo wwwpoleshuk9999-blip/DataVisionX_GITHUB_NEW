@@ -1,0 +1,18 @@
+{
+  "dta": "DTA-071",
+  "title": "WebSocket bridge unbound loop contract",
+  "status": "READY",
+  "component": "services.websocket_bridge",
+  "checks": {
+    "loop_unbound": "PASS",
+    "listener_returns_without_loop": "PASS",
+    "no_false_dispatch": "PASS",
+    "payload_valid": "PASS"
+  },
+  "observed": {
+    "main_loop": null,
+    "messages_dispatched": 0,
+    "event": "dta071_test_event",
+    "source": "system"
+  }
+}
