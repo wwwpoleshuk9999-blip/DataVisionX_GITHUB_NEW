@@ -1,0 +1,51 @@
+{
+  "dta": "DTA-095",
+  "title": "EventBus cross-emit payload isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "listeners_registered": "PASS",
+    "first_emit_success": "PASS",
+    "second_emit_success": "PASS",
+    "first_delivery_isolated": "PASS",
+    "second_delivery_isolated": "PASS",
+    "cross_emit_payload_isolated": "PASS",
+    "source_payloads_preserved": "PASS",
+    "delivery_order_preserved": "PASS"
+  },
+  "observed": {
+    "event": "dta095_test_event",
+    "listener_count": 2,
+    "delivery_count": 4,
+    "delivery_order": [
+      "MUTATOR",
+      "OBSERVER",
+      "MUTATOR",
+      "OBSERVER"
+    ],
+    "payload_1": {
+      "dta": "DTA-095",
+      "sequence": 1,
+      "status": "FIRST",
+      "nested": {
+        "value": 10
+      }
+    },
+    "payload_2": {
+      "dta": "DTA-095",
+      "sequence": 2,
+      "status": "SECOND",
+      "nested": {
+        "value": 20
+      }
+    }
+  },
+  "contract": {
+    "cross_emit_isolation": "Payload mutations from one emit do not affect subsequent emits",
+    "listener_isolation": "Each listener receives an independent deep-copied payload",
+    "source_integrity": "Source payloads remain unchanged after delivery",
+    "ordering": "Listeners receive repeated events in registration and emission order",
+    "independent_events": "Each emit creates an independent event delivery context"
+  }
+}
