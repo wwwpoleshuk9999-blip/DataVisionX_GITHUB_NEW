@@ -1,0 +1,33 @@
+{
+  "dta": "DTA-089",
+  "title": "EventBus listener order contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "listeners_registered": "PASS",
+    "registration_order_preserved": "PASS",
+    "emit_success": "PASS",
+    "delivery_order_preserved": "PASS",
+    "single_delivery_each": "PASS"
+  },
+  "observed": {
+    "event": "dta089_test_event",
+    "registered_order": [
+      "listener_a",
+      "listener_b",
+      "listener_c"
+    ],
+    "delivery_order": [
+      "A",
+      "B",
+      "C"
+    ],
+    "delivery_count": 3
+  },
+  "contract": {
+    "registration_order": "Listeners are stored in registration order",
+    "delivery_order": "EventBus.emit() invokes listeners in registration order",
+    "single_delivery": "Each registered listener receives the event exactly once"
+  }
+}
