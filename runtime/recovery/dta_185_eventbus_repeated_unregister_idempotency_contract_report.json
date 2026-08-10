@@ -1,0 +1,50 @@
+{
+  "dta": "DTA-185",
+  "title": "EventBus repeated unregister idempotency contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registrations_success": "PASS",
+    "initial_registry_correct": "PASS",
+    "first_unregister_success": "PASS",
+    "registry_after_first_unregister_correct": "PASS",
+    "second_unregister_observed": "PASS",
+    "registry_after_second_unregister_unchanged": "PASS",
+    "emit_success": "PASS",
+    "removed_callback_not_delivered": "PASS",
+    "remaining_callback_delivered": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta185_event",
+    "plugin": "plugin_a",
+    "initial_registry_order": [
+      "handler_a",
+      "handler_b"
+    ],
+    "first_unregister_result": true,
+    "registry_after_first_unregister": [
+      "handler_b.callback"
+    ],
+    "second_unregister_result": false,
+    "registry_after_second_unregister": [
+      "handler_b.callback"
+    ],
+    "emit_result": true,
+    "handler_a_delivery_count": 0,
+    "handler_b_delivery_count": 1,
+    "permission": "events"
+  },
+  "contract": {
+    "first_unregister": "unregister() returns True when the selected listener exists and removes it",
+    "repeated_unregister": "A second unregister() of an already removed callback returns False",
+    "registry_stability": "Repeated unregister does not alter remaining listeners",
+    "callback_isolation": "Repeated unregister does not affect unrelated callbacks",
+    "post_unregister_delivery": "The removed callback receives no subsequent events",
+    "remaining_callback_delivery": "Remaining callbacks continue receiving emitted events",
+    "permission_enforcement": "Each unregister and emit operation continues to require the events permission"
+  }
+}
