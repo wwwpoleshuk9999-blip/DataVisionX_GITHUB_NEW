@@ -1,0 +1,58 @@
+{
+  "dta": "DTA-192",
+  "title": "EventBus selective unregister and owner re-registration broadcast contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "initial_registration_a": "PASS",
+    "initial_registration_b": "PASS",
+    "initial_registry_correct": "PASS",
+    "unregister_a_success": "PASS",
+    "registry_only_b_after_unregister": "PASS",
+    "reregister_a_success": "PASS",
+    "registry_a_b_after_reregister": "PASS",
+    "emit_success": "PASS",
+    "handler_a_received_once": "PASS",
+    "handler_b_received_once": "PASS",
+    "source_metadata_correct": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta192_event",
+    "initial_registry": [
+      "plugin_a",
+      "plugin_b"
+    ],
+    "unregistered_owner": "plugin_a",
+    "registry_after_unregister": [
+      "plugin_b"
+    ],
+    "reregistered_owner": "plugin_a",
+    "registry_after_reregister": [
+      "plugin_b",
+      "plugin_a"
+    ],
+    "emitter": "plugin_b",
+    "emit_result": true,
+    "delivery_count": 2,
+    "delivery_targets": [
+      "handler_b",
+      "handler_a"
+    ],
+    "source_metadata": "plugin_b",
+    "permission": "events"
+  },
+  "contract": {
+    "selective_unregister": "Unregister removes only the targeted owner registration",
+    "owner_reregistration": "A previously unregistered owner can register the callback again successfully",
+    "reregistration_uniqueness": "Re-registration creates exactly one listener entry for the owner",
+    "cross_owner_broadcast": "An emitted event is delivered to all currently registered listeners for the event name regardless of owner",
+    "delivery_once": "Each currently registered listener receives the emitted event exactly once",
+    "source_metadata": "The event source preserves the plugin_id supplied to emit()",
+    "registry_preservation": "Broadcast delivery does not alter the listener registry",
+    "permission_enforcement": "Registration, unregister, and emit operations require the events permission"
+  }
+}
