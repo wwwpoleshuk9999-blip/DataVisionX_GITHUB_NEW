@@ -1,0 +1,56 @@
+{
+  "dta": "DTA-133",
+  "title": "EventBus registration during delivery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "initial_listeners_registered": "PASS",
+    "emit_success": "PASS",
+    "delivery_order_observed": "PASS",
+    "new_listener_registry_observed": "PASS",
+    "duplicate_registration_handled": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta133_event",
+    "initial_registry": [
+      "plugin_a",
+      "plugin_c"
+    ],
+    "first_delivery_order": [
+      "A",
+      "C",
+      "B"
+    ],
+    "registration_during_delivery": {
+      "performed_by": "plugin_a",
+      "registered_plugin": "plugin_b",
+      "callback": "listener_b"
+    },
+    "new_listener_received_current_event": true,
+    "second_delivery_order": [
+      "A",
+      "C",
+      "B"
+    ],
+    "final_registry": [
+      "plugin_a",
+      "plugin_c",
+      "plugin_b"
+    ],
+    "duplicate_registration_prevented": true,
+    "emit_result": true,
+    "permission": "events"
+  },
+  "contract": {
+    "dynamic_registration": "A listener registered during event delivery becomes eligible for the active delivery sequence",
+    "delivery_order": "The newly registered listener is delivered after listeners already present in the registry",
+    "current_event_delivery": "A listener registered before the delivery loop reaches it receives the current event",
+    "registry_update": "Registration during emit immediately updates the listener registry",
+    "duplicate_prevention": "Repeated registration of the same callback and plugin does not create duplicate listener entries",
+    "subsequent_delivery": "The dynamically registered listener remains available for subsequent events",
+    "emit_success": "EventBus.emit() remains successful when a listener registers another listener during delivery",
+    "permission_enforcement": "Registration and event emission require the appropriate events permission"
+  }
+}
