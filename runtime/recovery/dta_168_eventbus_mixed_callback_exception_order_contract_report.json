@@ -1,0 +1,54 @@
+{
+  "dta": "DTA-168",
+  "title": "EventBus mixed callback exception order contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registrations_success": "PASS",
+    "registry_order_correct": "PASS",
+    "first_emit_success": "PASS",
+    "first_delivery_order_correct": "PASS",
+    "exception_isolated": "PASS",
+    "registry_preserved_after_exception": "PASS",
+    "second_emit_success": "PASS",
+    "second_delivery_order_correct": "PASS",
+    "repeatable_exception_isolation": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta168_event",
+    "registry_before_count": 3,
+    "registry_order": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "callback_b_exception": "RuntimeError: DTA-168 callback_b failure",
+    "first_emit_result": true,
+    "first_delivery": [
+      ["A", {"dta": "DTA-168-FIRST"}],
+      ["B", {"dta": "DTA-168-FIRST"}],
+      ["C", {"dta": "DTA-168-FIRST"}]
+    ],
+    "registry_after_first_emit_count": 3,
+    "second_emit_result": true,
+    "second_delivery": [
+      ["A", {"dta": "DTA-168-SECOND"}],
+      ["B", {"dta": "DTA-168-SECOND"}],
+      ["C", {"dta": "DTA-168-SECOND"}]
+    ],
+    "permission": "events"
+  },
+  "contract": {
+    "delivery_order": "Callbacks are delivered in listener registry order",
+    "exception_isolation": "An exception raised by one callback does not abort EventBus.emit()",
+    "delivery_continuation": "Callbacks registered after an exception-raising callback still receive the event",
+    "emit_success": "EventBus.emit() remains successful despite callback exceptions",
+    "registry_stability": "Callback exceptions do not corrupt or mutate the listener registry",
+    "repeatability": "Subsequent emits preserve the same callback delivery behavior",
+    "callback_activation": "All registered callbacks remain active after an isolated callback exception",
+    "permission_enforcement": "EventBus event delivery requires the events permission"
+  }
+}
