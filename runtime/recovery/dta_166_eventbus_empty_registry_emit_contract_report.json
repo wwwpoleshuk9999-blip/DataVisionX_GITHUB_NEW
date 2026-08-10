@@ -1,0 +1,52 @@
+{
+  "dta": "DTA-166",
+  "title": "EventBus empty registry emit contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "empty_registry_initial": "PASS",
+    "emit_empty_registry_success": "PASS",
+    "empty_registry_no_delivery": "PASS",
+    "register_success": "PASS",
+    "registered_emit_success": "PASS",
+    "registered_delivery_correct": "PASS",
+    "unregister_success": "PASS",
+    "empty_registry_after_unregister": "PASS",
+    "emit_after_cleanup_success": "PASS",
+    "no_delivery_after_cleanup": "PASS",
+    "repeated_empty_emit_success": "PASS",
+    "registry_remains_empty": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta166_event",
+    "initial_registry_count": 0,
+    "empty_emit_1_result": true,
+    "empty_emit_1_delivery": [],
+    "register_result": true,
+    "registered_emit_result": true,
+    "registered_delivery": [
+      ["A", {"dta": "DTA-166-REGISTERED"}]
+    ],
+    "unregister_result": true,
+    "registry_after_unregister_count": 0,
+    "empty_emit_2_result": true,
+    "empty_emit_2_delivery": [],
+    "empty_emit_3_result": true,
+    "empty_emit_3_delivery": [],
+    "final_registry_count": 0,
+    "permission": "events"
+  },
+  "contract": {
+    "empty_registry_emit": "EventBus.emit() succeeds when the listener registry is empty",
+    "empty_registry_delivery": "An empty listener registry produces no callback delivery",
+    "registration_activation": "A registered callback becomes active for subsequent emits",
+    "cleanup": "Successful unregistration removes the callback and restores the empty registry state",
+    "post_cleanup_emit": "Emit remains successful after listener cleanup",
+    "repeated_empty_emit": "Repeated emits against an empty registry remain successful and side-effect free",
+    "registry_stability": "Repeated empty-registry emits do not mutate the listener registry",
+    "permission_enforcement": "EventBus emit and callback operations require the events permission"
+  }
+}
