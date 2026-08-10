@@ -1,0 +1,56 @@
+{
+  "dta": "DTA-140",
+  "title": "EventBus multi-owner selective unregister contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "first_registration_success": "PASS",
+    "second_registration_success": "PASS",
+    "multi_owner_registry_observed": "PASS",
+    "selective_unregister_success": "PASS",
+    "remaining_owner_preserved": "PASS",
+    "emit_success": "PASS",
+    "remaining_owner_delivery_preserved": "PASS",
+    "removed_owner_delivery_absent": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta140_event",
+    "initial_registry": [
+      {
+        "plugin": "plugin_a",
+        "callback": "shared_listener"
+      },
+      {
+        "plugin": "plugin_b",
+        "callback": "shared_listener"
+      }
+    ],
+    "unregister": {
+      "plugin": "plugin_a",
+      "callback": "shared_listener",
+      "result": true
+    },
+    "registry_after_unregister": [
+      {
+        "plugin": "plugin_b",
+        "callback": "shared_listener"
+      }
+    ],
+    "remaining_owner_received_event": true,
+    "removed_owner_received_subsequent_event": false,
+    "emit_result": true,
+    "permission": "events"
+  },
+  "contract": {
+    "selective_unregister": "Unregister removes only the listener entry owned by the specified plugin",
+    "ownership_isolation": "Removing one owner does not remove another owner using the same callback",
+    "remaining_owner_preservation": "The remaining owner stays registered with the shared callback",
+    "delivery_continuity": "The remaining owner continues receiving events after selective unregister",
+    "removed_owner_isolation": "The removed owner no longer receives subsequent events",
+    "registry_stability": "Selective unregister preserves the remaining listener registry",
+    "emit_success": "EventBus.emit() remains successful after selective multi-owner unregister",
+    "permission_enforcement": "Registration, unregister, and emit operations require the events permission"
+  }
+}
