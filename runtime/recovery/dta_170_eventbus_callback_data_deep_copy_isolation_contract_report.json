@@ -1,0 +1,90 @@
+{
+  "dta": "DTA-170",
+  "title": "EventBus callback data deep-copy isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registrations_success": "PASS",
+    "registry_correct": "PASS",
+    "emit_success": "PASS",
+    "callback_a_received_original_data": "PASS",
+    "callback_a_mutation_applied_locally": "PASS",
+    "callback_b_received_original_data": "PASS",
+    "callback_b_isolated_from_a": "PASS",
+    "source_data_unchanged": "PASS",
+    "nested_data_isolated": "PASS",
+    "list_data_isolated": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta170_event",
+    "registry_before_count": 2,
+    "registry_order": [
+      "plugin_a",
+      "plugin_b"
+    ],
+    "source_data": {
+      "dta": "DTA-170",
+      "nested": {
+        "value": "ORIGINAL"
+      },
+      "items": [
+        "ORIGINAL-ITEM"
+      ]
+    },
+    "callback_a_before_mutation": {
+      "dta": "DTA-170",
+      "nested": {
+        "value": "ORIGINAL"
+      },
+      "items": [
+        "ORIGINAL-ITEM"
+      ]
+    },
+    "callback_a_after_mutation": {
+      "dta": "DTA-170",
+      "nested": {
+        "value": "MUTATED-BY-A"
+      },
+      "items": [
+        "ORIGINAL-ITEM",
+        "A-MUTATION"
+      ]
+    },
+    "callback_b_received": {
+      "dta": "DTA-170",
+      "nested": {
+        "value": "ORIGINAL"
+      },
+      "items": [
+        "ORIGINAL-ITEM"
+      ]
+    },
+    "source_data_after_emit": {
+      "dta": "DTA-170",
+      "nested": {
+        "value": "ORIGINAL"
+      },
+      "items": [
+        "ORIGINAL-ITEM"
+      ]
+    },
+    "emit_result": true,
+    "final_registry_count": 2,
+    "permission": "events"
+  },
+  "contract": {
+    "deep_copy_per_delivery": "Each callback receives an isolated deep copy of emitted event data",
+    "callback_local_mutation": "A callback can mutate its received payload without affecting other callbacks",
+    "nested_data_isolation": "Nested mutable structures remain isolated between callback deliveries",
+    "list_data_isolation": "Mutable list structures remain isolated between callback deliveries",
+    "source_payload_isolation": "Callback mutations do not modify the original emitter payload",
+    "callback_independence": "A callback mutation does not leak into subsequent callback deliveries",
+    "emit_success": "EventBus.emit() remains successful while callbacks mutate their local payload",
+    "registry_stability": "Payload mutation does not modify the listener registry",
+    "permission_enforcement": "EventBus event delivery continues to require the events permission"
+  }
+}
