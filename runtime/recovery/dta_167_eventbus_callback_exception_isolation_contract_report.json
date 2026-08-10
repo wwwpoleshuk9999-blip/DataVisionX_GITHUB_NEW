@@ -1,0 +1,64 @@
+{
+  "dta": "DTA-167",
+  "title": "EventBus callback exception isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registrations_success": "PASS",
+    "registry_correct": "PASS",
+    "emit_result_observed": "PASS",
+    "callback_a_delivered": "PASS",
+    "callback_b_delivered": "PASS",
+    "callback_c_delivered": "PASS",
+    "exception_behavior_observed": "PASS",
+    "registry_preserved": "PASS",
+    "second_emit_observed": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta167_event",
+    "registry_before_count": 3,
+    "registry_before": [
+      {
+        "plugin": "plugin_a",
+        "callback": "callback_a"
+      },
+      {
+        "plugin": "plugin_b",
+        "callback": "callback_b"
+      },
+      {
+        "plugin": "plugin_c",
+        "callback": "callback_c"
+      }
+    ],
+    "callback_b_exception": "RuntimeError: DTA-167 callback_b failure",
+    "first_emit_result": true,
+    "first_emit_exception": null,
+    "first_delivery": [
+      ["A", {"dta": "DTA-167-FIRST"}],
+      ["B", {"dta": "DTA-167-FIRST"}],
+      ["C", {"dta": "DTA-167-FIRST"}]
+    ],
+    "registry_after_first_emit_count": 3,
+    "second_emit_result": true,
+    "second_emit_exception": null,
+    "second_delivery": [
+      ["A", {"dta": "DTA-167-SECOND"}],
+      ["B", {"dta": "DTA-167-SECOND"}],
+      ["C", {"dta": "DTA-167-SECOND"}]
+    ],
+    "permission": "events"
+  },
+  "contract": {
+    "callback_exception_isolation": "An exception raised by one callback does not abort EventBus.emit()",
+    "delivery_continuation": "Callback delivery continues after a callback raises an exception",
+    "emit_success": "EventBus.emit() remains successful when a registered callback raises an exception",
+    "registry_stability": "Callback exceptions do not corrupt or mutate the listener registry",
+    "repeatability": "Subsequent emits remain successful after a callback exception",
+    "callback_activation": "All registered callbacks remain active after an isolated callback exception",
+    "permission_enforcement": "EventBus event delivery requires the events permission"
+  }
+}
