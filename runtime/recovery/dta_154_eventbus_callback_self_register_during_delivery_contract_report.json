@@ -1,0 +1,93 @@
+{
+  "dta": "DTA-154",
+  "title": "EventBus callback self-register during delivery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registrations_success": "PASS",
+    "registry_observed": "PASS",
+    "self_register_success": "PASS",
+    "current_delivery_observed": "PASS",
+    "first_emit_success": "PASS",
+    "new_callback_registry_present": "PASS",
+    "second_emit_success": "PASS",
+    "new_callback_delivery_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta154_event",
+    "initial_registry": [
+      {
+        "plugin": "plugin_a",
+        "callback": "listener_a"
+      },
+      {
+        "plugin": "plugin_b",
+        "callback": "listener_b"
+      },
+      {
+        "plugin": "plugin_c",
+        "callback": "listener_c"
+      }
+    ],
+    "first_emit": {
+      "plugin": "plugin_a",
+      "result": true,
+      "delivery_order": [
+        ["A", {"dta": "DTA-154-FIRST"}],
+        ["R", true],
+        ["B", {"dta": "DTA-154-FIRST"}],
+        ["C", {"dta": "DTA-154-FIRST"}]
+      ]
+    },
+    "callback_registered_during_delivery": {
+      "plugin": "plugin_a",
+      "callback": "listener_d",
+      "result": true
+    },
+    "registry_after_first_emit": [
+      {
+        "plugin": "plugin_a",
+        "callback": "listener_a"
+      },
+      {
+        "plugin": "plugin_b",
+        "callback": "listener_b"
+      },
+      {
+        "plugin": "plugin_c",
+        "callback": "listener_c"
+      },
+      {
+        "plugin": "plugin_a",
+        "callback": "listener_d"
+      }
+    ],
+    "new_callback_received_first_event": false,
+    "second_emit": {
+      "plugin": "plugin_a",
+      "result": true,
+      "delivery_order": [
+        ["A", {"dta": "DTA-154-SECOND"}],
+        ["R", true],
+        ["B", {"dta": "DTA-154-SECOND"}],
+        ["C", {"dta": "DTA-154-SECOND"}],
+        ["D", {"dta": "DTA-154-SECOND"}]
+      ]
+    },
+    "new_callback_received_second_event": true,
+    "permission": "events"
+  },
+  "contract": {
+    "self_register": "A callback can register another callback during active event delivery",
+    "current_delivery_isolation": "A callback registered during an active emit does not receive that already-active event",
+    "current_delivery_continuity": "Registration during delivery does not interrupt existing callback delivery",
+    "registry_update": "The newly registered callback is added to the listener registry",
+    "future_delivery_activation": "A callback registered during one emit becomes active for subsequent emits",
+    "delivery_order_preservation": "Existing callbacks preserve their registered delivery order",
+    "emit_success": "EventBus.emit() remains successful after callback registration during delivery",
+    "registry_stability": "Self-registration during delivery does not corrupt the listener registry",
+    "permission_enforcement": "EventBus operations require the events permission"
+  }
+}
