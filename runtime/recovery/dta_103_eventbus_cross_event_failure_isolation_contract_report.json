@@ -1,0 +1,41 @@
+{
+  "dta": "DTA-103",
+  "title": "EventBus cross-event failure isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "event_a_registered": "PASS",
+    "event_b_registered": "PASS",
+    "event_a_emit_success": "PASS",
+    "event_b_emit_success": "PASS",
+    "event_a_failure_isolated": "PASS",
+    "event_b_delivery_unaffected": "PASS",
+    "cross_event_order_preserved": "PASS",
+    "registry_stable": "PASS",
+    "payload_a_preserved": "PASS",
+    "payload_b_preserved": "PASS"
+  },
+  "observed": {
+    "event_a": "dta103_event_a",
+    "event_b": "dta103_event_b",
+    "event_a_listener_count": 3,
+    "event_b_listener_count": 2,
+    "event_a_delivery": [
+      ["A1", "dta103_event_a", 1],
+      ["AFAIL", "dta103_event_a", 1],
+      ["A2", "dta103_event_a", 1]
+    ],
+    "event_b_delivery": [
+      ["B1", "dta103_event_b", 1],
+      ["B2", "dta103_event_b", 1]
+    ]
+  },
+  "contract": {
+    "failure_isolation": "A listener failure in one event does not affect delivery of subsequent listeners or other event types",
+    "cross_event_independence": "EventBus state for one event remains independent from another event after listener failure",
+    "delivery_order": "Listeners retain registration order within each event",
+    "registry_stability": "Listener failures do not mutate either event registry",
+    "source_integrity": "Source payloads for independent events remain unchanged"
+  }
+}
