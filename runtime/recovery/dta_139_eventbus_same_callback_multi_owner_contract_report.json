@@ -1,0 +1,41 @@
+{
+  "dta": "DTA-139",
+  "title": "EventBus same callback multi-owner contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "first_registration_success": "PASS",
+    "second_registration_success": "PASS",
+    "multi_owner_registry_observed": "PASS",
+    "emit_success": "PASS",
+    "both_owner_listeners_called": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta139_event",
+    "registrations": [
+      {
+        "plugin": "plugin_a",
+        "callback": "shared_listener"
+      },
+      {
+        "plugin": "plugin_b",
+        "callback": "shared_listener"
+      }
+    ],
+    "registry_listener_count": 2,
+    "emit_result": true,
+    "callback_invocations": 2,
+    "permission": "events"
+  },
+  "contract": {
+    "multi_owner_registration": "The same callback can be registered independently by different plugin owners",
+    "ownership_separation": "Each registration retains its own plugin ownership identity",
+    "registry_preservation": "Multi-owner registration produces separate listener entries",
+    "delivery": "Both owner-specific listener entries receive the emitted event",
+    "callback_identity": "Both listener entries may reference the same callback object",
+    "emit_success": "EventBus.emit() remains successful with multiple owners using the same callback",
+    "permission_enforcement": "Each registration and event emission requires the events permission"
+  }
+}
