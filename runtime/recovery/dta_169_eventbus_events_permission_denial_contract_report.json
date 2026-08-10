@@ -1,0 +1,53 @@
+{
+  "dta": "DTA-169",
+  "title": "EventBus events permission denial contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "allowed_register_success": "PASS",
+    "initial_registry_correct": "PASS",
+    "denied_register_observed": "PASS",
+    "registry_unchanged_after_denied_register": "PASS",
+    "allowed_emit_success": "PASS",
+    "allowed_delivery_correct": "PASS",
+    "denied_emit_observed": "PASS",
+    "delivery_unchanged_after_denied_emit": "PASS",
+    "denied_unregister_observed": "PASS",
+    "registry_unchanged_after_denied_unregister": "PASS",
+    "allowed_unregister_success": "PASS",
+    "final_registry_empty": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta169_event",
+    "initial_registry_count": 1,
+    "denied_register_exception": "PermissionError: Permission denied: plugin_b:events",
+    "registry_after_denied_register_count": 1,
+    "allowed_emit_result": true,
+    "allowed_delivery": [
+      ["A", {"dta": "DTA-169-ALLOWED"}]
+    ],
+    "denied_emit_exception": "PermissionError: Permission denied: plugin_b:events",
+    "delivery_after_denied_emit": [],
+    "denied_unregister_exception": "PermissionError: Permission denied: plugin_b:events",
+    "registry_after_denied_unregister_count": 1,
+    "allowed_unregister_result": true,
+    "final_registry_count": 0,
+    "permission": "events"
+  },
+  "contract": {
+    "permission_enforcement": "EventBus register, emit and unregister operations require the events permission",
+    "denied_register": "A registration attempt without events permission raises PermissionError",
+    "denied_register_integrity": "A denied registration does not mutate the listener registry",
+    "allowed_emit": "An authorized plugin can emit events normally",
+    "denied_emit": "An emit attempt without events permission raises PermissionError",
+    "denied_emit_delivery": "A denied emit produces no callback delivery",
+    "denied_unregister": "An unregister attempt without events permission raises PermissionError",
+    "denied_unregister_integrity": "A denied unregister does not mutate the listener registry",
+    "permission_recovery": "Restoring events permission allows normal callback removal",
+    "registry_cleanup": "Authorized unregister restores the empty listener registry",
+    "permission_check_visibility": "Permission checks are observable through the permission provider"
+  }
+}
