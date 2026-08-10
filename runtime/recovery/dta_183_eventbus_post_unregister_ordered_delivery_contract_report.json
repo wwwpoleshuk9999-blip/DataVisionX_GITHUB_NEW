@@ -1,0 +1,54 @@
+{
+  "dta": "DTA-183",
+  "title": "EventBus post-unregister ordered delivery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registrations_success": "PASS",
+    "initial_registry_order_correct": "PASS",
+    "unregister_b_success": "PASS",
+    "remaining_registry_order_correct": "PASS",
+    "emit_success": "PASS",
+    "a_delivered": "PASS",
+    "b_not_delivered": "PASS",
+    "c_delivered": "PASS",
+    "remaining_delivery_order_correct": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta183_event",
+    "plugin": "plugin_a",
+    "initial_registry_order": [
+      "handler_a",
+      "handler_b",
+      "handler_c"
+    ],
+    "unregistered_callback": "handler_b.callback",
+    "unregister_result": true,
+    "registry_after_unregister": [
+      "handler_a.callback",
+      "handler_c.callback"
+    ],
+    "delivery_after_unregister": [
+      "handler_a",
+      "handler_c"
+    ],
+    "handler_a_delivery_count": 1,
+    "handler_b_delivery_count": 0,
+    "handler_c_delivery_count": 1,
+    "emit_result": true,
+    "permission": "events"
+  },
+  "contract": {
+    "selective_unregister": "Removing a middle listener removes only that callback",
+    "remaining_order": "Remaining callbacks retain their original registration order",
+    "post_unregister_delivery": "The removed callback receives no subsequent events",
+    "remaining_delivery": "Callbacks remaining in the registry continue receiving emitted events",
+    "delivery_order": "Remaining callbacks are delivered in their preserved registration order",
+    "registry_stability": "Selective removal followed by emit leaves the listener registry structurally consistent",
+    "permission_enforcement": "Registration, unregister, and emit continue to require the events permission"
+  }
+}
