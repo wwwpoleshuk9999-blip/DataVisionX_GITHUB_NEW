@@ -1,0 +1,55 @@
+{
+  "dta": "DTA-186",
+  "title": "EventBus unregister nonexistent listener contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registration_success": "PASS",
+    "initial_registry_correct": "PASS",
+    "missing_callback_unregister_false": "PASS",
+    "registry_unchanged_after_missing_callback": "PASS",
+    "missing_event_unregister_false": "PASS",
+    "registry_unchanged_after_missing_event": "PASS",
+    "emit_success": "PASS",
+    "registered_callbacks_delivered": "PASS",
+    "missing_callback_not_delivered": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta186_event",
+    "plugin": "plugin_a",
+    "initial_registry_order": [
+      "handler_a",
+      "handler_b"
+    ],
+    "missing_callback": "handler_missing.callback",
+    "missing_callback_unregister_result": false,
+    "registry_after_missing_callback": [
+      "handler_a.callback",
+      "handler_b.callback"
+    ],
+    "missing_event": "dta186_missing_event",
+    "missing_event_unregister_result": false,
+    "registry_after_missing_event": [
+      "handler_a.callback",
+      "handler_b.callback"
+    ],
+    "emit_result": true,
+    "handler_a_delivery_count": 1,
+    "handler_b_delivery_count": 1,
+    "handler_missing_delivery_count": 0,
+    "permission": "events"
+  },
+  "contract": {
+    "missing_callback": "unregister() returns False when the requested callback is not registered",
+    "missing_event": "unregister() returns False when the requested event has no registered listener",
+    "registry_stability": "Unregister attempts for nonexistent listeners or events do not modify the existing listener registry",
+    "callback_isolation": "A nonexistent callback removal attempt does not affect registered callbacks",
+    "post_attempt_delivery": "Registered callbacks continue receiving emitted events after unsuccessful unregister attempts",
+    "missing_callback_delivery": "An unregistered callback receives no emitted events",
+    "permission_enforcement": "Unregister and emit operations continue to require the events permission"
+  }
+}
