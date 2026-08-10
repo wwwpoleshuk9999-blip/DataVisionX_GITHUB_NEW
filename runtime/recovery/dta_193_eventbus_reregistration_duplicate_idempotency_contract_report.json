@@ -1,0 +1,48 @@
+{
+  "dta": "DTA-193",
+  "title": "EventBus re-registration duplicate idempotency contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "initial_registration_success": "PASS",
+    "unregister_success": "PASS",
+    "registry_empty_after_unregister": "PASS",
+    "reregister_success": "PASS",
+    "duplicate_reregister_success": "PASS",
+    "registry_single_after_reregister": "PASS",
+    "stored_callback_equivalent": "PASS",
+    "emit_success": "PASS",
+    "callback_delivered_once": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta193_event",
+    "plugin": "plugin_a",
+    "initial_registration_result": true,
+    "unregister_result": true,
+    "registry_after_unregister": [],
+    "reregister_result": true,
+    "duplicate_reregister_result": true,
+    "registry_size_after_reregister": 1,
+    "callback_equivalence": true,
+    "emit_result": true,
+    "callback_delivery_count": 1,
+    "registry_size_after_emit": 1,
+    "permission": "events"
+  },
+  "contract": {
+    "initial_registration": "The owner can register the callback successfully",
+    "unregister": "The registered callback can be removed successfully",
+    "post_unregister_registry": "The listener registry is empty immediately after removal",
+    "reregistration": "The previously removed callback can be registered again successfully",
+    "duplicate_reregistration": "Repeated registration of the equivalent callback remains idempotent",
+    "registry_uniqueness": "Duplicate re-registration does not create a second listener entry",
+    "callback_identity": "Equivalent bound-method callback references resolve to the same logical callback",
+    "delivery_once": "The re-registered callback receives the emitted event exactly once",
+    "registry_preservation": "Event delivery does not alter the listener registry",
+    "permission_enforcement": "Registration, unregister, and emit operations require the events permission"
+  }
+}
