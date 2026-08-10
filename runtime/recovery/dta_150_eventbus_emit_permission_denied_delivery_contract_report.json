@@ -1,0 +1,58 @@
+{
+  "dta": "DTA-150",
+  "title": "EventBus emit permission denied delivery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registrations_success": "PASS",
+    "registry_observed": "PASS",
+    "permission_denial_triggered": "PASS",
+    "emit_result_observed": "PASS",
+    "callbacks_not_called_on_denied_emit": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta150_event",
+    "initial_registry": [
+      {
+        "plugin": "plugin_a",
+        "callback": "listener_a"
+      },
+      {
+        "plugin": "plugin_b",
+        "callback": "listener_b"
+      }
+    ],
+    "emit": {
+      "plugin": "plugin_a",
+      "permission": "events"
+    },
+    "permission_denied": true,
+    "exception": "PermissionError",
+    "exception_message": "Permission denied: plugin_a:events",
+    "emit_return_value": null,
+    "callback_invocations": 0,
+    "registry_after_denied_emit": [
+      {
+        "plugin": "plugin_a",
+        "callback": "listener_a"
+      },
+      {
+        "plugin": "plugin_b",
+        "callback": "listener_b"
+      }
+    ]
+  },
+  "contract": {
+    "permission_enforcement": "EventBus.emit() requires the events permission for the emitting plugin",
+    "denied_emit_exception": "A denied emit raises PermissionError",
+    "delivery_blocked": "No registered callbacks receive an event when emit permission is denied",
+    "registry_preservation": "Permission denial does not modify the listener registry",
+    "registry_stability": "The listener registry remains intact after a denied emit",
+    "failure_isolation": "Permission denial occurs before event delivery",
+    "no_partial_delivery": "No callback receives partial delivery before the permission failure",
+    "permission_observation": "The denied plugin permission check is recorded before delivery"
+  }
+}
