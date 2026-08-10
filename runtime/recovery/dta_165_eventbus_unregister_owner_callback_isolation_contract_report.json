@@ -1,0 +1,71 @@
+{
+  "dta": "DTA-165",
+  "title": "EventBus unregister owner/callback isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "initial_registrations": "PASS",
+    "initial_registry_correct": "PASS",
+    "wrong_owner_unregister_false": "PASS",
+    "wrong_callback_unregister_false": "PASS",
+    "registry_preserved_after_failed_unreg": "PASS",
+    "emit_after_failed_unreg_success": "PASS",
+    "delivery_after_failed_unreg_correct": "PASS",
+    "target_unregister_success": "PASS",
+    "target_removed_only": "PASS",
+    "remaining_callback_active": "PASS",
+    "repeated_target_unregister_false": "PASS",
+    "final_unregister_success": "PASS",
+    "final_registry_empty": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta165_event",
+    "initial_registry_count": 3,
+    "initial_registry": [
+      {
+        "plugin": "plugin_a",
+        "callback": "callback_a"
+      },
+      {
+        "plugin": "plugin_b",
+        "callback": "callback_a"
+      },
+      {
+        "plugin": "plugin_a",
+        "callback": "callback_b"
+      }
+    ],
+    "wrong_owner_unregister": false,
+    "wrong_callback_unregister": false,
+    "delivery_after_failed_unregister": [
+      ["A", {"dta": "DTA-165-AFTER-FAILED-UNREGISTER"}],
+      ["A", {"dta": "DTA-165-AFTER-FAILED-UNREGISTER"}],
+      ["B", {"dta": "DTA-165-AFTER-FAILED-UNREGISTER"}]
+    ],
+    "target_unregister": true,
+    "registry_after_target_count": 2,
+    "delivery_after_target_unregister": [
+      ["A", {"dta": "DTA-165-AFTER-TARGET-REMOVE"}],
+      ["B", {"dta": "DTA-165-AFTER-TARGET-REMOVE"}]
+    ],
+    "repeated_target_unregister": false,
+    "final_registry_count": 0,
+    "permission": "events"
+  },
+  "contract": {
+    "owner_isolation": "unregister() does not remove a callback registered under a different plugin owner",
+    "callback_isolation": "unregister() does not remove a different callback belonging to the same event",
+    "failed_unregister_integrity": "Failed unregister operations leave the listener registry unchanged",
+    "failed_unregister_delivery": "Callbacks remain active after unrelated failed unregister attempts",
+    "targeted_removal": "Successful unregister removes only the matching plugin/event/callback registration",
+    "remaining_callbacks": "Other callbacks remain active after targeted removal",
+    "repeated_unregister": "Unregistering an already removed registration returns false",
+    "registry_cleanup": "All targeted registrations can subsequently be removed without registry corruption",
+    "delivery_order": "Remaining callbacks preserve registry delivery order",
+    "emit_success": "EventBus.emit() remains successful throughout unregister isolation scenarios",
+    "permission_enforcement": "EventBus unregister operations require the events permission"
+  }
+}
