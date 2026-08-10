@@ -1,0 +1,49 @@
+{
+  "dta": "DTA-175",
+  "title": "EventBus duplicate registration idempotency contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "initial_registrations_success": "PASS",
+    "initial_registry_correct": "PASS",
+    "emit_success": "PASS",
+    "duplicate_registration_accepted": "PASS",
+    "duplicate_not_added": "PASS",
+    "single_delivery_of_duplicate_listener": "PASS",
+    "delivery_order_preserved": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta175_event",
+    "initial_registry_order": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "delivery_order": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "duplicate_registration_result": true,
+    "registry_after_emit": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "duplicate_delivery_count": 1,
+    "emit_result": true,
+    "permission": "events"
+  },
+  "contract": {
+    "idempotent_registration": "Registering an already registered callback returns True without adding a duplicate listener",
+    "single_delivery": "A listener registered multiple times is delivered the current event only once",
+    "delivery_order": "Duplicate registration does not alter existing listener order",
+    "registry_stability": "Duplicate registration does not change registry structure or size",
+    "mid_emit_idempotency": "Repeated registration during emit remains idempotent",
+    "permission_enforcement": "Duplicate registration continues to require the events permission"
+  }
+}
