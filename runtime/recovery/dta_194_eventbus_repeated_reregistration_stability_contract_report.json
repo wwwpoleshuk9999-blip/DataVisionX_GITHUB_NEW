@@ -1,0 +1,45 @@
+{
+  "dta": "DTA-194",
+  "title": "EventBus repeated re-registration stability contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "initial_registration": "PASS",
+    "cycles_complete": "PASS",
+    "registry_single_after_cycles": "PASS",
+    "no_duplicate_entries": "PASS",
+    "all_emits_success": "PASS",
+    "delivery_once_per_cycle": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta194_event",
+    "plugin": "plugin_a",
+    "cycles": 5,
+    "cycle_pattern": "unregister -> register -> duplicate register -> emit",
+    "cycle_results": [
+      [1, true, true, true, true],
+      [2, true, true, true, true],
+      [3, true, true, true, true],
+      [4, true, true, true, true],
+      [5, true, true, true, true]
+    ],
+    "delivery_counts": [1, 1, 1, 1, 1],
+    "registry_sizes": [1, 1, 1, 1, 1],
+    "final_registry_size": 1,
+    "permission": "events"
+  },
+  "contract": {
+    "repeated_unregister": "A registered callback can be removed successfully on every cycle",
+    "repeated_reregistration": "The owner can re-register the callback successfully after each unregister",
+    "duplicate_idempotency": "Repeated registration of the same logical callback does not create duplicate listener entries",
+    "registry_stability": "The listener registry remains exactly one entry throughout every completed cycle",
+    "delivery_once": "Each emitted event is delivered exactly once to the registered callback",
+    "emit_continuity": "EventBus.emit() remains successful throughout repeated registration cycles",
+    "registry_preservation": "Event delivery does not alter the listener registry",
+    "permission_enforcement": "Every registration, unregister, and emit operation requires the events permission"
+  }
+}
