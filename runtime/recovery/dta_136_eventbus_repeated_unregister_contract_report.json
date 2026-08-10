@@ -1,0 +1,37 @@
+{
+  "dta": "DTA-136",
+  "title": "EventBus repeated unregister contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "listener_registered": "PASS",
+    "first_unregister_success": "PASS",
+    "listener_removed": "PASS",
+    "second_unregister_observed": "PASS",
+    "registry_stable": "PASS",
+    "emit_after_unregister_success": "PASS",
+    "callback_not_called_after_unregister": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta136_event",
+    "plugin": "plugin_a",
+    "first_unregister_result": true,
+    "second_unregister_result": false,
+    "registry_after_first_unregister": {},
+    "registry_final": {},
+    "emit_after_unregister_result": true,
+    "callback_invocations_after_unregister": 0,
+    "permission": "events"
+  },
+  "contract": {
+    "idempotent_safety": "Repeated unregister of an already removed listener does not raise an exception",
+    "first_unregister": "A registered listener is removed successfully and unregister returns true",
+    "repeated_unregister": "Unregister of a listener that is no longer registered returns false",
+    "registry_stability": "Repeated unregister does not recreate or corrupt the event registry",
+    "post_unregister_emit": "Events emitted after listener removal succeed even when no listeners remain",
+    "delivery_isolation": "A removed listener is never invoked by subsequent events",
+    "permission_enforcement": "Each unregister and emit operation requires the events permission"
+  }
+}
