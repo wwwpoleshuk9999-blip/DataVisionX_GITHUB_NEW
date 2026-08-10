@@ -1,0 +1,82 @@
+{
+  "dta": "DTA-117",
+  "title": "EventBus self-unregister and self-register during emit contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "initial_listeners_registered": "PASS",
+    "first_emit_success": "PASS",
+    "self_unregister_success": "PASS",
+    "self_reregister_success": "PASS",
+    "current_snapshot_preserved": "PASS",
+    "no_duplicate_current_emit": "PASS",
+    "current_delivery_order_preserved": "PASS",
+    "registry_after_mutation_correct": "PASS",
+    "second_emit_success": "PASS",
+    "self_listener_present_next_emit": "PASS",
+    "second_emit_no_duplicate": "PASS",
+    "second_delivery_order_preserved": "PASS",
+    "registry_stable": "PASS",
+    "duplicate_registration_prevented": "PASS",
+    "payload_preserved": "PASS"
+  },
+  "observed": {
+    "event": "dta117_test_event",
+    "initial_registry": [
+      "listener_self",
+      "listener_other"
+    ],
+    "first_emit_delivery": [
+      ["SELF", 1],
+      ["OTHER", 1]
+    ],
+    "mutation_during_first_emit": {
+      "self_unregister": true,
+      "self_register": true
+    },
+    "registry_after_first_emit": [
+      "listener_other",
+      "listener_self"
+    ],
+    "second_emit_delivery": [
+      ["OTHER", 2],
+      ["SELF", 2]
+    ],
+    "mutation_during_second_emit": {
+      "self_unregister": true,
+      "self_register": true
+    },
+    "final_registry": [
+      {
+        "plugin": "system",
+        "callback": "listener_other"
+      },
+      {
+        "plugin": "system",
+        "callback": "listener_self"
+      }
+    ],
+    "duplicate_registration_attempt": true,
+    "duplicate_registration_created": false,
+    "payload_1": {
+      "dta": "DTA-117",
+      "sequence": 1,
+      "status": "FIRST"
+    },
+    "payload_2": {
+      "dta": "DTA-117",
+      "sequence": 2,
+      "status": "SECOND"
+    }
+  },
+  "contract": {
+    "emit_snapshot": "Self-unregister and self-register operations during an active emit do not alter the current delivery snapshot",
+    "current_emit_isolation": "A self-re-registered listener is not invoked twice during the same emit",
+    "subsequent_delivery": "A self-re-registered listener participates in subsequent emits",
+    "registry_order": "The removed listener is appended when re-registered, preserving deterministic registry order",
+    "duplicate_registration": "Repeated registration of the same plugin and callback does not create duplicate registry entries",
+    "mutation_safety": "Combined self-removal and self-registration does not corrupt the listener registry",
+    "source_integrity": "Source payloads remain unchanged after emit and listener mutation"
+  }
+}
