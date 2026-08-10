@@ -1,0 +1,51 @@
+{
+  "dta": "DTA-146",
+  "title": "EventBus same-callback wrong-owner unregister isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "owner_a_registration_success": "PASS",
+    "owner_b_registration_success": "PASS",
+    "multi_owner_registry_observed": "PASS",
+    "wrong_owner_unregister_observed": "PASS",
+    "registry_stable": "PASS",
+    "both_owner_delivery_preserved": "PASS",
+    "emit_success": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta146_event",
+    "registrations": [
+      {
+        "plugin": "plugin_a",
+        "callback": "shared_listener"
+      },
+      {
+        "plugin": "plugin_b",
+        "callback": "shared_listener"
+      }
+    ],
+    "wrong_owner_unregister": {
+      "plugin": "plugin_c",
+      "callback": "shared_listener",
+      "result": false
+    },
+    "registry_after_failed_unregister": [
+      "plugin_a",
+      "plugin_b"
+    ],
+    "callback_invocations": 2,
+    "emit_result": true,
+    "permission": "events"
+  },
+  "contract": {
+    "ownership_isolation": "A plugin cannot unregister a shared callback owned by other plugins",
+    "wrong_owner_result": "Wrong-owner unregister returns false",
+    "registry_preservation": "A wrong-owner unregister does not modify any valid owner entries",
+    "multi_owner_preservation": "All valid owners remain independently registered",
+    "delivery_preservation": "All valid owner registrations continue receiving events",
+    "emit_success": "EventBus.emit() remains successful after a wrong-owner unregister attempt",
+    "permission_enforcement": "Register, unregister, and emit operations require the events permission"
+  }
+}
