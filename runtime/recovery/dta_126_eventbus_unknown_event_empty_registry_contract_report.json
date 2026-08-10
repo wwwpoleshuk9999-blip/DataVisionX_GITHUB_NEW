@@ -1,0 +1,47 @@
+{
+  "dta": "DTA-126",
+  "title": "EventBus unknown event and empty registry contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "unknown_event_emit_success": "PASS",
+    "unknown_event_no_listener_called": "PASS",
+    "unknown_event_registry_unchanged": "PASS",
+    "listener_registered": "PASS",
+    "registered_event_emit_success": "PASS",
+    "registered_listener_called": "PASS",
+    "unregister_success": "PASS",
+    "event_removed_after_last_unregister": "PASS",
+    "post_unregister_emit_success": "PASS",
+    "post_unregister_no_listener_called": "PASS",
+    "registry_stable": "PASS",
+    "permission_checks_present": "PASS"
+  },
+  "observed": {
+    "unknown_event": {
+      "event": "dta126_unknown_event",
+      "emit_result": true,
+      "listener_called": false,
+      "registry_created": false
+    },
+    "registered_event": {
+      "event": "dta126_registered_event",
+      "listener_called": true,
+      "delivery_count": 1
+    },
+    "after_last_unregister": {
+      "emit_result": true,
+      "listener_called": false,
+      "event_removed_from_registry": true
+    }
+  },
+  "contract": {
+    "unknown_event": "Emitting an event with no registered listeners succeeds without creating a listener registry entry",
+    "empty_registry_delivery": "An event with an empty listener registry is accepted and produces no listener invocation",
+    "last_listener_removal": "Removing the last listener removes the event entry from the registry",
+    "post_unregister_emit": "Emitting after the last listener is removed remains successful and produces no delivery",
+    "registry_stability": "Unknown and post-unregister emits do not corrupt or recreate empty listener registries",
+    "permission_enforcement": "The emitting plugin is checked for the events permission before delivery"
+  }
+}
