@@ -1,0 +1,29 @@
+{
+  "dta": "DTA-084",
+  "title": "EventBus instance listener isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "bus_a_created": "PASS",
+    "bus_b_created": "PASS",
+    "registries_are_distinct": "PASS",
+    "bus_a_listener_registered": "PASS",
+    "bus_b_listener_registered": "PASS",
+    "bus_a_does_not_contain_bus_b_listener": "PASS",
+    "bus_b_does_not_contain_bus_a_listener": "PASS",
+    "same_event_independent_counts": "PASS",
+    "cross_instance_isolation": "PASS"
+  },
+  "observed": {
+    "bus_a_listener_count": 1,
+    "bus_b_listener_count": 1,
+    "bus_a_listener": "listener_a",
+    "bus_b_listener": "listener_b",
+    "event": "dta084_test_event"
+  },
+  "contract": {
+    "instance_registry": "Each EventBus instance owns an independent listener registry",
+    "cross_instance_isolation": "Listeners registered in one EventBus instance are not visible in another instance",
+    "same_event": "The same event name may exist independently across EventBus instances"
+  }
+}
