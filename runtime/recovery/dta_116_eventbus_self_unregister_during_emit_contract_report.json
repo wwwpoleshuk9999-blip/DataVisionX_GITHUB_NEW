@@ -1,0 +1,67 @@
+{
+  "dta": "DTA-116",
+  "title": "EventBus self-unregister during emit contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "initial_listeners_registered": "PASS",
+    "first_emit_success": "PASS",
+    "self_unregister_success": "PASS",
+    "self_listener_called_on_current_emit": "PASS",
+    "other_listener_called_on_current_emit": "PASS",
+    "current_delivery_order_preserved": "PASS",
+    "self_listener_removed_after_emit": "PASS",
+    "second_emit_success": "PASS",
+    "self_listener_not_called_on_next_emit": "PASS",
+    "other_listener_called_on_next_emit": "PASS",
+    "second_delivery_order_preserved": "PASS",
+    "registry_stable": "PASS",
+    "idempotent_self_removal": "PASS",
+    "payload_preserved": "PASS"
+  },
+  "observed": {
+    "event": "dta116_test_event",
+    "initial_registry": [
+      "listener_self",
+      "listener_other"
+    ],
+    "first_emit_delivery": [
+      ["SELF", 1],
+      ["OTHER", 1]
+    ],
+    "self_unregister_during_first_emit": true,
+    "registry_after_first_emit": [
+      "listener_other"
+    ],
+    "second_emit_delivery": [
+      ["OTHER", 2]
+    ],
+    "final_registry": [
+      {
+        "plugin": "system",
+        "callback": "listener_other"
+      }
+    ],
+    "second_self_removal_attempt": false,
+    "payload_1": {
+      "dta": "DTA-116",
+      "sequence": 1,
+      "status": "FIRST"
+    },
+    "payload_2": {
+      "dta": "DTA-116",
+      "sequence": 2,
+      "status": "SECOND"
+    }
+  },
+  "contract": {
+    "self_unregister_current_emit": "A listener unregistering itself during an active emit still receives the current event because it belongs to the emit snapshot",
+    "self_unregister_subsequent_emit": "A self-unregistered listener does not participate in subsequent emits",
+    "other_listener_delivery": "Other registered listeners continue receiving the current and subsequent events",
+    "ordering": "Current and subsequent deliveries retain deterministic registration order",
+    "registry_stability": "Self-unregistration does not corrupt the listener registry",
+    "idempotent_removal": "Removing an already removed listener returns False without mutating the registry",
+    "source_integrity": "Source payloads remain unchanged after emit and self-unregistration"
+  }
+}
