@@ -1,0 +1,40 @@
+{
+  "dta": "DTA-127",
+  "title": "EventBus bound-method duplicate registration contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "first_registration_success": "PASS",
+    "second_registration_success": "PASS",
+    "duplicate_prevented": "PASS",
+    "registry_contains_one_listener": "PASS",
+    "emit_success": "PASS",
+    "callback_called_once": "PASS",
+    "permission_checked": "PASS",
+    "regression_dta119_126": "PASS"
+  },
+  "observed": {
+    "event": "dta127_test_event",
+    "plugin": "plugin_method",
+    "callback_type": "bound_method",
+    "registry_size_after_duplicate_registration": 1,
+    "callback_delivery_count": 1,
+    "received": [
+      {
+        "dta": "DTA-127",
+        "status": "BOUND_METHOD"
+      }
+    ],
+    "implementation": "EventBus.register() compares bound methods by __self__ and __func__ in addition to direct callback identity"
+  },
+  "contract": {
+    "duplicate_prevention": "Registering the same bound method more than once for the same plugin and event does not create duplicate listeners",
+    "bound_method_identity": "Bound methods are identified by their bound instance (__self__) and underlying function (__func__)",
+    "different_instances": "The same method on different instances remains independently registrable",
+    "different_methods": "Different methods on the same instance remain independently registrable",
+    "delivery": "A duplicated bound-method registration results in exactly one callback invocation",
+    "permission_enforcement": "The plugin must have the events permission before registration",
+    "regression_safety": "DTA-119 through DTA-126 EventBus contracts remain passing"
+  }
+}

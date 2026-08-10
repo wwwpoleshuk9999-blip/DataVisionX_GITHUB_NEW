@@ -18,23 +18,34 @@ class EventBus:
         if not callable(callback):
             return False
 
-
         if plugin_id != "system" and not self.permissions.require(
             plugin_id,
             "events"
         ):
             return False
 
-
         if event not in self.listeners:
-
             self.listeners[event] = []
 
-
         for listener in self.listeners[event]:
+            existing = listener["callback"]
+
+            same_callback = existing is callback
+
+            if (
+                hasattr(existing, "__self__")
+                and hasattr(existing, "__func__")
+                and hasattr(callback, "__self__")
+                and hasattr(callback, "__func__")
+            ):
+                same_callback = (
+                    existing.__self__ is callback.__self__
+                    and existing.__func__ is callback.__func__
+                )
+
             if (
                 listener["plugin"] == plugin_id
-                and listener["callback"] is callback
+                and same_callback
             ):
                 return True
 
@@ -50,8 +61,6 @@ class EventBus:
         )
 
         return True
-
-
 
     def unregister(self, plugin_id, event, callback):
         if not callable(callback):
