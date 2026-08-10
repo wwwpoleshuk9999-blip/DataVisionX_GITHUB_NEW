@@ -1,0 +1,64 @@
+{
+  "dta": "DTA-144",
+  "title": "EventBus duplicate register during delivery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "listeners_registered": "PASS",
+    "first_emit_success": "PASS",
+    "duplicate_register_observed": "PASS",
+    "first_delivery_order_observed": "PASS",
+    "registry_stable": "PASS",
+    "second_emit_success": "PASS",
+    "second_delivery_observed": "PASS",
+    "duplicate_entries_absent": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta144_event",
+    "initial_registry": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "mutation": {
+      "performed_by": "plugin_a",
+      "operation": "register",
+      "target_plugin": "plugin_c",
+      "target_callback": "listener_c",
+      "result": true
+    },
+    "first_delivery_order": [
+      "A",
+      "R",
+      "B",
+      "C"
+    ],
+    "registry_after_first_emit": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "registry_final": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "plugin_c_registry_entries": 1,
+    "duplicate_registration_prevented": true,
+    "second_emit_result": true,
+    "permission": "events"
+  },
+  "contract": {
+    "duplicate_register": "Registering an already registered plugin and callback during delivery succeeds without creating a duplicate listener entry",
+    "idempotent_registration": "Repeated registration of the same plugin and callback is idempotent",
+    "current_event_continuity": "The active event continues successfully after duplicate registration",
+    "delivery_order": "The existing listener chain remains stable after duplicate registration",
+    "duplicate_prevention": "The listener registry retains exactly one entry for the plugin and callback",
+    "subsequent_delivery": "The existing listener continues receiving subsequent events normally",
+    "registry_stability": "Duplicate registration during emit does not corrupt the listener registry",
+    "emit_success": "EventBus.emit() remains successful after duplicate registration",
+    "permission_enforcement": "Register and emit operations require the events permission"
+  }
+}
