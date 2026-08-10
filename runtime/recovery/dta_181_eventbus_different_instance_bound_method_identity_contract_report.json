@@ -1,0 +1,53 @@
+{
+  "dta": "DTA-181",
+  "title": "EventBus different instance bound method identity contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "callback_a_callable": "PASS",
+    "callback_b_callable": "PASS",
+    "same_function_observed": "PASS",
+    "different_targets_observed": "PASS",
+    "registrations_success": "PASS",
+    "registry_contains_two_listeners": "PASS",
+    "emit_success": "PASS",
+    "both_callbacks_delivered": "PASS",
+    "delivery_order_preserved": "PASS",
+    "callbacks_independent": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta181_event",
+    "plugin": "plugin_a",
+    "callback_a": "handler_a.callback",
+    "callback_b": "handler_b.callback",
+    "same_function": true,
+    "different_bound_method_targets": true,
+    "registration_results": [
+      true,
+      true
+    ],
+    "registry_size": 2,
+    "delivery_order": [
+      "handler_a",
+      "handler_b"
+    ],
+    "handler_a_delivery_count": 1,
+    "handler_b_delivery_count": 1,
+    "emit_result": true,
+    "permission": "events"
+  },
+  "contract": {
+    "different_instance_identity": "Bound methods using the same class function but different target instances are treated as distinct callbacks",
+    "same_function_different_target": "Matching __func__ alone does not collapse callbacks when __self__ differs",
+    "independent_registration": "Each distinct handler instance may register its bound callback independently",
+    "delivery": "Both callbacks receive the emitted event",
+    "delivery_order": "Callbacks retain registration order",
+    "callback_independence": "Each handler instance receives its own callback invocation",
+    "registry_stability": "Multiple bound methods from different instances remain separate after emit",
+    "permission_enforcement": "Each registration and emit continues to require the events permission"
+  }
+}
