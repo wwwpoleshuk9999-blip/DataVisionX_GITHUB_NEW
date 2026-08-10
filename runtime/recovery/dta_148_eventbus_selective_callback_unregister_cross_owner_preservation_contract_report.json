@@ -1,0 +1,68 @@
+{
+  "dta": "DTA-148",
+  "title": "EventBus selective callback unregister cross-owner preservation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registrations_success": "PASS",
+    "cross_owner_shared_callback_observed": "PASS",
+    "selective_unregister_success": "PASS",
+    "same_owner_other_callback_preserved": "PASS",
+    "other_owner_shared_callback_preserved": "PASS",
+    "removed_entry_absent": "PASS",
+    "emit_success": "PASS",
+    "remaining_delivery_preserved": "PASS",
+    "registry_stable": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta148_event",
+    "initial_registry": [
+      {
+        "plugin": "plugin_a",
+        "callback": "listener_a"
+      },
+      {
+        "plugin": "plugin_a",
+        "callback": "listener_b"
+      },
+      {
+        "plugin": "plugin_b",
+        "callback": "listener_a"
+      }
+    ],
+    "unregister": {
+      "plugin": "plugin_a",
+      "callback": "listener_a",
+      "result": true
+    },
+    "registry_after_unregister": [
+      {
+        "plugin": "plugin_a",
+        "callback": "listener_b"
+      },
+      {
+        "plugin": "plugin_b",
+        "callback": "listener_a"
+      }
+    ],
+    "removed_entry_absent": true,
+    "same_owner_callback_preserved": true,
+    "other_owner_shared_callback_preserved": true,
+    "emit_result": true,
+    "remaining_delivery_preserved": true,
+    "permission": "events"
+  },
+  "contract": {
+    "cross_owner_selective_unregister": "Unregister removes only the specified plugin/callback ownership entry",
+    "same_owner_isolation": "Removing one callback does not remove another callback owned by the same plugin",
+    "cross_owner_isolation": "Removing one owner's callback does not remove another owner's identical callback",
+    "removed_entry_absence": "The specified ownership entry is absent after unregister",
+    "remaining_callback_preservation": "Other callbacks remain registered independently",
+    "delivery_preservation": "Remaining callbacks continue receiving events",
+    "registry_stability": "Selective cross-owner callback removal preserves registry integrity",
+    "emit_success": "EventBus.emit() remains successful after selective cross-owner unregister",
+    "permission_enforcement": "Register, unregister, and emit operations require the events permission"
+  }
+}
