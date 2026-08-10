@@ -1,0 +1,38 @@
+{
+  "dta": "DTA-122",
+  "title": "EventBus unregister permission enforcement contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "denied_bus_created": "PASS",
+    "allowed_bus_created": "PASS",
+    "denied_unregister_rejected": "PASS",
+    "denied_registry_unchanged": "PASS",
+    "denied_permission_checked": "PASS",
+    "allowed_unregister_success": "PASS",
+    "allowed_registry_empty": "PASS",
+    "allowed_permission_checked": "PASS",
+    "second_unregister_returns_false": "PASS"
+  },
+  "observed": {
+    "event": "dta122_test_event",
+    "denied_plugin": "plugin_denied",
+    "denied_permission_check": [
+      "plugin_denied",
+      "events"
+    ],
+    "denied_unregister_result": false,
+    "denied_registry_preserved": true,
+    "allowed_plugin": "plugin_allowed",
+    "allowed_unregister_result": true,
+    "allowed_registry_after_unregister": {},
+    "second_unregister_result": false
+  },
+  "contract": {
+    "permission_enforcement": "A plugin without events permission cannot unregister an EventBus listener",
+    "permission_check": "unregister() checks the events permission before modifying the listener registry",
+    "registry_integrity": "A denied unregister leaves the existing listener registry unchanged",
+    "authorized_unregistration": "A plugin with events permission can unregister its listener",
+    "idempotent_removal": "Removing an already removed listener returns False"
+  }
+}
