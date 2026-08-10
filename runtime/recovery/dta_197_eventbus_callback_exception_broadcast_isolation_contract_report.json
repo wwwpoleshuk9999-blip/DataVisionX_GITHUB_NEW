@@ -1,0 +1,57 @@
+{
+  "dta": "DTA-197",
+  "title": "EventBus callback exception broadcast isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registration_a_success": "PASS",
+    "registration_b_success": "PASS",
+    "registration_c_success": "PASS",
+    "initial_registry_three": "PASS",
+    "emit_behavior_observed": "PASS",
+    "handler_a_received": "PASS",
+    "handler_b_received": "PASS",
+    "handler_c_received": "PASS",
+    "post_failure_registry_valid": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta197_event",
+    "owners": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "emitter": "plugin_a",
+    "failing_listener": "plugin_b",
+    "emit_result": true,
+    "emit_exception": null,
+    "delivery_count": 3,
+    "delivery_targets": [
+      "handler_a",
+      "handler_b",
+      "handler_c"
+    ],
+    "failing_callback_exception": "RuntimeError",
+    "registry_after_emit": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "registry_entry_count": 3,
+    "source_metadata_preserved": true,
+    "permission": "events"
+  },
+  "contract": {
+    "callback_exception_isolation": "An exception raised by one listener callback does not propagate out of EventBus.emit()",
+    "broadcast_continuity": "EventBus.emit() continues successfully despite a callback failure during broadcast",
+    "listener_delivery": "The failing listener receives the event and subsequent listeners continue receiving the same event",
+    "delivery_success": "All registered listeners receive the emitted event exactly once in the observed scenario",
+    "emit_result": "EventBus.emit() returns True after the callback exception",
+    "registry_integrity": "A callback exception does not modify or corrupt the listener registry",
+    "source_metadata": "Delivered events preserve the plugin_id supplied to emit() as source metadata",
+    "permission_enforcement": "Event emission and listener registration require the events permission"
+  }
+}
