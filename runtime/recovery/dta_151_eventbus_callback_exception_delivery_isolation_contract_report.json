@@ -1,0 +1,73 @@
+{
+  "dta": "DTA-151",
+  "title": "EventBus callback exception delivery isolation contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registrations_success": "PASS",
+    "registry_observed": "PASS",
+    "callback_exception_isolated": "PASS",
+    "delivery_before_failure_observed": "PASS",
+    "delivery_after_failure_observed": "PASS",
+    "emit_success_preserved": "PASS",
+    "registry_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta151_event",
+    "initial_registry": [
+      {
+        "plugin": "plugin_a",
+        "callback": "listener_a"
+      },
+      {
+        "plugin": "plugin_b",
+        "callback": "listener_b"
+      },
+      {
+        "plugin": "plugin_c",
+        "callback": "listener_c"
+      }
+    ],
+    "failing_callback": {
+      "plugin": "plugin_b",
+      "callback": "listener_b",
+      "exception": "RuntimeError",
+      "message": "DTA-151 callback failure"
+    },
+    "delivery_order": [
+      "A",
+      "B",
+      "C"
+    ],
+    "callback_exception_propagated": false,
+    "callback_exception_isolated": true,
+    "emit_result": true,
+    "registry_after_emit": [
+      {
+        "plugin": "plugin_a",
+        "callback": "listener_a"
+      },
+      {
+        "plugin": "plugin_b",
+        "callback": "listener_b"
+      },
+      {
+        "plugin": "plugin_c",
+        "callback": "listener_c"
+      }
+    ],
+    "permission": "events"
+  },
+  "contract": {
+    "callback_exception_isolation": "An exception raised by one callback does not abort EventBus delivery",
+    "exception_containment": "Callback exceptions are contained by EventBus.emit()",
+    "delivery_continuity": "Listeners after a failing callback continue receiving the active event",
+    "delivery_order": "Listeners continue in their registered order despite callback failure",
+    "emit_success": "EventBus.emit() returns true after a callback exception is contained",
+    "registry_preservation": "Callback failure does not modify the listener registry",
+    "listener_preservation": "The failing callback remains registered after its exception",
+    "permission_enforcement": "EventBus.emit() requires the events permission before delivery"
+  }
+}
