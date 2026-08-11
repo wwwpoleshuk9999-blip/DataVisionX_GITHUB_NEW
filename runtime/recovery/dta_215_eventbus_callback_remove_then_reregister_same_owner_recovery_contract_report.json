@@ -1,0 +1,70 @@
+{
+  "dta": "DTA-215",
+  "title": "EventBus callback remove-then-reregister same-owner recovery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registration_a": "PASS",
+    "registration_b": "PASS",
+    "registration_c": "PASS",
+    "initial_registry_three": "PASS",
+    "cycle1_success": "PASS",
+    "cycle1_no_exception": "PASS",
+    "unregister_result": "PASS",
+    "reregister_result": "PASS",
+    "cycle1_a_received_once": "PASS",
+    "cycle1_b_received_once": "PASS",
+    "cycle1_c_received_once": "PASS",
+    "cycle1_delivery_three": "PASS",
+    "registry_single_b_entry": "PASS",
+    "registry_owner_order_valid": "PASS",
+    "unique_owner_entries": "PASS",
+    "cycle2_success": "PASS",
+    "cycle2_no_exception": "PASS",
+    "cycle2_delivery_three": "PASS",
+    "cycle2_delivery_once_each": "PASS",
+    "final_registry_valid": "PASS",
+    "source_metadata_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta215_event",
+    "mutation_owner": "plugin_a",
+    "removed_owner": "plugin_b",
+    "reregistered_owner": "plugin_b",
+    "unregister_result": true,
+    "reregister_result": true,
+    "cycle1_result": true,
+    "cycle1_delivery_count": 3,
+    "registry_after_mutation": [
+      "plugin_a",
+      "plugin_c",
+      "plugin_b"
+    ],
+    "plugin_b_entry_count": 1,
+    "duplicate_owner_entries": false,
+    "cycle2_result": true,
+    "cycle2_delivery_count": 3,
+    "cycle2_delivery_once_each": true,
+    "final_registry": [
+      "plugin_a",
+      "plugin_c",
+      "plugin_b"
+    ],
+    "source_metadata_preserved": true,
+    "permission": "events"
+  },
+  "contract": {
+    "remove_then_reregister": "A callback can remove another listener and re-register the same owner during an active EventBus.emit() cycle",
+    "current_cycle_delivery_continuity": "The removed listener receives the active broadcast exactly once before mutation completes",
+    "reregister_isolation": "The listener re-registered during the active broadcast does not receive the same broadcast a second time",
+    "duplicate_owner_prevention": "Re-registration restores exactly one listener entry for the owner",
+    "registry_order_integrity": "A removed and re-registered listener is appended as a new registry position",
+    "post_mutation_delivery_once": "Subsequent broadcasts deliver exactly once to every registered listener",
+    "emit_continuity": "EventBus.emit() remains successful before and after callback-driven remove-then-reregister mutation",
+    "source_metadata": "Delivered events preserve the plugin_id supplied to emit() as source metadata",
+    "permission_enforcement": "Registration, unregister, and emit operations require the events permission"
+  }
+}
