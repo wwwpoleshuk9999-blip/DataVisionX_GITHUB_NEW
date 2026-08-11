@@ -1,0 +1,73 @@
+{
+  "dta": "DTA-205",
+  "title": "EventBus callback add-other-listener recovery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registration_a": "PASS",
+    "registration_b": "PASS",
+    "registration_c": "PASS",
+    "initial_registry_three": "PASS",
+    "first_emit_success": "PASS",
+    "first_emit_no_exception": "PASS",
+    "first_a_received": "PASS",
+    "first_b_received": "PASS",
+    "first_c_received": "PASS",
+    "new_d_not_in_current_cycle": "PASS",
+    "registry_after_add_valid": "PASS",
+    "second_emit_success": "PASS",
+    "second_emit_no_exception": "PASS",
+    "second_delivery_count_four": "PASS",
+    "second_delivery_once_each": "PASS",
+    "source_metadata_preserved": "PASS",
+    "final_registry_valid": "PASS",
+    "unique_owner_entries": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta205_event",
+    "initial_registry": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "mutation_owner": "plugin_a",
+    "added_owner": "plugin_d",
+    "first_emit_result": true,
+    "first_emit_exception": null,
+    "first_delivery_count": 3,
+    "new_listener_current_cycle_delivery_count": 0,
+    "registry_after_add": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c",
+      "plugin_d"
+    ],
+    "second_emit_result": true,
+    "second_emit_exception": null,
+    "second_delivery_count": 4,
+    "second_delivery_once_each": true,
+    "final_registry": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c",
+      "plugin_d"
+    ],
+    "duplicate_owner_entries": false,
+    "source_metadata_preserved": true,
+    "permission": "events"
+  },
+  "contract": {
+    "callback_mutation_isolation": "A listener can add another listener during callback execution without aborting EventBus.emit()",
+    "current_cycle_isolation": "A listener added during an active broadcast does not receive that same broadcast",
+    "post_add_continuity": "The newly registered listener receives subsequent broadcasts",
+    "delivery_once": "Each currently registered listener receives the applicable broadcast exactly once",
+    "registry_integrity": "The listener registry remains structurally valid after callback-driven registration",
+    "unique_owner_integrity": "Callback-driven registration does not create duplicate owner entries",
+    "source_metadata": "Delivered events preserve the plugin_id supplied to emit() as source metadata",
+    "emit_continuity": "EventBus.emit() remains successful before and after callback-driven listener addition",
+    "permission_enforcement": "Registration and emit operations require the events permission"
+  }
+}
