@@ -1,0 +1,71 @@
+{
+  "dta": "DTA-209",
+  "title": "EventBus callback duplicate registration recovery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registration_a": "PASS",
+    "registration_b": "PASS",
+    "registration_c": "PASS",
+    "initial_registry_three": "PASS",
+    "cycle1_success": "PASS",
+    "cycle1_no_exception": "PASS",
+    "duplicate_register_result": "PASS",
+    "cycle1_delivery_three": "PASS",
+    "cycle1_a_received_once": "PASS",
+    "cycle1_b_received_once": "PASS",
+    "cycle1_c_received_once": "PASS",
+    "registry_no_duplicate_b": "PASS",
+    "unique_owner_entries": "PASS",
+    "cycle2_success": "PASS",
+    "cycle2_no_exception": "PASS",
+    "cycle2_delivery_three": "PASS",
+    "cycle2_delivery_once_each": "PASS",
+    "final_registry_valid": "PASS",
+    "source_metadata_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta209_event",
+    "initial_registry": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "mutation_owner": "plugin_a",
+    "duplicate_registration_owner": "plugin_b",
+    "duplicate_register_result": true,
+    "cycle1_result": true,
+    "cycle1_delivery_count": 3,
+    "cycle1_plugin_b_delivery_count": 1,
+    "registry_after_duplicate": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "cycle2_result": true,
+    "cycle2_delivery_count": 3,
+    "cycle2_delivery_once_each": true,
+    "final_registry": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "duplicate_owner_entries": false,
+    "source_metadata_preserved": true,
+    "permission": "events"
+  },
+  "contract": {
+    "duplicate_registration_isolation": "A callback can attempt to register an already registered listener without aborting EventBus.emit()",
+    "duplicate_registration_integrity": "Repeated registration of an existing listener does not create duplicate registry entries",
+    "current_cycle_delivery_once": "An already registered listener receives the active broadcast exactly once",
+    "post_registration_delivery_once": "Subsequent broadcasts continue delivering exactly once per registered listener",
+    "registry_integrity": "The listener registry remains structurally valid after duplicate registration",
+    "unique_owner_integrity": "Duplicate registration does not create duplicate owner entries",
+    "source_metadata": "Delivered events preserve the plugin_id supplied to emit() as source metadata",
+    "emit_continuity": "EventBus.emit() remains successful before and after duplicate registration",
+    "permission_enforcement": "Registration and emit operations require the events permission"
+  }
+}
