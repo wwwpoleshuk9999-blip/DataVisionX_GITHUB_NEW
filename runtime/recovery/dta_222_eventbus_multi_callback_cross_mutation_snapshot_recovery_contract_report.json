@@ -1,0 +1,51 @@
+{
+  "dta": "DTA-222",
+  "title": "EventBus multi-callback cross-mutation snapshot recovery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "result": "PASS",
+  "contract": {
+    "multi_callback_cross_mutation": "A callback can unregister and re-register multiple other owners during an active EventBus.emit() cycle",
+    "snapshot_delivery": "Every listener present at the start of the broadcast receives the active event exactly once",
+    "current_cycle_reregister_isolation": "Listeners re-registered during the active broadcast do not receive that broadcast a second time",
+    "single_owner_entries": "Each re-registered owner has exactly one listener entry",
+    "registry_order_integrity": "Removed and re-registered listeners are appended in mutation order",
+    "duplicate_owner_prevention": "Cross-callback mutations do not create duplicate owner entries",
+    "post_recovery_delivery_once": "Subsequent broadcasts deliver exactly once to every currently registered listener",
+    "emit_continuity": "EventBus.emit() remains successful before and after multi-callback mutation",
+    "source_metadata": "Delivered events preserve the plugin_id supplied to emit() as source metadata",
+    "permission_enforcement": "EventBus registration, unregister, and emit operations require the events permission"
+  },
+  "observed": {
+    "event": "dta222_event",
+    "mutation_owner": "plugin_a",
+    "mutated_owners": [
+      "plugin_b",
+      "plugin_c"
+    ],
+    "cycle1_result": true,
+    "cycle1_delivery_count": 4,
+    "cycle1_delivery_once_each_original_listener": true,
+    "registry_after_mutation": [
+      "plugin_a",
+      "plugin_d",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "plugin_b_entry_count": 1,
+    "plugin_c_entry_count": 1,
+    "duplicate_owner_entries": false,
+    "cycle2_result": true,
+    "cycle2_delivery_count": 4,
+    "cycle2_delivery_once_each_registered": true,
+    "final_registry": [
+      "plugin_a",
+      "plugin_d",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "source_metadata_preserved": true,
+    "permission": "events"
+  }
+}
