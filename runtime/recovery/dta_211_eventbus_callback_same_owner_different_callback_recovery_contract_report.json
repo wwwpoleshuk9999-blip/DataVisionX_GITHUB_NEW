@@ -1,0 +1,66 @@
+{
+  "dta": "DTA-211",
+  "title": "EventBus callback same-owner different-callback registration recovery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "registration_a": "PASS",
+    "registration_b": "PASS",
+    "registration_c": "PASS",
+    "initial_registry_three": "PASS",
+    "cycle1_success": "PASS",
+    "conflict_register_result": "PASS",
+    "registry_single_b_entry": "PASS",
+    "registry_owner_order_valid": "PASS",
+    "original_callback_preserved": "PASS",
+    "cycle1_original_b_received_once": "PASS",
+    "cycle1_alternative_b_not_received": "PASS",
+    "cycle2_success": "PASS",
+    "cycle2_original_b_received_once": "PASS",
+    "cycle2_alternative_b_not_received": "PASS",
+    "final_registry_valid": "PASS",
+    "unique_owner_entries": "PASS",
+    "source_metadata_preserved": "PASS"
+  },
+  "observed": {
+    "event": "dta211_event",
+    "mutation_owner": "plugin_a",
+    "conflicting_owner": "plugin_b",
+    "conflicting_callback": "plugin_b_alt",
+    "conflict_register_result": true,
+    "cycle1_result": true,
+    "cycle1_delivery_count": 3,
+    "cycle1_alternative_callback_delivery_count": 0,
+    "registry_after_conflict": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "cycle2_result": true,
+    "cycle2_delivery_count": 3,
+    "cycle2_alternative_callback_delivery_count": 0,
+    "final_registry": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "duplicate_owner_entries": false,
+    "original_callback_preserved": true,
+    "source_metadata_preserved": true,
+    "permission": "events"
+  },
+  "contract": {
+    "same_owner_registration_isolation": "A callback cannot register a different callback for an already registered plugin owner and event",
+    "duplicate_owner_prevention": "An existing plugin owner remains represented by exactly one listener entry per event",
+    "callback_preservation": "A conflicting registration attempt does not replace the original callback",
+    "current_cycle_delivery_once": "The original listener receives the active broadcast exactly once",
+    "conflicting_callback_isolation": "A rejected conflicting callback receives no broadcast",
+    "post_conflict_delivery_once": "Subsequent broadcasts continue delivering exactly once per registered listener",
+    "registry_integrity": "The listener registry remains structurally valid after conflicting callback registration",
+    "unique_owner_integrity": "Each plugin owner has at most one listener entry for an event",
+    "source_metadata": "Delivered events preserve the plugin_id supplied to emit() as source metadata",
+    "emit_continuity": "EventBus.emit() remains successful before and after conflicting registration",
+    "permission_enforcement": "Registration and emit operations require the events permission"
+  }
+}

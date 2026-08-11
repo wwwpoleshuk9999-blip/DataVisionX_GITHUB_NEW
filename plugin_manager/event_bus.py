@@ -28,25 +28,7 @@ class EventBus:
             self.listeners[event] = []
 
         for listener in self.listeners[event]:
-            existing = listener["callback"]
-
-            same_callback = existing is callback
-
-            if (
-                hasattr(existing, "__self__")
-                and hasattr(existing, "__func__")
-                and hasattr(callback, "__self__")
-                and hasattr(callback, "__func__")
-            ):
-                same_callback = (
-                    existing.__self__ is callback.__self__
-                    and existing.__func__ is callback.__func__
-                )
-
-            if (
-                listener["plugin"] == plugin_id
-                and same_callback
-            ):
+            if listener["plugin"] == plugin_id:
                 return True
 
         self.listeners[event].append(
