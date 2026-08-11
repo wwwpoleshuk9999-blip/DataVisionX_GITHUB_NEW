@@ -1,0 +1,54 @@
+{
+  "dta": "DTA-219",
+  "title": "EventBus self-unregister + same-owner re-register idempotency recovery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "result": "PASS",
+  "contract": {
+    "self_unregister": "A callback can unregister itself during an active EventBus.emit() cycle",
+    "same_callback_reregister": "The same owner can re-register the same callback after self-unregister",
+    "different_callback_idempotency": "A subsequent registration attempt for the same owner with a different callback is idempotent and does not replace the existing callback",
+    "single_owner_entry": "Exactly one listener entry exists for the owner after self-recovery",
+    "original_callback_preserved": "The original callback remains registered after duplicate same-owner registration attempts",
+    "current_cycle_continuity": "The active callback receives the current broadcast exactly once",
+    "current_cycle_recovery_isolation": "Callbacks registered during the active broadcast do not receive that same broadcast again",
+    "post_recovery_delivery_once": "Subsequent broadcasts deliver exactly once to every registered listener",
+    "registry_order_integrity": "Self-removed and re-registered owner is restored at the end of the registry",
+    "emit_continuity": "EventBus.emit() remains successful before and after self-recovery",
+    "source_metadata": "Delivered events preserve the plugin_id supplied to emit() as source metadata",
+    "permission_enforcement": "EventBus registration, unregister, and emit operations require the events permission"
+  },
+  "observed": {
+    "event": "dta219_event",
+    "mutation_owner": "plugin_a",
+    "unregister_result": true,
+    "reregister_same_result": true,
+    "reregister_different_result": true,
+    "different_callback_installed": false,
+    "cycle1_result": true,
+    "cycle1_delivery_count": 3,
+    "cycle1_original_callback_delivery_count": 1,
+    "cycle1_alternative_callback_delivery_count": 0,
+    "registry_after_mutation": [
+      "plugin_b",
+      "plugin_c",
+      "plugin_a"
+    ],
+    "plugin_a_entry_count": 1,
+    "duplicate_owner_entries": false,
+    "original_callback_preserved": true,
+    "cycle2_result": true,
+    "cycle2_delivery_count": 3,
+    "cycle2_original_callback_delivery_count": 1,
+    "cycle2_alternative_callback_delivery_count": 0,
+    "cycle2_delivery_once_each_registered": true,
+    "final_registry": [
+      "plugin_b",
+      "plugin_c",
+      "plugin_a"
+    ],
+    "source_metadata_preserved": true,
+    "permission": "events"
+  }
+}
