@@ -1,0 +1,48 @@
+{
+  "dta": "DTA-220",
+  "title": "EventBus self-unregister + double-unregister + re-register recovery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "result": "PASS",
+  "contract": {
+    "self_unregister": "A callback can unregister itself during an active EventBus.emit() cycle",
+    "double_unregister_idempotency": "A second unregister attempt for an already removed callback returns false without corrupting the registry",
+    "reregister_after_unregister": "The same owner can re-register after self-unregister",
+    "current_cycle_continuity": "The active callback receives the current broadcast exactly once",
+    "current_cycle_reregister_isolation": "The re-registered callback does not receive the active broadcast a second time",
+    "single_owner_entry": "Exactly one listener entry exists for the owner after recovery",
+    "registry_order_integrity": "The self-removed and re-registered owner is restored at the end of the registry",
+    "post_recovery_delivery_once": "Subsequent broadcasts deliver exactly once to every registered listener",
+    "emit_continuity": "EventBus.emit() remains successful before and after recovery",
+    "source_metadata": "Delivered events preserve the plugin_id supplied to emit() as source metadata",
+    "permission_enforcement": "EventBus registration, unregister, and emit operations require the events permission"
+  },
+  "observed": {
+    "event": "dta220_event",
+    "mutation_owner": "plugin_a",
+    "unregister_result_1": true,
+    "unregister_result_2": false,
+    "reregister_result": true,
+    "cycle1_result": true,
+    "cycle1_delivery_count": 3,
+    "cycle1_owner_delivery_count": 1,
+    "registry_after_mutation": [
+      "plugin_b",
+      "plugin_c",
+      "plugin_a"
+    ],
+    "plugin_a_entry_count": 1,
+    "duplicate_owner_entries": false,
+    "cycle2_result": true,
+    "cycle2_delivery_count": 3,
+    "cycle2_delivery_once_each": true,
+    "final_registry": [
+      "plugin_b",
+      "plugin_c",
+      "plugin_a"
+    ],
+    "source_metadata_preserved": true,
+    "permission": "events"
+  }
+}
