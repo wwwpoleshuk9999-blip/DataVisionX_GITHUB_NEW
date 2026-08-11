@@ -1,0 +1,81 @@
+{
+  "dta": "DTA-206",
+  "title": "EventBus callback add-then-remove listener recovery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registration_a": "PASS",
+    "registration_b": "PASS",
+    "registration_c": "PASS",
+    "initial_registry_three": "PASS",
+    "cycle1_success": "PASS",
+    "cycle1_delivery_three": "PASS",
+    "d_not_in_cycle1": "PASS",
+    "registry_after_add": "PASS",
+    "cycle2_success": "PASS",
+    "cycle2_delivery_four": "PASS",
+    "d_received_cycle2": "PASS",
+    "registry_after_remove": "PASS",
+    "cycle3_success": "PASS",
+    "cycle3_delivery_three": "PASS",
+    "removed_d_receives_nothing": "PASS",
+    "final_registry_valid": "PASS",
+    "unique_owner_entries": "PASS",
+    "source_metadata_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta206_event",
+    "initial_registry": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "mutation_owner": "plugin_a",
+    "added_owner": "plugin_d",
+    "removed_owner": "plugin_d",
+    "cycle1_result": true,
+    "cycle1_delivery_count": 3,
+    "cycle1_new_listener_delivery_count": 0,
+    "registry_after_add": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c",
+      "plugin_d"
+    ],
+    "cycle2_result": true,
+    "cycle2_delivery_count": 4,
+    "cycle2_removed_listener_delivery_count": 1,
+    "registry_after_remove": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "cycle3_result": true,
+    "cycle3_delivery_count": 3,
+    "cycle3_removed_listener_delivery_count": 0,
+    "final_registry": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "duplicate_owner_entries": false,
+    "source_metadata_preserved": true,
+    "permission": "events"
+  },
+  "contract": {
+    "callback_mutation_isolation": "A listener can add and subsequently remove another listener during callback execution without aborting EventBus.emit()",
+    "current_cycle_add_isolation": "A listener added during an active broadcast does not receive that same broadcast",
+    "next_cycle_add_continuity": "A listener added during one broadcast receives the subsequent broadcast",
+    "current_cycle_remove_continuity": "A listener removed during a callback still receives the current broadcast exactly once",
+    "post_remove_isolation": "A listener removed during a callback receives no subsequent broadcasts",
+    "registry_integrity": "The listener registry remains structurally valid throughout add-then-remove recovery",
+    "unique_owner_integrity": "Callback-driven add/remove operations preserve exactly one listener entry per active owner",
+    "delivery_once": "Each currently registered listener receives each applicable broadcast exactly once",
+    "source_metadata": "Delivered events preserve the plugin_id supplied to emit() as source metadata",
+    "emit_continuity": "EventBus.emit() remains successful across add, remove, and post-removal cycles",
+    "permission_enforcement": "Registration, unregister, and emit operations require the events permission"
+  }
+}
