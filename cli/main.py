@@ -1,5 +1,7 @@
 import sys
 import subprocess
+import os
+import fcntl
 from pathlib import Path
 
 from services.health_service import health_service
@@ -11,24 +13,30 @@ from core.service import service
 
 
 def start():
-    if service.is_running():
-        print("DataVision X already running")
-        return
+    lock_file = Path("runtime/dvx.start.lock")
+    lock_file.parent.mkdir(parents=True, exist_ok=True)
 
-    process = subprocess.Popen(
-        [
-            sys.executable,
-            "-m",
-            "core.daemon"
-        ],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    )
+    with open(lock_file, "w", encoding="utf-8") as lock:
+        fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
 
-    service.save_pid(process.pid)
+        if service.is_running():
+            print("DataVision X already running")
+            return
 
-    print("DataVision X started")
-    print(f"PID: {process.pid}")
+        process = subprocess.Popen(
+            [
+                sys.executable,
+                "-m",
+                "core.daemon"
+            ],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+
+        service.save_pid(process.pid)
+
+        print("DataVision X started")
+        print(f"PID: {process.pid}")
 
 
 def stop():

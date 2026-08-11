@@ -23,9 +23,21 @@ class HealthMonitor:
         except Exception:
             running_plugins = 0
 
+        runtime_status = runtime_data.get("status", "UNKNOWN")
+
+        if process_running:
+            status = "RUNNING"
+            uptime = runtime.uptime()
+        elif runtime_status == "RUNNING":
+            status = "RECOVERY_REQUIRED"
+            uptime = 0
+        else:
+            status = runtime_status
+            uptime = 0
+
         return {
-            "status": runtime_data.get("status", "UNKNOWN"),
-            "uptime": runtime.uptime(),
+            "status": status,
+            "uptime": uptime,
             "pid": service.read_pid(),
             "process": "RUNNING" if process_running else "STOPPED",
             "plugins": total_plugins,

@@ -103,6 +103,24 @@ def register_core_services():
             "ai_chat_completed",
             websocket_event_listener
         )
+        event_bus.register(
+            "system",
+            "runtime_started",
+            websocket_event_listener
+        )
+
+        event_bus.register(
+            "system",
+            "runtime_stopped",
+            websocket_event_listener
+        )
+
+        event_bus.register(
+            "system",
+            "runtime_reloaded",
+            websocket_event_listener
+        )
+
 
     return runtime.registry.list_services()
 

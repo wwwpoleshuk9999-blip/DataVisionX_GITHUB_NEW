@@ -61,6 +61,19 @@ class ServiceManager:
         except Exception:
             return False
 
+    def is_dvx_process(self, pid: int):
+        """
+        Проверяет, что PID принадлежит именно DataVisionX daemon.
+        """
+        try:
+            cmdline = Path(f"/proc/{pid}/cmdline").read_bytes()
+            cmdline = cmdline.replace(b"\\x00", b" ").decode(
+                "utf-8", errors="ignore"
+            )
+            return "core.daemon" in cmdline
+        except Exception:
+            return False
+
     def is_running(self):
         """
         Проверяет, работает ли Runtime.
@@ -70,12 +83,15 @@ class ServiceManager:
         if pid is None:
             return False
 
-        if self.pid_exists(pid):
-            return True
+        if not self.pid_exists(pid):
+            self.remove_pid()
+            return False
 
-        # PID устарел
-        self.remove_pid()
-        return False
+        if not self.is_dvx_process(pid):
+            self.remove_pid()
+            return False
+
+        return True
 
     def ensure_pid(self):
         """
@@ -99,26 +115,56 @@ class ServiceManager:
 
     def stop(self):
         """
-        Останавливает процесс.
+        Останавливает именно DataVisionX daemon
+        и подтверждает фактическое завершение процесса.
         """
         pid = self.read_pid()
 
         if pid is None:
             return False
 
+        if not self.pid_exists(pid):
+            self.remove_pid()
+            return False
+
+        if not self.is_dvx_process(pid):
+            self.remove_pid()
+            return False
+
         try:
             os.kill(pid, signal.SIGTERM)
-
         except ProcessLookupError:
-            pass
-
+            self.remove_pid()
+            return False
         except PermissionError:
             return False
 
-        finally:
-            self.remove_pid()
+        import time
 
-        return True
+        # Даём процессу до 5 секунд на штатное завершение.
+        for _ in range(50):
+            if not self.pid_exists(pid):
+                self.remove_pid()
+                return True
+            time.sleep(0.1)
+
+        # Если SIGTERM не помог — принудительное завершение.
+        try:
+            os.kill(pid, signal.SIGKILL)
+        except ProcessLookupError:
+            self.remove_pid()
+            return True
+        except PermissionError:
+            return False
+
+        # Подтверждаем завершение после SIGKILL.
+        for _ in range(20):
+            if not self.pid_exists(pid):
+                self.remove_pid()
+                return True
+            time.sleep(0.1)
+
+        return False
 
 
 service = ServiceManager()

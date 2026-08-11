@@ -5,7 +5,7 @@ class PluginService:
     """Service for managing DataVision X plugins."""
 
     def load(self):
-        plugin_manager.scan_plugins()
+        plugin_manager.discover()
 
     def list(self):
         return plugin_manager.list_plugins()

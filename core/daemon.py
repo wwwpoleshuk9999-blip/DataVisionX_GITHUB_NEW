@@ -1,14 +1,9 @@
 import signal
-import time
 
-from core.kernel import Kernel
-
-
-kernel = Kernel()
+import uvicorn
 
 
 def shutdown(signum, frame):
-    kernel.stop()
     raise SystemExit(0)
 
 
@@ -16,10 +11,12 @@ def run():
     signal.signal(signal.SIGTERM, shutdown)
     signal.signal(signal.SIGINT, shutdown)
 
-    kernel.start()
-
-    while True:
-        time.sleep(1)
+    uvicorn.run(
+        "api.main:app",
+        host="0.0.0.0",
+        port=8000,
+        log_level="info",
+    )
 
 
 if __name__ == "__main__":

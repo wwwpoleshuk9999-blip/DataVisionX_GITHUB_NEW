@@ -3,7 +3,6 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from core.kernel import Kernel
 from core.runtime import runtime
 from core.bootstrap import register_core_services
 from services.websocket_bridge import set_loop
@@ -56,20 +55,19 @@ app.include_router(devtools_router)
 app.mount('/web', StaticFiles(directory='web'), name='web')
 
 
-kernel = Kernel()
 
 
 @app.on_event("startup")
 async def startup():
     register_core_services()
     set_loop(asyncio.get_running_loop())
-    kernel.start()
+    runtime.start()
     runtime.auto_start_plugins()
 
 
 @app.on_event("shutdown")
 def shutdown():
-    kernel.stop()
+    runtime.stop()
 
 
 @app.get("/")

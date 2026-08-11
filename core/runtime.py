@@ -11,7 +11,6 @@ class RuntimeManager:
     def __init__(self):
         self.registry = ServiceRegistry()
         self.plugin_registry = PluginRegistryManager()
-        self.plugin_registry = PluginRegistryManager()
 
         self.base_dir = Path("runtime")
         self.base_dir.mkdir(exist_ok=True)
@@ -88,14 +87,29 @@ class RuntimeManager:
 
 
     def start(self):
-
         data = self._load()
+
+        # Повторный START не должен перезапускать Runtime.
+        if data.get("status") == "RUNNING":
+            return data
 
         data["status"] = "RUNNING"
         data["started_at"] = int(time.time())
         data["last_action"] = "START"
 
         self._save(data)
+
+        event_bus = self.get_service("event_bus")
+        if event_bus:
+            event_bus.emit(
+                "system",
+                "runtime_started",
+                {
+                    "status": data["status"],
+                    "last_action": data["last_action"],
+                    "restart_count": data["restart_count"]
+                }
+            )
 
         return data
 
@@ -134,6 +148,12 @@ class RuntimeManager:
 
 
     def stop(self):
+        data = self._load()
+
+        # Повторный STOP не должен повторно останавливать Runtime.
+        if data.get("status") != "RUNNING":
+            return data
+
         plugin_manager = self.get_service("plugin_manager")
 
         if plugin_manager:
@@ -144,11 +164,24 @@ class RuntimeManager:
                 except Exception as e:
                     print(f"Plugin stop failed {plugin.id}: {e}")
 
-        data = self._load()
         data["status"] = "STOPPED"
         data["last_action"] = "STOP"
         self._save(data)
+
+        event_bus = self.get_service("event_bus")
+        if event_bus:
+            event_bus.emit(
+                "system",
+                "runtime_stopped",
+                {
+                    "status": data["status"],
+                    "last_action": data["last_action"],
+                    "restart_count": data["restart_count"]
+                }
+            )
+
         return data
+
 
     def reload(self):
 
@@ -169,6 +202,18 @@ class RuntimeManager:
 
 
         self._save(data)
+
+        event_bus = self.get_service("event_bus")
+        if event_bus:
+            event_bus.emit(
+                "system",
+                "runtime_reloaded",
+                {
+                    "status": data["status"],
+                    "last_action": data["last_action"],
+                    "restart_count": data["restart_count"]
+                }
+            )
 
         return data
 

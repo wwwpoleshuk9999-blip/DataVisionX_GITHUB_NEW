@@ -28,7 +28,13 @@ class EventBus:
             self.listeners[event] = []
 
         for listener in self.listeners[event]:
-            if listener["plugin"] == plugin_id:
+            if (
+                listener["plugin"] == plugin_id
+                and self._same_callback(
+                    listener["callback"],
+                    callback
+                )
+            ):
                 return True
 
         self.listeners[event].append(
@@ -43,6 +49,24 @@ class EventBus:
         )
 
         return True
+
+    def _same_callback(self, existing, callback):
+        if existing is callback:
+            return True
+
+        if (
+            hasattr(existing, "__self__")
+            and hasattr(existing, "__func__")
+            and hasattr(callback, "__self__")
+            and hasattr(callback, "__func__")
+        ):
+            return (
+                existing.__self__ is callback.__self__
+                and existing.__func__ is callback.__func__
+            )
+
+        return False
+
 
     def unregister(self, plugin_id, event, callback):
         if not callable(callback):
