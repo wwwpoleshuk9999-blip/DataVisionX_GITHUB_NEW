@@ -1,0 +1,69 @@
+{
+  "dta": "DTA-208",
+  "title": "EventBus callback self-remove recovery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registration_a": "PASS",
+    "registration_b": "PASS",
+    "registration_c": "PASS",
+    "initial_registry_three": "PASS",
+    "cycle1_success": "PASS",
+    "cycle1_no_exception": "PASS",
+    "cycle1_a_received": "PASS",
+    "cycle1_b_received": "PASS",
+    "cycle1_c_received": "PASS",
+    "cycle1_delivery_three": "PASS",
+    "registry_after_self_remove_valid": "PASS",
+    "cycle2_success": "PASS",
+    "cycle2_no_exception": "PASS",
+    "cycle2_a_not_received": "PASS",
+    "cycle2_b_received": "PASS",
+    "cycle2_c_received": "PASS",
+    "cycle2_delivery_two": "PASS",
+    "final_registry_valid": "PASS",
+    "unique_owner_entries": "PASS",
+    "source_metadata_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta208_event",
+    "initial_registry": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "self_remove_owner": "plugin_a",
+    "cycle1_result": true,
+    "cycle1_delivery_count": 3,
+    "cycle1_self_remove_delivery_count": 1,
+    "registry_after_self_remove": [
+      "plugin_b",
+      "plugin_c"
+    ],
+    "cycle2_result": true,
+    "cycle2_delivery_count": 2,
+    "cycle2_removed_owner_delivery_count": 0,
+    "final_registry": [
+      "plugin_b",
+      "plugin_c"
+    ],
+    "duplicate_owner_entries": false,
+    "source_metadata_preserved": true,
+    "permission": "events"
+  },
+  "contract": {
+    "self_mutation_isolation": "A listener can remove itself during callback execution without aborting EventBus.emit()",
+    "current_cycle_self_remove_continuity": "A listener removing itself during an active broadcast still receives that broadcast exactly once",
+    "post_remove_isolation": "A self-removed listener receives no subsequent broadcasts",
+    "remaining_listener_continuity": "Other registered listeners continue receiving broadcasts after self-removal",
+    "registry_integrity": "The listener registry remains structurally valid after callback-driven self-removal",
+    "unique_owner_integrity": "Self-removal does not create duplicate or stale owner entries",
+    "delivery_once": "Each applicable listener receives each broadcast exactly once",
+    "source_metadata": "Delivered events preserve the plugin_id supplied to emit() as source metadata",
+    "emit_continuity": "EventBus.emit() remains successful before and after callback-driven self-removal",
+    "permission_enforcement": "Registration, unregister, and emit operations require the events permission"
+  }
+}
