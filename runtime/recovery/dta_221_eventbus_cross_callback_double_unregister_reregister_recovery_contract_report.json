@@ -1,0 +1,48 @@
+{
+  "dta": "DTA-221",
+  "title": "EventBus cross-callback double-unregister + re-register recovery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "result": "PASS",
+  "contract": {
+    "cross_callback_unregister": "A callback can unregister another owner's listener during an active EventBus.emit() cycle",
+    "double_unregister_idempotency": "A second unregister attempt for the already removed listener returns false without corrupting the registry",
+    "cross_callback_reregister": "The removed owner can be re-registered during the same active broadcast",
+    "current_cycle_delivery_continuity": "The original listener still receives the active broadcast exactly once",
+    "current_cycle_reregister_isolation": "The re-registered listener does not receive the active broadcast a second time",
+    "single_owner_entry": "Exactly one listener entry exists for the re-registered owner",
+    "registry_order_integrity": "The removed and re-registered owner is appended at the end of the registry",
+    "post_recovery_delivery_once": "Subsequent broadcasts deliver exactly once to every registered listener",
+    "emit_continuity": "EventBus.emit() remains successful before and after cross-callback recovery",
+    "source_metadata": "Delivered events preserve the plugin_id supplied to emit() as source metadata",
+    "permission_enforcement": "EventBus registration, unregister, and emit operations require the events permission"
+  },
+  "observed": {
+    "event": "dta221_event",
+    "mutation_owner": "plugin_a",
+    "removed_owner": "plugin_b",
+    "unregister_result_1": true,
+    "unregister_result_2": false,
+    "reregister_result": true,
+    "cycle1_result": true,
+    "cycle1_delivery_count": 3,
+    "registry_after_mutation": [
+      "plugin_a",
+      "plugin_c",
+      "plugin_b"
+    ],
+    "plugin_b_entry_count": 1,
+    "duplicate_owner_entries": false,
+    "cycle2_result": true,
+    "cycle2_delivery_count": 3,
+    "cycle2_delivery_once_each": true,
+    "final_registry": [
+      "plugin_a",
+      "plugin_c",
+      "plugin_b"
+    ],
+    "source_metadata_preserved": true,
+    "permission": "events"
+  }
+}
