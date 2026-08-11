@@ -1,0 +1,95 @@
+{
+  "dta": "DTA-207",
+  "title": "EventBus multi-callback registry mutation recovery contract",
+  "status": "READY",
+  "component": "plugin_manager.event_bus",
+  "observation_status": "COMPLETE",
+  "checks": {
+    "eventbus_created": "PASS",
+    "registration_a": "PASS",
+    "registration_b": "PASS",
+    "registration_c": "PASS",
+    "initial_registry_three": "PASS",
+    "cycle1_success": "PASS",
+    "cycle1_delivery_three": "PASS",
+    "cycle1_a_received": "PASS",
+    "cycle1_b_received": "PASS",
+    "cycle1_c_received": "PASS",
+    "cycle1_d_not_received": "PASS",
+    "registry_after_cycle1": "PASS",
+    "cycle2_success": "PASS",
+    "cycle2_delivery_three": "PASS",
+    "cycle2_d_received": "PASS",
+    "registry_after_cycle2": "PASS",
+    "cycle3_success": "PASS",
+    "cycle3_delivery_two": "PASS",
+    "d_receives_nothing_after_removal": "PASS",
+    "final_registry_valid": "PASS",
+    "unique_owner_entries": "PASS",
+    "source_metadata_preserved": "PASS",
+    "permission_checked": "PASS"
+  },
+  "observed": {
+    "event": "dta207_event",
+    "initial_registry": [
+      "plugin_a",
+      "plugin_b",
+      "plugin_c"
+    ],
+    "cycle1": {
+      "result": true,
+      "mutations": [
+        "plugin_a adds plugin_d",
+        "plugin_c removes plugin_b"
+      ],
+      "delivery_count": 3,
+      "plugin_d_delivery_count": 0,
+      "registry": [
+        "plugin_a",
+        "plugin_c",
+        "plugin_d"
+      ]
+    },
+    "cycle2": {
+      "result": true,
+      "mutations": [
+        "plugin_a removes plugin_d"
+      ],
+      "delivery_count": 3,
+      "plugin_d_delivery_count": 1,
+      "registry": [
+        "plugin_a",
+        "plugin_c"
+      ]
+    },
+    "cycle3": {
+      "result": true,
+      "delivery_count": 2,
+      "plugin_d_delivery_count": 0,
+      "registry": [
+        "plugin_a",
+        "plugin_c"
+      ]
+    },
+    "final_registry": [
+      "plugin_a",
+      "plugin_c"
+    ],
+    "duplicate_owner_entries": false,
+    "source_metadata_preserved": true,
+    "permission": "events"
+  },
+  "contract": {
+    "multi_callback_mutation_isolation": "Multiple callbacks may mutate the listener registry during one broadcast without aborting EventBus.emit()",
+    "current_cycle_snapshot": "The active broadcast follows its listener snapshot and is not corrupted by concurrent registry mutation",
+    "current_cycle_add_isolation": "A listener added during an active broadcast does not receive that same broadcast",
+    "current_cycle_remove_continuity": "A listener removed during an active broadcast still receives that broadcast exactly once when present in the active snapshot",
+    "post_mutation_continuity": "Subsequent broadcasts operate against the updated listener registry",
+    "registry_integrity": "The listener registry remains structurally valid after multiple callback-driven mutations",
+    "unique_owner_integrity": "Callback-driven additions and removals do not create duplicate owner entries",
+    "delivery_once": "Each applicable listener receives each broadcast exactly once",
+    "source_metadata": "Delivered events preserve the plugin_id supplied to emit() as source metadata",
+    "emit_continuity": "EventBus.emit() remains successful across multiple mutation cycles",
+    "permission_enforcement": "Registration, unregister, and emit operations require the events permission"
+  }
+}
