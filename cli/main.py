@@ -64,7 +64,7 @@ def doctor():
 
     print("DataVision X Doctor")
     print("==============================")
-    print("Kernel  : OK")
+    print("Core    : OK")
     print(f"Runtime : {data['status']}")
     print(f"Process : {data['process']}")
     print(f"PID     : {data['pid']}")
