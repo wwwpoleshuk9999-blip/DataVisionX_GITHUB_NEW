@@ -1,14 +1,21 @@
-import sqlite3
-import hashlib
+import sqlite3, hashlib
 from pathlib import Path
 from datetime import datetime, timezone
+
 class AIKnowledge:
     def __init__(self, db_path="data/ai_knowledge.db"):
-        self.db_path = Path(db_path); self.db_path.parent.mkdir(parents=True, exist_ok=True); self.init_db()
+        self.db_path = Path(db_path)
+        self.db_path.parent.mkdir(parents=True, exist_ok=True)
+        self.init_db()
     def init_db(self):
         with sqlite3.connect(self.db_path) as conn:
-            conn.execute("CREATE TABLE IF NOT EXISTS knowledge (id INTEGER PRIMARY KEY AUTOINCREMENT, topic TEXT NOT NULL, content TEXT NOT NULL, source TEXT DEFAULT 'internal', content_hash TEXT, version INTEGER DEFAULT 1, is_external INTEGER DEFAULT 0, created_at TEXT NOT NULL, updated_at TEXT NOT NULL)")
-            conn.execute("CREATE INDEX IF NOT EXISTS idx_knowledge_topic ON knowledge(topic)"); conn.execute("CREATE INDEX IF NOT EXISTS idx_knowledge_hash ON knowledge(content_hash)"); conn.execute("CREATE INDEX IF NOT EXISTS idx_knowledge_version ON knowledge(topic, version)"); conn.commit()
+            conn.execute("""CREATE TABLE IF NOT EXISTS knowledge (
+                id INTEGER PRIMARY KEY AUTOINCREMENT, topic TEXT NOT NULL, content TEXT NOT NULL,
+                source TEXT DEFAULT 'internal', content_hash TEXT, version INTEGER DEFAULT 1,
+                is_external INTEGER DEFAULT 0, created_at TEXT NOT NULL, updated_at TEXT NOT NULL)""")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_knowledge_topic ON knowledge(topic)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_knowledge_hash ON knowledge(content_hash)")
+            conn.commit()
     def _now(self): return datetime.now(timezone.utc).isoformat()
     def _hash(self, c): return hashlib.sha256(c.encode('utf-8')).hexdigest()[:16]
     def _sanitize_source(self, s): return (str(s)[:256].strip().replace("..","").replace(";","") or "internal") if s else "internal"
@@ -28,16 +35,19 @@ class AIKnowledge:
             if dup: return {"ok": True, "id": dup[0], "duplicate": True, "external": True}
             row=conn.execute("SELECT MAX(version) FROM knowledge WHERE topic=?",(topic,)).fetchone(); next_ver=(row[0] or 0)+1
             cur=conn.execute("INSERT INTO knowledge (topic, content, source, content_hash, version, is_external, created_at, updated_at) VALUES (?,?,?,?,?,1,?,?)",(topic,content,source,chash,next_ver,now,now)); conn.commit(); return {"ok": True, "id": cur.lastrowid, "version": next_ver, "external": True}
-    def get(self, topic, version=None):
-        with sqlite3.connect(self.db_path) as conn:
-            r=conn.execute("SELECT topic, content, source, version, is_external, created_at, updated_at FROM knowledge WHERE topic=? ORDER BY version DESC LIMIT 1",(topic,)).fetchone() if version is None else conn.execute("SELECT topic, content, source, version, is_external, created_at, updated_at FROM knowledge WHERE topic=? AND version=?",(topic,version)).fetchone()
-            return None if not r else {"topic": r[0], "content": r[1], "source": r[2], "version": r[3], "is_external": bool(r[4]), "created_at": r[5], "updated_at": r[6]}
     def search(self, query, limit=20, include_external=True):
         if not query or not str(query).strip(): return []
-        query=str(query).strip(); tokens=[t.lower() for t in query.split() if len(t)>1] or [query.lower()]
+        query=str(query).strip()
+        tokens=[t.lower() for t in query.split() if len(t)>2]
+        if not tokens: tokens=[query.lower()]
         with sqlite3.connect(self.db_path) as conn:
             where_ext="" if include_external else "AND is_external=0"
-            rows=conn.execute(f"SELECT topic, content, source, version, is_external, created_at, updated_at FROM knowledge WHERE (topic LIKE ? OR content LIKE ?) {where_ext} ORDER BY id DESC LIMIT 100",(f"%{query}%",f"%{query}%")).fetchall()
+            # FIX: ищем по любому токену, а не по целой фразе
+            like_clauses=" OR ".join(["topic LIKE ? OR content LIKE ?" for _ in tokens])
+            params=[]
+            for tok in tokens:
+                params.extend([f"%{tok}%", f"%{tok}%"])
+            rows=conn.execute(f"SELECT topic, content, source, version, is_external, created_at, updated_at FROM knowledge WHERE ({like_clauses}) {where_ext} ORDER BY id DESC LIMIT 100", params).fetchall()
             scored=[]
             for r in rows:
                 tl=r[0].lower(); cl=r[1].lower(); score=0
@@ -54,7 +64,3 @@ class AIKnowledge:
         with sqlite3.connect(self.db_path) as conn:
             rows=conn.execute("SELECT topic, MAX(version), COUNT(*) FROM knowledge GROUP BY topic ORDER BY MAX(id) DESC").fetchall()
             return [{"topic": r[0], "latest_version": r[1], "count": r[2]} for r in rows]
-    def delete(self, topic, version=None):
-        with sqlite3.connect(self.db_path) as conn:
-            cur=conn.execute("DELETE FROM knowledge WHERE topic=?",(topic,)) if version is None else conn.execute("DELETE FROM knowledge WHERE topic=? AND version=?",(topic,version))
-            conn.commit(); return {"deleted": cur.rowcount}
