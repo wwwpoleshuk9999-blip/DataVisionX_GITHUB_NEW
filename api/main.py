@@ -152,3 +152,10 @@ async def websocket_direct(websocket: WebSocket):
         pass
     finally:
         manager.disconnect(websocket)
+
+# Phoenix 015 Dashboard 2.0
+try:
+    from web.dashboard_v2 import router as dashboard_v2_router
+    app.include_router(dashboard_v2_router)
+except Exception as e:
+    print(f"Dashboard v2 not loaded: {e}")
