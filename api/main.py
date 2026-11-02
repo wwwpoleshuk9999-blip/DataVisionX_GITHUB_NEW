@@ -17,6 +17,7 @@ from api.routes.auth.login import router as auth_router
 from api.routes.users import router as users_router
 from api.routes.websocket import router as websocket_router
 from api.routes.ai import router as ai_router
+from api.routes.ai_agents import router as ai_agents_router
 
 from auth.middleware import auth_middleware
 
@@ -95,6 +96,7 @@ app.include_router(registry_router)
 app.include_router(events_router)
 app.include_router(plugin_health_router)
 app.include_router(ai_router)
+app.include_router(ai_agents_router)
 
 
 # -----------------------
