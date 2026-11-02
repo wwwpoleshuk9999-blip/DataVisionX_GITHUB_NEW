@@ -23,3 +23,8 @@ backups/
 *.backup
 data/ai_memory.db
 runtime/state.json
+
+data/*.db
+runtime/*.pid
+runtime/*.json
+runtime/*.log
