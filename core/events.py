@@ -1,4 +1,4 @@
-from core.event_bus import event_bus
+from plugin_manager.event_bus import event_bus
 from core.event_store import (
     save_event,
     get_events as load_events
