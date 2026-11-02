@@ -37,3 +37,11 @@ dvx/
 uploads/extract/
 .pytest_cache/
 .venv/
+
+data/*.db
+runtime/*.pid
+runtime/*.json
+runtime/*.log
+*.bak
+*before*
+*broken*
