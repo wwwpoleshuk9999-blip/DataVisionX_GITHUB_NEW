@@ -1,4 +1,4 @@
-# DataVisionX .gitignore Phoenix Clean
+# Phoenix Build 013 Clean
 __pycache__/
 *.pyc
 *.pyo
@@ -19,4 +19,7 @@ runtime/*.pid
 runtime/*.json
 runtime/*.log
 runtime/events.log
+logs/*.log
 *.orig
+*.zip
+test_plugin/
