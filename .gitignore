@@ -23,3 +23,17 @@ backups/
 *.backup
 data/ai_memory.db
 runtime/state.json
+# DVX cleanup 2026-11-02
+data/*.db
+runtime/*.pid
+runtime/*.json
+runtime/*.log
+*.bak.*
+*.pre_*
+*before*
+*broken*
+backups/
+dvx/
+uploads/extract/
+.pytest_cache/
+.venv/
