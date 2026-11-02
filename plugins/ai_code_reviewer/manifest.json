@@ -1,0 +1,13 @@
+{
+    "name": "AI Code Reviewer",
+    "version": "1.0.0",
+    "description": "Auto review PRs + security scan + best practices",
+    "permissions": {
+        "events": true,
+        "storage": true,
+        "network": false
+    },
+    "author": "DVX Marketplace",
+    "category": "ai_agent",
+    "api_routes": ["/ai/agent/review"]
+}
