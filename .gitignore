@@ -1,36 +1,22 @@
-# Python
+# DataVisionX .gitignore Phoenix Clean
 __pycache__/
 *.pyc
 *.pyo
-
-# Virtual Environment
+.pytest_cache/
 .venv/
-
-# Logs
-*.log
-
-# Runtime
-runtime/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Backups
+venv/
+*.bak.*
+*.pre_*
+*before*
+*broken*
 backups/
-*.broken
-*.bak
-*.backup
-data/ai_memory.db
-runtime/state.json
-
-audit_report.json
-
+dvx/
+uploads/extract/
 data/*.db
+data/*.sqlite
+data/*.sqlite3
 runtime/*.pid
 runtime/*.json
 runtime/*.log
-*.bak
-*before*
-*broken*
-*.pre_*
+runtime/events.log
+*.orig
