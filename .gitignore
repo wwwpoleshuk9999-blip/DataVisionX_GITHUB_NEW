@@ -25,3 +25,12 @@ data/ai_memory.db
 runtime/state.json
 
 audit_report.json
+
+data/*.db
+runtime/*.pid
+runtime/*.json
+runtime/*.log
+*.bak
+*before*
+*broken*
+*.pre_*
