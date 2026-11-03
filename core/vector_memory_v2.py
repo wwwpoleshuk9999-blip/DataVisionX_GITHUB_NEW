@@ -69,6 +69,17 @@ class VectorMemoryV2:
             res.append({"score":score,"doc":self.docs[idx],"vector_dim":len(self.vectors[idx])})
         return res
 
+    def save_persistent(self, text_content, doc_id):
+        try:
+            import sqlite3
+            conn=sqlite3.connect('core/phoenix_ultimate.db')
+            cur=conn.cursor()
+            cur.execute('CREATE TABLE IF NOT EXISTS vector_docs (id TEXT PRIMARY KEY, text TEXT, meta TEXT, timestamp REAL)')
+            cur.execute('INSERT OR REPLACE INTO vector_docs VALUES (?,?,?,?)', (doc_id, text_content[:5000], '{}', __import__('time').time()))
+            conn.commit()
+            conn.close()
+        except: pass
+
     def stats(self):
         return {"total_docs":len(self.docs),"dim":self.dim if self.vectors else 0,"backend":self.backend,"vocab_size":len(self.vocab)}
 
