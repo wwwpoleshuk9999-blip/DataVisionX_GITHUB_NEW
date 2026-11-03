@@ -138,3 +138,38 @@ def agent_info(agent_id: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# --- Phoenix 018 - Memory Routes ---
+class MemoryRememberRequest(BaseModel):
+    content: str
+    type: str = "memory"
+
+class MemoryRecallRequest(BaseModel):
+    query: str = ""
+    limit: int = 10
+
+@router.post("/ai/agent/memory/remember")
+def memory_remember(req: MemoryRememberRequest):
+    try:
+        from plugins.ai_memory.plugin import Plugin
+        mem = Plugin()
+        mem.start()
+        entry = mem.remember(req.content, req.type)
+        return {"ok": True, "entry": entry, "phoenix": "018 MAX"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/ai/agent/memory")
+@router.post("/ai/agent/memory/recall")
+def memory_recall(req: MemoryRecallRequest = None, query: str = "", limit: int = 10):
+    try:
+        from plugins.ai_memory.plugin import Plugin
+        mem = Plugin()
+        mem.start()
+        q = req.query if req else query
+        l = req.limit if req else limit
+        results = mem.recall(q, l)
+        stats = mem.get_stats()
+        return {"ok": True, "query": q, "results": results, "stats": stats, "phoenix": "018 MAX - 100% REAL"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

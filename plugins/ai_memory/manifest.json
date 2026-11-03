@@ -1,0 +1,9 @@
+{
+    "name": "AI Memory Agent",
+    "version": "1.0.0",
+    "description": "Persistent memory + context + history for AI agents - REAL 100%",
+    "permissions": {"events": true, "storage": true, "network": false},
+    "author": "DVX Marketplace",
+    "category": "ai_agent",
+    "api_routes": ["/ai/agent/memory"]
+}
