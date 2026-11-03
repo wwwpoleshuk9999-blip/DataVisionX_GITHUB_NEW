@@ -1,37 +1,34 @@
-"""Phoenix 100000 AUTONOMOUS - REAL AUTONOMOUS INTELLIGENCE PLATFORM"""
+"""Phoenix 100000 AUTONOMOUS MODULAR - 30 REAL"""
 from fastapi import FastAPI
 from pathlib import Path
+import json
 
-app = FastAPI(title="Phoenix 100000 AUTONOMOUS", version="100.0.0")
-
-# Try to include routers if they exist
-try:
-    from api.autonomous import router as autonomous_router
-    app.include_router(autonomous_router)
-    print("✓ Autonomous router included - 30 REAL agents")
-except Exception as e:
-    print(f"Autonomous router not loaded: {e}")
-
-try:
-    from dashboard.dashboard_100 import get_dashboard
-    dash = get_dashboard()
-    print(dash.render())
-except Exception as e:
-    print(f"Dashboard not loaded: {e}")
+app = FastAPI(title="Phoenix 100000 AUTONOMOUS MODULAR", version="100.0.0")
 
 @app.get("/")
 def root():
-    plugins = list(Path("plugins").glob("ai_*/plugin.py"))
+    manifest = Path("plugins/manifest.json")
+    if manifest.exists():
+        data = json.loads(manifest.read_text())
+    else:
+        data = {"total": len(list(Path("plugins").rglob("ai_*/plugin.py")))}
+    
     return {
-        "phoenix": "100000 AUTONOMOUS",
+        "phoenix": "100000 AUTONOMOUS MODULAR",
         "version": "100.0.0",
-        "message": "30 REAL AUTONOMOUS AGENTS",
-        "total_agents": len(plugins),
+        "architecture": "MODULAR",
+        "layers": data.get("layers", {}),
+        "total_agents": data.get("total", 0),
         "real": True,
         "autonomous": True,
-        "dashboard": "100.0"
+        "modular": True
     }
+
+@app.get("/layers")
+def layers():
+    mf = json.loads(Path("plugins/manifest.json").read_text())
+    return mf
 
 @app.get("/health")
 def health():
-    return {"status": "RUNNING", "phoenix": "100000 AUTONOMOUS", "real": True}
+    return {"status": "RUNNING", "phoenix": "100000 AUTONOMOUS MODULAR", "real": True}

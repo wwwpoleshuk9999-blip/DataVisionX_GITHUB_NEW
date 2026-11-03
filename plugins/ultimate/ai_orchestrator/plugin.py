@@ -39,7 +39,17 @@ class Plugin:
         results = []
         for step in decomposition["steps"]:
             try:
-                mod = __import__(f"plugins.{step['agent']}.plugin", fromlist=["Plugin"])
+                agent_id = step['agent']
+                # Modular import - try ultimate, super, business layers
+                mod = None
+                for layer in ["ultimate", "super", "business"]:
+                    try:
+                        mod = __import__(f"plugins.{layer}.{agent_id}.plugin", fromlist=["Plugin"])
+                        break
+                    except:
+                        continue
+                if not mod:
+                    mod = __import__(f"plugins.{agent_id}.plugin", fromlist=["Plugin"])
                 p = mod.Plugin()
                 p.start()
                 res = p.execute({"action": step["action"], "data": step["input"]})
