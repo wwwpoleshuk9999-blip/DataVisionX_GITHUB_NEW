@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>PHOENIX 100000.6 ULTIMATE DASHBOARD 200.0</title>
+<style>
+body{font-family:monospace;background:#000;color:#0ff;padding:20px}
+.card{border:1px solid #0ff;padding:15px;margin:10px 0;background:#111}
+.kpi{display:inline-block;border:1px solid #0ff;padding:10px;margin:5px;min-width:100px}
+h1{color:#0ff;text-shadow:0 0 15px #0ff}
+h2{color:#0f0}
+button{background:#0ff;color:#000;border:none;padding:10px 20px;cursor:pointer;margin:5px}
+button:hover{background:#0f0}
+pre{background:#000;padding:10px;overflow:auto;border:1px solid #333;max-height:300px}
+.live{animation: pulse 1s infinite}
+@keyframes pulse{0%{opacity:1}50%{opacity:0.5}100%{opacity:1}}
+</style>
+</head>
+<body>
+<h1>🔥 PHOENIX 100000.6 ULTIMATE DASHBOARD 200.0 <span class="live">● LIVE</span></h1>
+<div id="status">Loading...</div>
+
+<div class="card">
+<h2>📊 REALTIME KPI STREAM</h2>
+<div id="kpi"></div>
+<button onclick="loadUltimate()">Refresh Ultimate</button>
+<button onclick="streamKPI()">Stream KPI</button>
+</div>
+
+<div class="card">
+<h2>🧠 VECTOR MEMORY V2 (384-dim transformer fallback 128)</h2>
+<div id="vector"></div>
+<button onclick="searchVector()">Search Vector</button>
+</div>
+
+<div class="card">
+<h2>🛠️ TOOL ENGINE (6 tools)</h2>
+<div id="tools"></div>
+<button onclick="loadTools()">Load Tools History</button>
+</div>
+
+<div class="card">
+<h2>📚 SELF LEARNING LOOP</h2>
+<div id="learning"></div>
+<button onclick="loadLearning()">Load Learnings</button>
+<button onclick="suggestProduct()">Suggest Next Product</button>
+</div>
+
+<div class="card">
+<h2>💰 REVENUE ENGINE (MRR, LTV, CAC, ROI)</h2>
+<div id="revenue"></div>
+<button onclick="loadRevenue()">Load Revenue KPI</button>
+<button onclick="simulateRevenue()">Simulate 5 Sales</button>
+</div>
+
+<div class="card">
+<h2>⚡ AUTO SCALING (20 workers)</h2>
+<div id="scaling"></div>
+<button onclick="loadScaling()">Load Scaling Stats</button>
+</div>
+
+<script>
+async function fetchJSON(url, opts){
+  try{
+    const r=await fetch(url, opts);
+    return await r.json();
+  }catch(e){return {error:e.message}}
+}
+async function loadUltimate(){
+  const d=await fetchJSON('/ultimate/dashboard');
+  document.getElementById('status').innerHTML=`Version: ${d.version} | Stable: ${d.stable_base} | Realtime: ${d.realtime} | WebSocket: ${d.websocket_ready}`;
+  document.getElementById('kpi').innerHTML=`<pre>${JSON.stringify(d, null, 2).substring(0,3000)}</pre>`;
+  document.getElementById('vector').innerHTML=`<div>Backend: ${d.vector_memory_v2.backend} Docs: ${d.vector_memory_v2.total_docs} Dim: ${d.vector_memory_v2.dim}</div><pre>${JSON.stringify(d.vector_memory_v2, null, 2)}</pre>`;
+  document.getElementById('tools').innerHTML=`<div>Tools: ${d.tool_engine.total_tools} History: ${d.tool_engine.history_count}</div><pre>${JSON.stringify(d.tool_engine.last_10, null, 2)}</pre>`;
+  document.getElementById('learning').innerHTML=`<div>Total Learnings: ${d.learnings.total} Backend: ${d.learnings.backend}</div><pre>${JSON.stringify(d.learnings, null, 2)}</pre>`;
+}
+async function streamKPI(){
+  const d=await fetchJSON('/ultimate/dashboard/stream');
+  document.getElementById('kpi').innerHTML+=`<div>STREAM: ${JSON.stringify(d)}</div>`;
+}
+async function searchVector(){
+  const d=await fetchJSON('/ultimate/vector/search?q=enterprise%20dashboard');
+  document.getElementById('vector').innerHTML+=`<pre>${JSON.stringify(d, null, 2)}</pre>`;
+}
+async function loadTools(){
+  const d=await fetchJSON('/ultimate/tools/history');
+  document.getElementById('tools').innerHTML=`<pre>${JSON.stringify(d, null, 2)}</pre>`;
+}
+async function loadLearning(){
+  const d=await fetchJSON('/ultimate/learning');
+  document.getElementById('learning').innerHTML=`<pre>${JSON.stringify(d, null, 2)}</pre>`;
+}
+async function suggestProduct(){
+  const d=await fetchJSON('/ultimate/learning/suggest');
+  document.getElementById('learning').innerHTML+=`<div>Suggestion: ${d.suggestion} ROI ${d.expected_roi}</div><pre>${JSON.stringify(d, null, 2)}</pre>`;
+}
+async function loadRevenue(){
+  const d=await fetchJSON('/ultimate/revenue/kpi');
+  document.getElementById('revenue').innerHTML=`<div>Total: $${d.total_revenue} MRR: $${d.mrr} Customers: ${d.customers} LTV: $${d.ltv} ROI: ${d.roi}</div><pre>${JSON.stringify(d, null, 2)}</pre>`;
+}
+async function simulateRevenue(){
+  const d=await fetchJSON('/ultimate/revenue/simulate?count=5');
+  document.getElementById('revenue').innerHTML+=`<pre>${JSON.stringify(d, null, 2)}</pre>`;
+}
+async function loadScaling(){
+  const d=await fetchJSON('/ultimate/scaling/stats');
+  document.getElementById('scaling').innerHTML=`<pre>${JSON.stringify(d, null, 2)}</pre>`;
+}
+loadUltimate();
+setInterval(streamKPI, 3000);
+</script>
+</body>
+</html>

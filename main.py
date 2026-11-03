@@ -25,6 +25,12 @@ from core.enterprise_dashboard import enterprise_dashboard
 from core.persistent_restoration import persistent_restoration
 from core.budget_debate import budget_debate
 from core.product_launch import product_launch
+from core.vector_memory_v2 import vector_memory_v2
+from core.tool_engine import tool_engine
+from core.self_learning_loop import self_learning_loop
+from core.realtime_dashboard import realtime_dashboard
+from core.revenue_engine import revenue_engine
+from core.auto_scaling_engine import auto_scaling_engine
 
 
 app = FastAPI(title="Phoenix 100000 FULL PRODUCTION CORE")
@@ -216,5 +222,95 @@ def enterprise_plus_full():
         "product_launch":launch,
         "real":True,
         "enterprise_plus":True
+    }
+
+
+# === PHOENIX 100000.6 ENTERPRISE ULTIMATE ENDPOINTS ===
+@app.get("/ultimate/dashboard")
+def ultimate_dashboard():
+    return realtime_dashboard.full_realtime()
+
+@app.get("/ultimate/dashboard/stream")
+def ultimate_stream():
+    return realtime_dashboard.stream_kpi()
+
+@app.get("/ultimate/vector/stats")
+def ultimate_vector_stats():
+    return vector_memory_v2.stats()
+
+@app.post("/ultimate/vector/add")
+def ultimate_vector_add(req: dict):
+    txt=req.get("text","")
+    meta=req.get("meta",None)
+    doc_id=vector_memory_v2.add(txt,meta)
+    return {"doc_id":doc_id,"stats":vector_memory_v2.stats(),"real":True}
+
+@app.get("/ultimate/vector/search")
+def ultimate_vector_search(q: str = "enterprise", top_k: int = 5):
+    return {"query":q,"results":vector_memory_v2.search(q,top_k),"real":True}
+
+@app.get("/ultimate/tools/history")
+def ultimate_tools_history():
+    return {"tools":tool_engine.tools,"history":tool_engine.history[-20:],"count":len(tool_engine.history),"real":True}
+
+@app.post("/ultimate/tools/execute")
+def ultimate_tools_execute(req: dict):
+    goal=req.get("goal","Execute tool chain")
+    steps=req.get("steps",[])
+    return tool_engine.execute_tool_chain(goal,steps)
+
+@app.get("/ultimate/learning")
+def ultimate_learning():
+    return self_learning_loop.get_learnings(10)
+
+@app.get("/ultimate/learning/suggest")
+def ultimate_learning_suggest():
+    return self_learning_loop.suggest_next_product()
+
+@app.get("/ultimate/revenue/kpi")
+def ultimate_revenue_kpi():
+    return revenue_engine.get_revenue_kpis()
+
+@app.post("/ultimate/revenue/sale")
+def ultimate_revenue_sale(req: dict):
+    customer=req.get("customer","test@enterprise.com")
+    product=req.get("product","Phoenix 100000.6")
+    amount=req.get("amount",1000)
+    mrr=req.get("mrr",None)
+    return revenue_engine.add_sale(customer,product,amount,mrr)
+
+@app.get("/ultimate/revenue/simulate")
+def ultimate_revenue_simulate(count: int = 5):
+    return revenue_engine.simulate_pipeline(count)
+
+@app.get("/ultimate/scaling/stats")
+def ultimate_scaling_stats():
+    return auto_scaling_engine.get_stats()
+
+@app.post("/ultimate/scaling/parallel")
+def ultimate_scaling_parallel(req: dict):
+    count=req.get("count",10)
+    tasks=[{"name":f"ultimate_task_{i}"} for i in range(count)]
+    return auto_scaling_engine.run_parallel(tasks, worker_count=req.get("workers",10))
+
+@app.get("/ultimate/full")
+def ultimate_full():
+    from core.business_loop import business_loop
+    biz=business_loop.execute_business_goal("Full 100000.6 Enterprise Ultimate execution")
+    rt=realtime_dashboard.full_realtime()
+    rev=revenue_engine.simulate_pipeline(3)
+    learn=self_learning_loop.get_learnings(3)
+    suggest=self_learning_loop.suggest_next_product()
+    scaling=auto_scaling_engine.get_stats()
+    return {
+        "version":"100000.6-enterprise-ultimate",
+        "business":biz,
+        "realtime_dashboard":rt,
+        "revenue":rev,
+        "learning":learn,
+        "suggestion":suggest,
+        "scaling":scaling,
+        "real":True,
+        "enterprise_ultimate":True
     }
 
