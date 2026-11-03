@@ -434,17 +434,29 @@ def ultimate_plus_full_execute(req: dict = {}):
         "executed": True
     }
 
+
 @app.websocket("/ws/dashboard")
 async def websocket_endpoint(websocket):
     await websocket.accept()
     websocket_dashboard.connections.append(websocket)
     try:
         import asyncio
+        import time
         for i in range(100):
-            payload = websocket_dashboard.get_simple_payload(i+1)
+            payload = {
+                "timestamp": time.time(),
+                "message_num": i+1,
+                "real": True,
+                "websocket_real": True,
+                "connections": len(websocket_dashboard.connections),
+                "kpi": {"value": 60, "roi": 600, "leads": 5},
+                "version": "500.0 REALTIME ENTERPRISE ULTIMATE PLUS",
+                "messages_sent": websocket_dashboard.messages_sent + i + 1
+            }
+            websocket_dashboard.messages_sent += 1
             await websocket.send_json(payload)
             await asyncio.sleep(0.5)
-    except Exception:
+    except:
         pass
     finally:
         try:
@@ -452,6 +464,7 @@ async def websocket_endpoint(websocket):
                 websocket_dashboard.connections.remove(websocket)
         except:
             pass
+
 
 @app.get("/ws/dashboard/info")
 def ws_dashboard_info():
