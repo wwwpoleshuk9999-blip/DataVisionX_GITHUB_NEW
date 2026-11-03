@@ -64,7 +64,7 @@ def core_stats():
         "event_bus": bus.stats(),
         "memory": memory.stats(),
         "vector_db": vectordb.stats(),
-        "context": {"conversations": len(context_mgr.conversations), "recent": context_mgr.get_recent(2)},
+        "context": {"conversations": len(context_mgr.conversations), "recent": context_mgr.conversations[-2:] if hasattr(context_mgr, 'conversations') else []},
         "autonomous": autonomous.stats(),
         "persistence": persistence.stats(),
         "embeddings": {"backend": embeddings.backend, "real": True},
