@@ -213,3 +213,16 @@ try:
     app.include_router(god_router)
 except Exception as e:
     print(f"GOD API not loaded: {e}")
+
+# Phoenix 10000 BEYOND GOD AGI Dashboard 100.0 + BEYOND API
+try:
+    from web.dashboard_v100 import router as dashboard_v100_router
+    app.include_router(dashboard_v100_router)
+except Exception as e:
+    print(f"Dashboard v100 not loaded: {e}")
+
+try:
+    from api.routes.beyond import router as beyond_router
+    app.include_router(beyond_router)
+except Exception as e:
+    print(f"BEYOND API not loaded: {e}")
