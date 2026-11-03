@@ -1,11 +1,50 @@
-version: '3.8'
 services:
   datavisionx:
-    build: .
-    ports: ["8000:8000"]
-    volumes: ["./data:[STRIPPED], "./runtime:/app/runtime", "./logs:/app/logs"]
-    environment: ["ENV=production"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./runtime:/app/runtime
+      - ./logs:/app/logs
+    environment:
+      - ENV=production
+      - PYTHONUNBUFFERED=1
+      - PHOENIX=018-MAX
     restart: unless-stopped
+    networks:
+      - dvx-net
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket; s=socket.socket(); s.settimeout(2); s.connect(('127.0.0.1',8000)); s.close()"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    depends_on:
+      redis:
+        condition: service_healthy
+
   redis:
-    image: redis:alpine
-    ports: ["6379:6379"]
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - dvx-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    command: redis-server --appendonly yes
+
+volumes:
+  redis_data:
+
+networks:
+  dvx-net:
+    driver: bridge
