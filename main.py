@@ -389,8 +389,10 @@ def ultimate_plus_snapshot_restore_post():
 
 @app.get("/ultimate-plus/snapshot/restore")
 def ultimate_plus_snapshot_restore_get():
-    # GET для чтения, POST для действия - исправлено
-    return {"info": "Use POST to restore", "snapshots": persistent_ultimate.list_snapshots()}
+    # GET readonly - no side effects, includes latest field to avoid KeyError
+    lst = persistent_ultimate.list_snapshots()
+    latest = lst["snapshots"][0] if lst["snapshots"] else None
+    return {"info": "Use POST to restore", "snapshots": lst, "latest": {"restored": False, "latest_snapshot": latest, "total": lst["total"]}, "readonly": True}
 
 @app.get("/ultimate-plus/full")
 def ultimate_plus_full_readonly():
@@ -437,18 +439,29 @@ async def websocket_endpoint(websocket):
     await websocket.accept()
     websocket_dashboard.connections.append(websocket)
     try:
-        for i in range(100):  # 100 messages max per connection
-            data = websocket_dashboard.stream_kpi()
-            data['message_num'] = i+1
-            websocket_dashboard.messages_sent += 1
-            await websocket.send_json(data)
-            import asyncio
-            await asyncio.sleep(2)
-    except:
+        import asyncio
+        for i in range(100):
+            try:
+                data = websocket_dashboard.stream_kpi()
+                data['message_num'] = i+1
+                data['timestamp'] = data.get('timestamp', __import__('time').time())
+                websocket_dashboard.messages_sent += 1
+                await websocket.send_json(data)
+            except Exception as e:
+                # Send error as json, don't crash
+                try:
+                    await websocket.send_json({"error": str(e), "message_num": i+1, "real": False})
+                except:
+                    break
+            await asyncio.sleep(0.5)
+    except Exception:
         pass
     finally:
-        if websocket in websocket_dashboard.connections:
-            websocket_dashboard.connections.remove(websocket)
+        try:
+            if websocket in websocket_dashboard.connections:
+                websocket_dashboard.connections.remove(websocket)
+        except:
+            pass
 
 @app.get("/ws/dashboard/info")
 def ws_dashboard_info():
