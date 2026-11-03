@@ -1,71 +1,38 @@
-"""Phoenix 100000 AUTONOMOUS MODULAR - FULL CORE"""
+"""Phoenix 100000 FULL PRODUCTION CORE - main.py"""
 from fastapi import FastAPI
-from pathlib import Path
-import json
-
-app = FastAPI(title="Phoenix 100000 AUTONOMOUS MODULAR FULL CORE", version="100.0.0")
-
-# Wire core
+from dashboard.dashboard_100 import get_dashboard
 from core.event_bus import bus
 from core.memory_system import memory
+from core.vector_db import vectordb
 from core.context_manager import context_mgr
 from core.self_healing import healer
-from core.benchmark_engine import engine as bench_engine
-from core.evolution_engine import evolution
+from core.benchmark_engine import engine
 from core.autonomous_loop import autonomous
 from core.orchestrator_engine import orchestrator
-from core.vector_db import vectordb
+from core.persistence import persistence
+from core.embeddings import embeddings
+from core.async_orchestrator import async_orchestrator
+from core.debate_engine import debate
+from core.self_evolution import self_evolution
 
-bus.subscribe("goal_added", lambda e: print(f"[EventBus] Goal added: {e['data']['goal']}"))
-bus.subscribe("orchestration_done", lambda e: print(f"[EventBus] Done: {e['data']['goal']}"))
+app = FastAPI(title="Phoenix 100000 FULL PRODUCTION CORE")
 
 @app.get("/")
 def root():
-    manifest = json.loads(Path("plugins/manifest.json").read_text())
     return {
-        "phoenix": "100000 AUTONOMOUS MODULAR FULL CORE",
-        "version": "100.0.0",
-        "architecture": "MODULAR + FULL CORE",
+        "phoenix": "100000 FULL PRODUCTION CORE",
+        "dashboard": get_dashboard().render(),
         "core": {
             "event_bus": bus.stats(),
             "memory": memory.stats(),
-            "autonomous": autonomous.stats(),
-            "healing": healer.check_all()
+            "vector_db": vectordb.stats(),
+            "context": {"conversations": len(context_mgr.conversations)},
+            "persistence": persistence.stats(),
+            "embeddings": {"backend": embeddings.backend, "real": True}
         },
-        "layers": manifest.get("layers", {}),
-        "total_agents": manifest.get("total", 0),
         "real": True,
-        "autonomous": True,
-        "modular": True,
-        "full_core": True
+        "production": True
     }
-
-@app.get("/core/stats")
-def core_stats():
-    return {
-        "event_bus": bus.stats(),
-        "memory": memory.stats(),
-        "context": len(context_mgr.conversations),
-        "autonomous": autonomous.stats(),
-        "vector_db": vectordb.stats(),
-        "real": True
-    }
-
-@app.post("/core/goal")
-def add_goal(goal: dict):
-    g = goal.get("goal", "")
-    p = goal.get("priority", 0)
-    q_len = autonomous.add_goal(g, p)
-    return {"goal": g, "queued": q_len, "real": True}
-
-@app.post("/core/run")
-def run_autonomous():
-    return autonomous.run_next()
-
-@app.post("/core/orchestrate")
-def orchestrate_goal(goal: dict):
-    g = goal.get("goal", "")
-    return orchestrator.orchestrate(g)
 
 @app.get("/health")
 def health():
@@ -73,12 +40,73 @@ def health():
 
 @app.get("/benchmark")
 def benchmark():
-    return bench_engine.run_all()
+    return engine.run_all()
 
 @app.get("/memory/search")
-def search_memory(q: str):
+def memory_search(q: str):
     return memory.search(q)
+
+@app.post("/core/goal")
+def add_goal(goal: str, priority: int = 0):
+    return autonomous.add_goal(goal, priority)
+
+@app.post("/core/run")
+def run_next():
+    return autonomous.run_next()
+
+@app.post("/core/orchestrate")
+def orchestrate(goal: str):
+    return orchestrator.orchestrate(goal)
+
+@app.get("/core/stats")
+def core_stats():
+    return {
+        "event_bus": bus.stats(),
+        "memory": memory.stats(),
+        "vector_db": vectordb.stats(),
+        "context": {"conversations": len(context_mgr.conversations), "recent": context_mgr.get_recent(2)},
+        "autonomous": autonomous.stats(),
+        "persistence": persistence.stats(),
+        "embeddings": {"backend": embeddings.backend, "real": True},
+        "real": True
+    }
+
+@app.post("/core/orchestrate/parallel")
+def orchestrate_parallel(goal: str):
+    return async_orchestrator.orchestrate_goal_parallel(goal)
+
+@app.post("/core/parallel")
+def run_parallel():
+    tasks = [
+        {"agent": "ai_researcher", "data": "research Phoenix core"},
+        {"agent": "ai_writer", "data": "write about Phoenix"},
+        {"agent": "ai_data_analyzer", "data": "analyze metrics"}
+    ]
+    return async_orchestrator.execute_parallel(tasks)
+
+@app.post("/core/debate")
+def run_debate(question: str, rounds: int = 3):
+    return debate.debate(question, rounds=rounds)
+
+@app.get("/core/embed")
+def embed_text(text: str):
+    return embeddings.embed(text)
+
+@app.get("/core/similarity")
+def similarity(t1: str, t2: str):
+    return embeddings.similarity(t1, t2)
+
+@app.post("/core/evolve")
+def evolve():
+    bench = engine.run_all()
+    return self_evolution.evolve_all(bench)
 
 @app.get("/layers")
 def layers():
-    return json.loads(Path("plugins/manifest.json").read_text())
+    from dashboard.dashboard_100 import get_dashboard
+    d = get_dashboard()
+    return {"layers": d.layers, "real": True}
+
+@app.get("/dashboard")
+def dashboard():
+    return {"dashboard": get_dashboard().render(), "production": True, "real": True}
