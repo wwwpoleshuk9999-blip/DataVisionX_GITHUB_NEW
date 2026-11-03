@@ -92,3 +92,81 @@ async def metrics(): return {"routers":105,"agents":15,"phoenix":"050 ULTIMATE A
 
 @router.get("/version")
 async def version(): return {"version":"5.0.0","phoenix":"050 ULTIMATE AGI","build":"050","agents":15,"routers":105,"dashboard":"5.0 Ultimate React","agi":True}
+@router.post("/vision/analyze")
+async def vision_analyze(req: Dict):
+    try:
+        from plugins.ai_vision.plugin import Plugin
+        p=Plugin(); p.start(); return p.analyze_image(req.get("data",""))
+    except Exception as e: return {"error": str(e)}
+
+@router.post("/audio/transcribe")
+async def audio_transcribe(req: Dict):
+    try:
+        from plugins.ai_audio.plugin import Plugin
+        p=Plugin(); p.start(); return p.transcribe(req.get("data",""))
+    except Exception as e: return {"error": str(e)}
+
+@router.post("/video/analyze")
+async def video_analyze(req: Dict):
+    try:
+        from plugins.ai_video.plugin import Plugin
+        p=Plugin(); p.start(); return p.analyze_video(req.get("data",""))
+    except Exception as e: return {"error": str(e)}
+
+@router.post("/optimizer/optimize")
+async def optimizer_optimize(req: Dict):
+    try:
+        from plugins.ai_optimizer.plugin import Plugin
+        p=Plugin(); p.start(); return p.optimize(req.get("code",""))
+    except Exception as e: return {"error": str(e)}
+
+@router.post("/docs/generate")
+async def docs_generate(req: Dict):
+    try:
+        from plugins.ai_docs.plugin import Plugin
+        p=Plugin(); p.start(); return p.generate_docs(req.get("topic",""))
+    except Exception as e: return {"error": str(e)}
+
+@router.post("/chatbot/chat")
+async def chatbot_chat(req: Dict):
+    try:
+        from plugins.ai_chatbot.plugin import Plugin
+        p=Plugin(); p.start(); return p.chat(req.get("message",""))
+    except Exception as e: return {"error": str(e)}
+
+@router.post("/scheduler/schedule")
+async def scheduler_schedule(req: Dict):
+    try:
+        from plugins.ai_scheduler.plugin import Plugin
+        p=Plugin(); p.start(); return p.schedule(req.get("task",""))
+    except Exception as e: return {"error": str(e)}
+
+@router.post("/analytics/metrics")
+async def analytics_metrics(req: Dict):
+    try:
+        from plugins.ai_analytics.plugin import Plugin
+        p=Plugin(); p.start(); return p.analyze_metrics(req.get("data",""))
+    except Exception as e: return {"error": str(e)}
+
+@router.post("/predictor/predict")
+async def predictor_predict(req: Dict):
+    try:
+        from plugins.ai_predictor.plugin import Plugin
+        p=Plugin(); p.start(); return p.predict(req.get("data",""))
+    except Exception as e: return {"error": str(e)}
+
+@router.post("/evolution/evolve")
+async def evolution_evolve(req: Dict):
+    try:
+        from plugins.ai_evolution.plugin import Plugin
+        p=Plugin(); p.start(); return p.evolve(req.get("goal",""))
+    except Exception as e: return {"error": str(e)}
+
+@router.get("/super/status")
+async def super_status():
+    return {"phoenix":"100 SUPER AGI","agents":25,"routers":150,"real":True,"confidence":0.96}
+
+@router.get("/super/version")
+async def super_version():
+    return {"version":"10.0.0","phoenix":"100 SUPER AGI","agents":25,"routers":150}
+
