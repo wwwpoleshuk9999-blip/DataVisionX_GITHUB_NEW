@@ -154,6 +154,29 @@ except Exception as e:
 # Phoenix 020 Dashboard 3.0 React 100% MAX
 try:
     from web.dashboard_v3 import router as dashboard_v3_router
+    try:
+        from web.dashboard_v5 import router as dashboard_v5_router
+        app.include_router(dashboard_v5_router)
+    except Exception as e:
+        print(f"Dashboard v5 not loaded: {e}")
+    try:
+        from api.routes.ultimate import router as ultimate_router
+        app.include_router(ultimate_router)
+    except Exception as e:
+        print(f"Ultimate API not loaded: {e}")
     app.include_router(dashboard_v3_router)
 except Exception as e:
     print(f"Dashboard v3 not loaded: {e}")
+
+# Phoenix 050 Ultimate AGI
+try:
+    from web.dashboard_v5 import router as dashboard_v5_router
+    app.include_router(dashboard_v5_router)
+except Exception as e:
+    print(f"Dashboard v5 not loaded: {e}")
+
+try:
+    from api.routes.ultimate import router as ultimate_router
+    app.include_router(ultimate_router)
+except Exception as e:
+    print(f"Ultimate API not loaded: {e}")
