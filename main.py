@@ -117,3 +117,34 @@ def layers():
 @app.get("/dashboard")
 def dashboard():
     return {"dashboard": get_dashboard().render(), "production": True, "real": True}
+
+@app.post("/enterprise/execute")
+def enterprise_execute(req: dict):
+    goal = req.get("goal", "Analyze sales leads, generate marketing campaign, create product offer")
+    return business_loop.execute_business_goal(goal)
+
+@app.get("/enterprise/kpi")
+def enterprise_kpi():
+    return kpi_tracker.roi_report()
+
+@app.get("/enterprise/audit")
+def enterprise_audit():
+    return independent_audit.full_audit("100000.4-enterprise")
+
+@app.get("/enterprise/knowledge")
+def enterprise_knowledge(q: str = "sales marketing"):
+    return knowledge_graph.search_knowledge(q)
+
+@app.get("/enterprise/stress")
+def enterprise_stress():
+    return stress_test.full_stress()
+
+@app.post("/enterprise/collab")
+def enterprise_collab(req: dict):
+    goal = req.get("goal", "Analyze sales leads and create offer")
+    return collaboration.collaborate(goal)
+
+@app.get("/enterprise/stats")
+def enterprise_stats():
+    return {"kpi": kpi_tracker.get_kpis(), "knowledge_nodes": len(knowledge_graph.nodes), "enterprise": True, "real": True}
+
