@@ -173,3 +173,87 @@ def memory_recall(req: MemoryRecallRequest = None, query: str = "", limit: int =
         return {"ok": True, "query": q, "results": results, "stats": stats, "phoenix": "018 MAX - 100% REAL"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# --- Phoenix 019 - Vector DB + Context Routes ---
+class VectorAddRequest(BaseModel):
+    text: str
+    metadata: dict = {}
+
+class VectorSearchRequest(BaseModel):
+    query: str
+    limit: int = 5
+
+class ContextAddRequest(BaseModel):
+    role: str = "user"
+    content: str
+    metadata: dict = {}
+
+class ContextSearchRequest(BaseModel):
+    query: str
+    limit: int = 5
+
+@router.post("/ai/agent/vector/add")
+def vector_add(req: VectorAddRequest):
+    try:
+        from plugins.ai_vector_db.plugin import Plugin
+        vdb = Plugin()
+        vdb.start()
+        entry = vdb.add(req.text, req.metadata)
+        return {"ok": True, "entry": entry, "phoenix": "019 VECTOR REAL"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/ai/agent/vector/search")
+@router.get("/ai/agent/vector/search")
+def vector_search(req: VectorSearchRequest = None, query: str = "", limit: int = 5):
+    try:
+        from plugins.ai_vector_db.plugin import Plugin
+        vdb = Plugin()
+        vdb.start()
+        q = req.query if req else query
+        l = req.limit if req else limit
+        results = vdb.search(q, l)
+        stats = vdb.get_stats()
+        return {"ok": True, "query": q, "results": results, "stats": stats, "phoenix": "019 VECTOR REAL"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/ai/agent/context/add")
+def context_add(req: ContextAddRequest):
+    try:
+        from plugins.ai_context.plugin import Plugin
+        ctx = Plugin()
+        ctx.start()
+        entry = ctx.add_context(req.role, req.content, req.metadata)
+        return {"ok": True, "entry": entry, "phoenix": "019 CONTEXT REAL"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/ai/agent/context")
+@router.post("/ai/agent/context/search")
+def context_search(req: ContextSearchRequest = None, query: str = "", limit: int = 5):
+    try:
+        from plugins.ai_context.plugin import Plugin
+        ctx = Plugin()
+        ctx.start()
+        q = req.query if req else query
+        l = req.limit if req else limit
+        if q:
+            results = ctx.search_context(q, l)
+        else:
+            results = ctx.get_context(l)
+        stats = ctx.get_stats()
+        return {"ok": True, "query": q, "results": results, "stats": stats, "phoenix": "019 CONTEXT 100% REAL"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/ai/agent/context/prompt")
+def context_prompt(query: str):
+    try:
+        from plugins.ai_context.plugin import Plugin
+        ctx = Plugin()
+        ctx.start()
+        prompt = ctx.build_prompt(query)
+        return {"ok": True, "prompt": prompt, "phoenix": "019 PROMPT REAL"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
