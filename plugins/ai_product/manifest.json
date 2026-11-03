@@ -1,1 +1,7 @@
-{"id":"ai_product","name":"ai_product","version":"1.0.0","description":"Product AI - Product Management REAL","real":true,"phoenix":"200 BUSINESS AGI"}
+{
+  "id": "ai_product",
+  "description": "Product REAL AUTONOMOUS",
+  "real": true,
+  "autonomous": true,
+  "phoenix": "100000 AUTONOMOUS"
+}

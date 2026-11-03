@@ -1,8 +1,7 @@
 {
   "id": "ai_analytics",
-  "name": "Ai Analytics",
-  "version": "1.0.0",
-  "description": "Analytics AI - Metrics REAL",
+  "description": "Analytics REAL AUTONOMOUS",
   "real": true,
-  "phoenix": "100 SUPER AGI"
+  "autonomous": true,
+  "phoenix": "100000 AUTONOMOUS"
 }

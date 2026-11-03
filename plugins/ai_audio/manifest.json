@@ -1,8 +1,7 @@
 {
   "id": "ai_audio",
-  "name": "Ai Audio",
-  "version": "1.0.0",
-  "description": "Audio AI - Speech Recognition REAL",
+  "description": "Audio REAL AUTONOMOUS",
   "real": true,
-  "phoenix": "100 SUPER AGI"
+  "autonomous": true,
+  "phoenix": "100000 AUTONOMOUS"
 }

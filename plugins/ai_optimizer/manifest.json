@@ -1,8 +1,7 @@
 {
   "id": "ai_optimizer",
-  "name": "Ai Optimizer",
-  "version": "1.0.0",
-  "description": "Code Optimizer - Performance REAL",
+  "description": "Optimizer REAL AUTONOMOUS",
   "real": true,
-  "phoenix": "100 SUPER AGI"
+  "autonomous": true,
+  "phoenix": "100000 AUTONOMOUS"
 }

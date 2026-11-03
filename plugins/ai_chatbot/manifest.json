@@ -1,8 +1,7 @@
 {
   "id": "ai_chatbot",
-  "name": "Ai Chatbot",
-  "version": "1.0.0",
-  "description": "Chatbot AI - Multi-turn Chat REAL",
+  "description": "Chatbot REAL AUTONOMOUS",
   "real": true,
-  "phoenix": "100 SUPER AGI"
+  "autonomous": true,
+  "phoenix": "100000 AUTONOMOUS"
 }

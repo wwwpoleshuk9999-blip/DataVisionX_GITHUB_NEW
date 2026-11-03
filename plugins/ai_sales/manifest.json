@@ -1,1 +1,7 @@
-{"id":"ai_sales","name":"ai_sales","version":"1.0.0","description":"Sales AI - Lead Generation REAL","real":true,"phoenix":"200 BUSINESS AGI"}
+{
+  "id": "ai_sales",
+  "description": "Sales REAL AUTONOMOUS",
+  "real": true,
+  "autonomous": true,
+  "phoenix": "100000 AUTONOMOUS"
+}

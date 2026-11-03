@@ -1,11 +1,7 @@
 {
   "id": "ai_planner",
-  "name": "AI Planner Agent",
-  "version": "1.0.0",
-  "description": "Task planning + goal breakdown REAL 100%",
-  "author": "DataVisionX Core",
-  "type": "ai_agent",
-  "entry": "plugin.py:Plugin",
-  "dependencies": [],
-  "requires": ["event_bus", "ai_memory"]
+  "description": "Planner REAL AUTONOMOUS",
+  "real": true,
+  "autonomous": true,
+  "phoenix": "100000 AUTONOMOUS"
 }

@@ -1,8 +1,7 @@
 {
   "id": "ai_vision",
-  "name": "Ai Vision",
-  "version": "1.0.0",
-  "description": "Vision AI - Image Analysis REAL",
+  "description": "Vision REAL AUTONOMOUS",
   "real": true,
-  "phoenix": "100 SUPER AGI"
+  "autonomous": true,
+  "phoenix": "100000 AUTONOMOUS"
 }
