@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>PHOENIX 100000.5 ENTERPRISE DASHBOARD 100.0</title>
+<style>
+body{font-family:monospace;background:#0a0a0a;color:#0f0;padding:20px}
+.card{border:1px solid #0f0;padding:15px;margin:10px 0;background:#111}
+.kpi{display:inline-block;border:1px solid #0f0;padding:10px;margin:5px;min-width:120px}
+.dag-node{display:inline-block;border:2px solid #0f0;padding:10px;margin:10px;background:#222}
+.dag-edge{color:#0ff;margin:0 5px}
+h1{color:#0f0;text-shadow:0 0 10px #0f0}
+h2{color:#0ff}
+button{background:#0f0;color:#000;border:none;padding:10px 20px;cursor:pointer;margin:5px}
+button:hover{background:#0ff}
+pre{background:#000;padding:10px;overflow:auto;border:1px solid #333}
+</style>
+</head>
+<body>
+<h1>🔥 PHOENIX 100000.5 ENTERPRISE DASHBOARD 100.0</h1>
+<div id="status">Loading...</div>
+
+<div class="card">
+<h2>📊 LIVE KPI</h2>
+<div id="kpi"></div>
+<button onclick="loadKPI()">Refresh KPI</button>
+</div>
+
+<div class="card">
+<h2>🔗 DAG VISUALIZATION: sales → marketing → product</h2>
+<div id="dag"></div>
+<button onclick="loadDAG()">Refresh DAG</button>
+</div>
+
+<div class="card">
+<h2>🤖 AGENTS STATUS (30 REAL)</h2>
+<div id="agents"></div>
+<button onclick="loadAgents()">Refresh Agents</button>
+</div>
+
+<div class="card">
+<h2>💰 BUDGET DEBATE (3 Agents: trader/sales/product)</h2>
+<div id="budget"></div>
+<button onclick="runBudgetDebate()">Run Budget Debate $10000</button>
+</div>
+
+<div class="card">
+<h2>🚀 PRODUCT LAUNCH</h2>
+<div id="launch"></div>
+<button onclick="runProductLaunch()">Launch Product</button>
+<button onclick="listLaunches()">List Launches</button>
+</div>
+
+<div class="card">
+<h2>💾 PERSISTENT RESTORATION</h2>
+<div id="snapshot"></div>
+<button onclick="createSnapshot()">Create Snapshot</button>
+<button onclick="listSnapshots()">List Snapshots</button>
+</div>
+
+<div class="card">
+<h2>🏢 SYSTEM STATE</h2>
+<div id="system"></div>
+</div>
+
+<script>
+async function fetchJSON(url, opts){
+  try{
+    const r=await fetch(url, opts);
+    return await r.json();
+  }catch(e){return {error:e.message}}
+}
+async function loadDashboard(){
+  const d=await fetchJSON('/enterprise-plus/dashboard');
+  document.getElementById('status').innerHTML=`Version: ${d.version} | Stable: ${d.stable_base} | Real: ${d.real} | Enterprise: ${d.enterprise}`;
+  renderKPI(d.kpi);
+  renderDAG(d.dag);
+  renderAgents(d.agents);
+  renderSystem(d.system);
+}
+function renderKPI(kpiData){
+  const k=kpiData.kpi;
+  document.getElementById('kpi').innerHTML=`
+    <div class="kpi">Value: ${k.business_value}</div>
+    <div class="kpi">Leads: ${k.leads_analyzed}</div>
+    <div class="kpi">Campaigns: ${k.campaigns_generated}</div>
+    <div class="kpi">Offers: ${k.offers_created}</div>
+    <div class="kpi">Success: ${(k.success_rate*100).toFixed(0)}%</div>
+    <div class="kpi">ROI: ${kpiData.roi.roi_estimate}</div>
+    <pre>${JSON.stringify(kpiData, null, 2)}</pre>
+  `;
+}
+function renderDAG(dag){
+  let html='';
+  dag.nodes.forEach((n,i)=>{
+    html+=`<div class="dag-node">${n.label}<br><small>${n.id}</small><br><small>${n.status}</small></div>`;
+    if(i<dag.nodes.length-1) html+=`<span class="dag-edge">→</span>`;
+  });
+  html+=`<div>Total: ${dag.total_nodes} nodes, ${dag.total_edges} edges</div>`;
+  html+=`<pre>${JSON.stringify(dag, null, 2)}</pre>`;
+  document.getElementById('dag').innerHTML=html;
+}
+function renderAgents(ag){
+  let html=`<div>Total: ${ag.total} Healthy: ${ag.healthy}</div>`;
+  ag.agents.slice(0,10).forEach(a=>{
+    html+=`<div class="kpi">${a.name}: ${a.status}</div>`;
+  });
+  html+=`<div>... and ${ag.total-10} more</div>`;
+  document.getElementById('agents').innerHTML=html;
+}
+function renderSystem(sys){
+  document.getElementById('system').innerHTML=`
+    <div>Persistence: ${JSON.stringify(sys.persistence)}</div>
+    <div>Knowledge nodes: ${sys.knowledge_nodes} edges: ${sys.knowledge_edges}</div>
+    <div>Core files: ${sys.core_files} Version: ${sys.version}</div>
+    <pre>${JSON.stringify(sys, null, 2)}</pre>
+  `;
+}
+async function loadKPI(){
+  const d=await fetchJSON('/enterprise-plus/dashboard/kpi');
+  renderKPI(d);
+}
+async function loadDAG(){
+  const d=await fetchJSON('/enterprise-plus/dashboard/dag');
+  renderDAG(d);
+}
+async function loadAgents(){
+  const d=await fetchJSON('/enterprise-plus/dashboard');
+  renderAgents(d.agents);
+}
+async function runBudgetDebate(){
+  const d=await fetchJSON('/enterprise-plus/budget/debate?budget=10000&goal=Q1%20launch');
+  document.getElementById('budget').innerHTML=`
+    <div>Budget: $${d.budget} Consensus: M $${d.consensus.marketing} P $${d.consensus.product} R $${d.consensus.reserve} ROI $${d.roi_estimate} Risk ${d.risk} Decision ${d.decision}</div>
+    <pre>${JSON.stringify(d, null, 2)}</pre>
+  `;
+}
+async function runProductLaunch(){
+  const d=await fetchJSON('/enterprise-plus/product/launch', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({product_name:'Phoenix 100000.5 Enterprise Plus', budget:10000})});
+  document.getElementById('launch').innerHTML=`
+    <div>Launched: ${d.product_name} ID ${d.launch_id} Audit ${d.audit_score}/100 Files ${d.files.join(', ')}</div>
+    <pre>${JSON.stringify(d, null, 2)}</pre>
+  `;
+}
+async function listLaunches(){
+  const d=await fetchJSON('/enterprise-plus/product/launches');
+  document.getElementById('launch').innerHTML+=`<pre>${JSON.stringify(d, null, 2)}</pre>`;
+}
+async function createSnapshot(){
+  const d=await fetchJSON('/enterprise-plus/snapshot/create?name=dashboard_snapshot');
+  document.getElementById('snapshot').innerHTML=`<pre>${JSON.stringify(d, null, 2)}</pre>`;
+}
+async function listSnapshots(){
+  const d=await fetchJSON('/enterprise-plus/snapshot/list');
+  document.getElementById('snapshot').innerHTML+=`<pre>${JSON.stringify(d, null, 2)}</pre>`;
+}
+loadDashboard();
+</script>
+</body>
+</html>

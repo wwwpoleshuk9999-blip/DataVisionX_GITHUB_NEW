@@ -21,6 +21,11 @@ from core.knowledge_graph import knowledge_graph
 from core.evolution_sandbox import evolution_sandbox
 from core.stress_test import stress_test
 from core.independent_audit import independent_audit
+from core.enterprise_dashboard import enterprise_dashboard
+from core.persistent_restoration import persistent_restoration
+from core.budget_debate import budget_debate
+from core.product_launch import product_launch
+
 
 app = FastAPI(title="Phoenix 100000 FULL PRODUCTION CORE")
 
@@ -147,4 +152,69 @@ def enterprise_collab(req: dict):
 @app.get("/enterprise/stats")
 def enterprise_stats():
     return {"kpi": kpi_tracker.get_kpis(), "knowledge_nodes": len(knowledge_graph.nodes), "enterprise": True, "real": True}
+
+
+# === PHOENIX 100000.5 ENTERPRISE PLUS ENDPOINTS ===
+@app.get("/enterprise-plus/dashboard")
+def enterprise_plus_dashboard():
+    return enterprise_dashboard.full_dashboard()
+
+@app.get("/enterprise-plus/dashboard/kpi")
+def enterprise_plus_kpi():
+    return enterprise_dashboard.get_live_kpi()
+
+@app.get("/enterprise-plus/dashboard/dag")
+def enterprise_plus_dag():
+    return enterprise_dashboard.get_dag_viz()
+
+@app.get("/enterprise-plus/snapshot/create")
+def snapshot_create(name: str = "100000.5_snapshot"):
+    return persistent_restoration.create_snapshot(name)
+
+@app.get("/enterprise-plus/snapshot/restore")
+def snapshot_restore(name: str = None):
+    return persistent_restoration.restore_full(name)
+
+@app.get("/enterprise-plus/snapshot/list")
+def snapshot_list():
+    return persistent_restoration.list_snapshots()
+
+@app.post("/enterprise-plus/budget/debate")
+def budget_debate_endpoint(req: dict):
+    budget=req.get("budget",10000)
+    goal=req.get("goal","Allocate Q1 product launch budget")
+    return budget_debate.debate_budget(budget,goal)
+
+@app.get("/enterprise-plus/budget/debate")
+def budget_debate_get(budget: int = 10000, goal: str = "Allocate Q1 launch"):
+    return budget_debate.debate_budget(budget,goal)
+
+@app.post("/enterprise-plus/product/launch")
+def product_launch_endpoint(req: dict):
+    name=req.get("product_name","Phoenix Enterprise Plus")
+    budget=req.get("budget",10000)
+    features=req.get("features",None)
+    return product_launch.launch_product(name,budget,features)
+
+@app.get("/enterprise-plus/product/launches")
+def product_launches():
+    return product_launch.list_launches()
+
+@app.get("/enterprise-plus/full")
+def enterprise_plus_full():
+    # Full 100000.5 execution: business + dashboard + debate + launch
+    from core.business_loop import business_loop
+    biz=business_loop.execute_business_goal("Full 100000.5 enterprise plus execution")
+    dash=enterprise_dashboard.full_dashboard()
+    debate=budget_debate.debate_budget(10000,"Q1 Enterprise Plus launch")
+    launch=product_launch.launch_product("Phoenix 100000.5 Enterprise Plus AUTO",10000)
+    return {
+        "version":"100000.5-enterprise-plus",
+        "business":biz,
+        "dashboard":dash,
+        "budget_debate":debate,
+        "product_launch":launch,
+        "real":True,
+        "enterprise_plus":True
+    }
 
