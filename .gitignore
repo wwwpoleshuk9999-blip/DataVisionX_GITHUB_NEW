@@ -7,13 +7,16 @@
 *.zip
 *before*
 *broken*
+.DS_Store
 .pytest_cache/
 .venv/
 __pycache__/
 backups/
 data/*.db
+data/*.json
 data/*.sqlite
 data/*.sqlite3
+data/vector_db.json
 dvx/
 logs/*.log
 runtime/
@@ -24,5 +27,3 @@ runtime/events.log
 test_plugin/
 uploads/extract/
 venv/
-data/*.json
-data/vector_db.json
