@@ -14,6 +14,13 @@ from core.embeddings import embeddings
 from core.async_orchestrator import async_orchestrator
 from core.debate_engine import debate
 from core.self_evolution import self_evolution
+from core.collaboration_engine import collaboration
+from core.business_loop import business_loop
+from core.kpi_tracker import kpi_tracker
+from core.knowledge_graph import knowledge_graph
+from core.evolution_sandbox import evolution_sandbox
+from core.stress_test import stress_test
+from core.independent_audit import independent_audit
 
 app = FastAPI(title="Phoenix 100000 FULL PRODUCTION CORE")
 
