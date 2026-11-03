@@ -1,0 +1,11 @@
+{
+  "id": "ai_code_generator",
+  "name": "AI Code Generator Agent",
+  "version": "1.0.0",
+  "description": "Generate boilerplate code REAL 100% - templates + validation",
+  "author": "DataVisionX Core",
+  "type": "ai_agent",
+  "entry": "plugin.py:Plugin",
+  "dependencies": [],
+  "requires": ["event_bus"]
+}

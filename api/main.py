@@ -30,8 +30,6 @@ from core.runtime import runtime
 from core.service import service
 from core.logger import logger
 
-
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     service.save_pid()
@@ -60,7 +58,6 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-
 @app.middleware("http")
 async def security_middleware(request: Request, call_next):
 
@@ -77,7 +74,6 @@ async def security_middleware(request: Request, call_next):
             status_code=e.status_code,
             content={"detail": e.detail}
         )
-
 
 # -----------------------
 # API ROUTES
@@ -98,7 +94,6 @@ app.include_router(plugin_health_router)
 app.include_router(ai_router)
 app.include_router(ai_agents_router)
 
-
 # -----------------------
 # WEB
 # -----------------------
@@ -109,7 +104,6 @@ app.mount(
     name="web"
 )
 
-
 @app.get("/")
 def root():
 
@@ -119,7 +113,6 @@ def root():
         "status": "RUNNING"
     }
 
-
 @app.get("/dashboard")
 def dashboard():
 
@@ -127,16 +120,12 @@ def dashboard():
         "web/index.html"
     )
 
-
 @app.get("/web/")
 def web_home():
 
     return FileResponse(
         "web/index.html"
     )
-
-
-
 
 from services.websocket_manager import manager
 from fastapi import WebSocket, WebSocketDisconnect
@@ -161,3 +150,10 @@ try:
     app.include_router(dashboard_v2_router)
 except Exception as e:
     print(f"Dashboard v2 not loaded: {e}")
+
+# Phoenix 020 Dashboard 3.0 React 100% MAX
+try:
+    from web.dashboard_v3 import router as dashboard_v3_router
+    app.include_router(dashboard_v3_router)
+except Exception as e:
+    print(f"Dashboard v3 not loaded: {e}")
