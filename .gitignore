@@ -24,3 +24,5 @@ runtime/events.log
 test_plugin/
 uploads/extract/
 venv/
+data/*.json
+data/vector_db.json
