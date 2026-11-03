@@ -1,1 +1,7 @@
-{"id":"ai_trader","name":"ai_trader","version":"1.0.0","description":"Trader AI - Crypto Stock Trading REAL","real":true,"phoenix":"200 BUSINESS AGI"}
+{
+  "id": "ai_trader",
+  "description": "Trader REAL AUTONOMOUS",
+  "real": true,
+  "autonomous": true,
+  "phoenix": "100000 AUTONOMOUS"
+}

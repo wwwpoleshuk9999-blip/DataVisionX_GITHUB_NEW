@@ -1,1 +1,7 @@
-{"id":"ai_ultimate","name":"ai_ultimate","version":"5.0.0","description":"ai_ultimate REAL","author":"Phoenix 050","type":"ai_agent","entry":"plugin.py:Plugin"}
+{
+  "id": "ai_ultimate",
+  "description": "Ultimate REAL AUTONOMOUS",
+  "real": true,
+  "autonomous": true,
+  "phoenix": "100000 AUTONOMOUS"
+}

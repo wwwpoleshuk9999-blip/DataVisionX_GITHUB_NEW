@@ -1,1 +1,7 @@
-{"id":"ai_deployer","name":"ai_deployer","version":"5.0.0","description":"ai_deployer REAL","author":"Phoenix 050","type":"ai_agent","entry":"plugin.py:Plugin"}
+{
+  "id": "ai_deployer",
+  "description": "Deployer REAL AUTONOMOUS",
+  "real": true,
+  "autonomous": true,
+  "phoenix": "100000 AUTONOMOUS"
+}

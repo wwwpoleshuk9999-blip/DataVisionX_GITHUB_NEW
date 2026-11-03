@@ -1,8 +1,7 @@
 {
   "id": "ai_evolution",
-  "name": "Ai Evolution",
-  "version": "1.0.0",
-  "description": "Evolution AI - Self-Evolution REAL",
+  "description": "Evolution REAL AUTONOMOUS",
   "real": true,
-  "phoenix": "100 SUPER AGI"
+  "autonomous": true,
+  "phoenix": "100000 AUTONOMOUS"
 }

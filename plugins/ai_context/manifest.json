@@ -1,12 +1,7 @@
 {
   "id": "ai_context",
-  "name": "AI Context Manager",
-  "version": "0.9.0",
-  "description": "Context Window + Memory + Vector DB fusion - 100% REAL AI Context",
-  "author": "Phoenix 019",
-  "entry": "plugin.py",
-  "class": "Plugin",
-  "type": "ai_agent",
+  "description": "Context REAL AUTONOMOUS",
   "real": true,
-  "phoenix": "019"
+  "autonomous": true,
+  "phoenix": "100000 AUTONOMOUS"
 }

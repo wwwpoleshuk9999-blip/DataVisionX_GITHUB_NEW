@@ -1,1 +1,7 @@
-{"id":"ai_researcher","name":"ai_researcher","version":"5.0.0","description":"ai_researcher REAL","author":"Phoenix 050","type":"ai_agent","entry":"plugin.py:Plugin"}
+{
+  "id": "ai_researcher",
+  "description": "Researcher AI REAL",
+  "real": true,
+  "autonomous": true,
+  "phoenix": "100000 AUTONOMOUS"
+}

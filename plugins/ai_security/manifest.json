@@ -1,1 +1,7 @@
-{"id":"ai_security","name":"ai_security","version":"5.0.0","description":"ai_security REAL","author":"Phoenix 050","type":"ai_agent","entry":"plugin.py:Plugin"}
+{
+  "id": "ai_security",
+  "description": "Security REAL AUTONOMOUS",
+  "real": true,
+  "autonomous": true,
+  "phoenix": "100000 AUTONOMOUS"
+}

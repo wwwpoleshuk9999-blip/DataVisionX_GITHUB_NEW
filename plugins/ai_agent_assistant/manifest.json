@@ -1,13 +1,7 @@
 {
-    "name": "AI Assistant Agent",
-    "version": "1.0.0",
-    "description": "RAG chat with knowledge base + WebSocket streaming",
-    "permissions": {
-        "events": true,
-        "storage": true,
-        "network": false
-    },
-    "author": "DVX Marketplace",
-    "category": "ai_agent",
-    "api_routes": ["/ai/agent/assistant"]
+  "id": "ai_agent_assistant",
+  "description": "Agent_Assistant AI REAL",
+  "real": true,
+  "autonomous": true,
+  "phoenix": "100000 AUTONOMOUS"
 }

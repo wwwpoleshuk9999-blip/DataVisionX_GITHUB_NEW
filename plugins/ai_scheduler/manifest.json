@@ -1,8 +1,7 @@
 {
   "id": "ai_scheduler",
-  "name": "Ai Scheduler",
-  "version": "1.0.0",
-  "description": "Scheduler AI - Task Scheduling REAL",
+  "description": "Scheduler REAL AUTONOMOUS",
   "real": true,
-  "phoenix": "100 SUPER AGI"
+  "autonomous": true,
+  "phoenix": "100000 AUTONOMOUS"
 }

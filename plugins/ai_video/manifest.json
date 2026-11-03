@@ -1,8 +1,7 @@
 {
   "id": "ai_video",
-  "name": "Ai Video",
-  "version": "1.0.0",
-  "description": "Video AI - Video Analysis REAL",
+  "description": "Video REAL AUTONOMOUS",
   "real": true,
-  "phoenix": "100 SUPER AGI"
+  "autonomous": true,
+  "phoenix": "100000 AUTONOMOUS"
 }
