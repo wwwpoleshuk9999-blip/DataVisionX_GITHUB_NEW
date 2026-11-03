@@ -441,18 +441,8 @@ async def websocket_endpoint(websocket):
     try:
         import asyncio
         for i in range(100):
-            try:
-                data = websocket_dashboard.stream_kpi()
-                data['message_num'] = i+1
-                data['timestamp'] = data.get('timestamp', __import__('time').time())
-                websocket_dashboard.messages_sent += 1
-                await websocket.send_json(data)
-            except Exception as e:
-                # Send error as json, don't crash
-                try:
-                    await websocket.send_json({"error": str(e), "message_num": i+1, "real": False})
-                except:
-                    break
+            payload = websocket_dashboard.get_simple_payload(i+1)
+            await websocket.send_json(payload)
             await asyncio.sleep(0.5)
     except Exception:
         pass
