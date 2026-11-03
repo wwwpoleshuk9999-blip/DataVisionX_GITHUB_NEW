@@ -187,3 +187,16 @@ try:
     app.include_router(dashboard_v6_router)
 except Exception as e:
     print(f"Dashboard v6 not loaded: {e}")
+
+# Phoenix 200 BUSINESS AGI Dashboard 7.0 + Business API
+try:
+    from web.dashboard_v7 import router as dashboard_v7_router
+    app.include_router(dashboard_v7_router)
+except Exception as e:
+    print(f"Dashboard v7 not loaded: {e}")
+
+try:
+    from api.routes.business import router as business_router
+    app.include_router(business_router)
+except Exception as e:
+    print(f"Business API not loaded: {e}")
