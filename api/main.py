@@ -180,3 +180,10 @@ try:
     app.include_router(ultimate_router)
 except Exception as e:
     print(f"Ultimate API not loaded: {e}")
+
+# Phoenix 100 SUPER AGI Dashboard 6.0
+try:
+    from web.dashboard_v6 import router as dashboard_v6_router
+    app.include_router(dashboard_v6_router)
+except Exception as e:
+    print(f"Dashboard v6 not loaded: {e}")
